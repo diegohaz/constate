@@ -1,7 +1,7 @@
 {
   "name": "constate",
   "version": "0.0.1",
-  "description": "Simple React state management library that lets you switch between local and global state with ease",
+  "description": "Yet another React state management library that lets you work with local state and scale up to global state with ease",
   "license": "MIT",
   "repository": "diegohaz/constate",
   "main": "dist/cjs/constate.js",
