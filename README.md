@@ -111,19 +111,6 @@ Whenever you need to share state between components and/or feel the need to have
 
     export default CounterValue
     ```
-    ```jsx
-    // CounterParity.js
-    import React from 'react'
-    import CounterState from './CounterState'
-
-    const CounterParity = () => (
-      <CounterState context="foo">
-        {({ getParity }) => <div>{getParity()}</div>} 
-      </CounterState>
-    )
-
-    export default CounterParity
-    ```
 
 2. Wrap your root component with `Provider`:
     ```jsx
@@ -133,13 +120,11 @@ Whenever you need to share state between components and/or feel the need to have
     import { Provider } from 'constate'
     import CounterButton from './CounterButton'
     import CounterValue from './CounterValue'
-    import CounterParity from './CounterParity'
 
     const App = () => (
       <Provider>
         <CounterButton />
         <CounterValue />
-        <CounterParity />
       </Provider>
     )
 
