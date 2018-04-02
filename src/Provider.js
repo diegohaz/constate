@@ -1,33 +1,33 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import Context from './Context'
+import React from "react";
+import PropTypes from "prop-types";
+import Context from "./Context";
 
 class Provider extends React.Component {
   static propTypes = {
     children: PropTypes.node,
-    initialState: PropTypes.object,
-  }
+    initialState: PropTypes.object
+  };
 
   static defaultProps = {
-    initialState: {},
-  }
+    initialState: {}
+  };
 
-  state = this.props.initialState
+  state = this.props.initialState;
 
-  onSetState = (...args) => this.setState(...args)
+  onSetState = (...args) => this.setState(...args);
 
   render() {
     return (
       <Context.Provider
         value={{
           state: this.state,
-          setState: this.onSetState,
+          setState: this.onSetState
         }}
       >
         {this.props.children}
       </Context.Provider>
-    )
+    );
   }
 }
 
-export default Provider
+export default Provider;
