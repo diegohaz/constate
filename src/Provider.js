@@ -1,3 +1,4 @@
+/* eslint-disable react/sort-comp, react/no-unused-state */
 import React from "react";
 import PropTypes from "prop-types";
 import Context from "./Context";
@@ -17,18 +18,24 @@ class Provider extends React.Component {
     initialState: {}
   };
 
-  state = this.props.initialState;
+  changeState = (fn, cb) => {
+    this.setState(
+      (state, props) => ({
+        state: fn(state.state, props),
+        setState: this.changeState
+      }),
+      cb
+    );
+  };
 
-  onSetState = (...args) => this.setState(...args);
+  state = {
+    state: this.props.initialState,
+    setState: this.changeState
+  };
 
   render() {
     return (
-      <Context.Provider
-        value={{
-          state: this.state,
-          setState: this.onSetState
-        }}
-      >
+      <Context.Provider value={this.state}>
         {this.props.children}
       </Context.Provider>
     );
