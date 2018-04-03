@@ -2,6 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import Context from "./Context";
 
+/**
+ * @class Provider
+ * @prop {React.Node} children
+ * @prop {Object=} initialState
+ */
 class Provider extends React.Component {
   static propTypes = {
     children: PropTypes.node,
