@@ -147,7 +147,7 @@ It's possible to pass `initialState` to `Provider`:
 ```jsx
 const initialState = {
   foo: {
-    count: 0
+    count: 10
   }
 };
 
@@ -155,8 +155,9 @@ const App = () => (
   <Provider initialState={initialState}>
     ...
   </Provider>
-)
+);
 ```
+This way, all `State` with `context="foo"` will start with `{ count: 10 }`
 
 > Note: while using context, only the `initialState` of the first `State` in the tree will be considered. `Provider` will always take precedence over `State`.
 
