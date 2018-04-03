@@ -21,8 +21,7 @@ class Provider extends React.Component {
   changeState = (fn, cb) => {
     this.setState(
       (state, props) => ({
-        state: fn(state.state, props),
-        setState: this.changeState
+        state: fn(state.state, props)
       }),
       cb
     );
