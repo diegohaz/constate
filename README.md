@@ -25,7 +25,7 @@ npm i -S constate
 
 ## Usage
 
-**Table of Contents**:
+**Table of Contents**
 
 -   [Local state](#local-state)
 -   [Global state](#global-state)
