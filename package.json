@@ -25,7 +25,7 @@
     "postcoverage": "opn coverage/lcov-report/index.html",
     "lint": "eslint src test",
     "clean": "rimraf dist",
-    "docs": "documentation readme src --section API",
+    "docs": "documentation readme src --section API --markdown-toc false",
     "prebuild": "npm run clean && yarn docs",
     "build": "rollup -c",
     "watch": "npm-watch",
