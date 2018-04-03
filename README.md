@@ -13,125 +13,92 @@
 
 > context + state = constate
 
-~2KB React state management library that lets you work with local state and scale up to global state with ease. 
+~2KB React state management library that lets you work with local state and scale up to global state with ease when needed. 
+
+Demo: https://codesandbox.io/s/7p2qv6mmq
 
 ## Install
 
-npm:
 ```sh
 npm i -S constate
 ```
 
-Yarn:
-```sh
-yarn add constate
-```
-
 ## Usage
+
+**Table of Contents**:
+  - [Local state](#local-state)
+  - [Global state](#global-state)
+  - [Composing state](#composing-state)
+  - [Testing](#testing)
 
 ### Local state
 
-You can start by using local state. Make the state global only when you need it.
+You can start by creating your `State` component:
+```jsx
+import React from "react";
+import { State } from "constate";
 
-1. Create your `State` component:
-    ```jsx
-    // CounterState.js
-    import React from "react";
-    import { State } from "constate";
+export const initialState = {
+  count: 0
+};
 
-    export const initialState = {
-      count: 0
-    };
+export const actions = {
+  increment: amount => state => ({ count: state.count + amount })
+};
 
-    export const actions = {
-      increment: amount => state => ({ count: state.count + amount })
-    };
+export const selectors = {
+  getParity: () => state => (state.count % 2 === 0 ? "even" : "odd")
+};
 
-    export const selectors = {
-      getParity: () => state => (state.count % 2 === 0 ? "even" : "odd")
-    };
+const CounterState = props => (
+  <State
+    initialState={initialState}
+    actions={actiosn}
+    selectors={selectors}
+    {...props}
+  />
+);
 
-    const CounterState = props => (
-      <State 
-        initialState={initialState}
-        actions={actions}
-        selectors={selectors}
-        {...props} 
-      />
-    );
+export default CounterState;
+```
+> Note: the reason we're exporting `initialState`, `actions` and `selectors` is to make [testing](#testing) easier.
 
-    export default CounterState;
-    ```
-
-2. Wrap your component with `CounterState`:
-    ```jsx
-    // CounterButton.js
-    import React from "react";
-    import CounterState from "./CounterState";
-
-    const CounterButton = () => (
-      <CounterState>
-        {({ count, increment, getParity }) => (
-          <button onClick={() => increment(1)}>{count} {getParity()}</button>
-        )} 
-      </CounterState>
-    );
-
-    export default CounterButton;
-    ```
+Then, just use it elsewhere:
+```jsx
+const CounterButton = () => (
+  <CounterState>
+    {({ count, increment, getParity }) => (
+      <button onClick={() => increment(1)}>{count} {getParity()}</button>
+    )}
+  </CounterState>
+);
+```
 
 ### Global state
 
-Whenever you need to share state between components and/or feel the need to have a global state, just follow these steps:
+Whenever you need to share state between components and/or feel the need to have a global state, you can pass a `context` property to `State` and wrap your app with `Provider`:
+```jsx
+const CounterButton = () => (
+  <CounterState context="foo">
+    {({ increment }) => <button onClick={() => increment(1)}>Increment</button>}
+  </CounterState>
+);
 
-1. Pass `context` property to your `State` components:
-    ```jsx
-    // CounterButton.js
-    import React from "react";
-    import CounterState from "./CounterState";
+const CounterValue = () => (
+  <CounterState context="foo">
+    {({ count }) => <div>{count}</div>} 
+  </CounterState>
+);
 
-    const CounterButton = () => (
-      <CounterState context="foo">
-        {({ increment }) => <button onClick={() => increment(1)}>Increment</button>}
-      </CounterState>
-    );
+const App = () => (
+  <Provider>
+    <CounterButton />
+    <CounterValue />
+  </Provider>
+);
+```
 
-    export default CounterButton;
-    ```
-    ```jsx
-    // CounterValue.js
-    import React from "react";
-    import CounterState from "./CounterState";
-
-    const CounterValue = () => (
-      <CounterState context="foo">
-        {({ count }) => <div>{count}</div>} 
-      </CounterState>
-    );
-
-    export default CounterValue;
-    ```
-
-2. Wrap your root component with `Provider`:
-    ```jsx
-    // index.js
-    import React from "react";
-    import ReactDOM from "react-dom";
-    import { Provider } from "constate";
-    import CounterButton from "./CounterButton";
-    import CounterValue from "./CounterValue";
-
-    const App = () => (
-      <Provider>
-        <CounterButton />
-        <CounterValue />
-      </Provider>
-    );
-
-    ReactDOM.render(<App />, document.getElementById("root"));
-    ```
-
-### Overriding `CounterState` properties
+### Composing state
 
 This is still React, so you can pass new properties to `CounterState`, making it really composable.
 
@@ -168,27 +135,7 @@ const CounterButton = () => (
 
 Those new members will work even if you use `context`.
 
-### Global initial state
-
-You can also pass `initialState` to `Provider`:
-
-```jsx
-const initialState = {
-  foo: {
-    count: 10
-  }
-};
-
-const App = () => (
-  <Provider initialState={initialState}>
-    ...
-  </Provider>
-);
-```
-
-That way, components using `context=foo` will have that initial state.
-
-## Testing
+### Testing
 
 `actions` and `selectors` are pure functions. Testing is pretty straightfoward:
 
