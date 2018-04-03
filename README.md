@@ -157,6 +157,19 @@ test("selectors", () => {
 });
 ```
 
+## Contributing
+
+If you find some bug, please [create an issue](https://github.com/diegohaz/constate/issues/new) providing instructions to reproduce it. It's always very appreciable if you find the time to fix it. In this case, please [submit a PR](https://github.com/diegohaz/constate/pulls).
+
+If you're a beginner, it'll be a pleasure to help you contribute. See [the beginner's guide to contributing to a GitHub project](https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/).
+
+Make sure to install dependencies (`yarn` or `npm install`) and to lint and test the code before submitting the PR (`yarn lint && yarn test`).
+
+## TODO
+
+- Side effects / async actions ([#1](https://github.com/diegohaz/constate/issues/1))
+- Middlewares? ([create an issue](https://github.com/diegohaz/constate/issues/new) if you find a use case for this)
+
 ## License
 
 MIT © [Diego Haz](https://github.com/diegohaz)
