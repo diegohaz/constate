@@ -30,6 +30,7 @@ npm i -S constate
 -   [Local state](#local-state)
 -   [Global state](#global-state)
 -   [Composing state](#composing-state)
+-   [Global initial state](#global-initial-state)
 -   [Testing](#testing)
 
 ### Local state
@@ -139,6 +140,25 @@ const CounterButton = () => (
 ```
 
 Those new members will work even if you use `context`.
+
+### Global initial state
+
+It's possible to pass `initialState` to `Provider`:
+```jsx
+const initialState = {
+  foo: {
+    count: 0
+  }
+};
+
+const App = () => (
+  <Provider initialState={initialState}>
+    ...
+  </Provider>
+)
+```
+
+> Note: while using context, only the `initialState` of the first `State` in the tree will be considered. `Provider` will always take precedence over `State`.
 
 ### Testing
 
