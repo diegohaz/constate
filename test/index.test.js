@@ -24,6 +24,12 @@ const createTests = props => () => {
     expect(getState(wrapper)).toEqual(initialState);
   });
 
+  test("multiple initialState", () => {
+    const initialState = { foo: "bar", baz: "qux" };
+    const wrapper = wrap(initialState, props);
+    expect(getState(wrapper)).toEqual(initialState);
+  });
+
   test("actions", () => {
     const initialState = { count: 0 };
     const actions = {
@@ -38,6 +44,23 @@ const createTests = props => () => {
     expect(getState(wrapper)).toEqual(expect.objectContaining({ count: 2 }));
   });
 
+  test("actions with mutiple initialState", () => {
+    const initialState = { count: 0, foo: "bar" };
+    const actions = {
+      increment: amount => state => ({ count: state.count + amount })
+    };
+    const wrapper = wrap(initialState, { actions, ...props });
+    expect(getState(wrapper)).toEqual({
+      count: 0,
+      foo: "bar",
+      increment: expect.any(Function)
+    });
+    getState(wrapper).increment(2);
+    expect(getState(wrapper)).toEqual(
+      expect.objectContaining({ count: 2, foo: "bar" })
+    );
+  });
+
   test("selectors", () => {
     const initialState = { count: 0 };
     const selectors = {
@@ -46,6 +69,20 @@ const createTests = props => () => {
     const wrapper = wrap(initialState, { selectors, ...props });
     expect(getState(wrapper)).toEqual({
       count: 0,
+      getParity: expect.any(Function)
+    });
+    expect(getState(wrapper).getParity()).toBe("even");
+  });
+
+  test("selectors with mutiple initialState", () => {
+    const initialState = { count: 0, foo: "bar" };
+    const selectors = {
+      getParity: () => state => (state.count % 2 === 0 ? "even" : "odd")
+    };
+    const wrapper = wrap(initialState, { selectors, ...props });
+    expect(getState(wrapper)).toEqual({
+      count: 0,
+      foo: "bar",
       getParity: expect.any(Function)
     });
     expect(getState(wrapper).getParity()).toBe("even");
@@ -60,6 +97,15 @@ describe("global", () => {
     const wrapper = wrap(undefined, { context: "foo" }, { initialState });
     expect(getState(wrapper)).toEqual({
       count: 0
+    });
+  });
+
+  test("global multiple initialState", () => {
+    const initialState = { foo: { count: 0, foo: "bar" }, bar: {} };
+    const wrapper = wrap(undefined, { context: "foo" }, { initialState });
+    expect(getState(wrapper)).toEqual({
+      count: 0,
+      foo: "bar"
     });
   });
 
