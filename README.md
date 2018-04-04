@@ -13,7 +13,7 @@
 
 > context + state = constate
 
-~2KB React state management library that lets you work with local state and scale up to global state with ease when needed. 
+~2kB React state management library that lets you work with local state and scale up to global state with ease when needed. 
 
 Demo: <https://codesandbox.io/s/7p2qv6mmq>
 
