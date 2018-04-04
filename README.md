@@ -31,6 +31,7 @@ npm i -S constate
 -   [Global state](#global-state)
 -   [Composing state](#composing-state)
 -   [Global initial state](#global-initial-state)
+-   [State in lifecycle methods](#state-in-lifecycle-methods)
 -   [Testing](#testing)
 
 ### Local state
@@ -85,13 +86,13 @@ Whenever you need to share state between components and/or feel the need to have
 
 ```jsx
 const CounterButton = () => (
-  <CounterState context="foo">
+  <CounterState context="counter1">
     {({ increment }) => <button onClick={() => increment(1)}>Increment</button>}
   </CounterState>
 );
 
 const CounterValue = () => (
-  <CounterState context="foo">
+  <CounterState context="counter1">
     {({ count }) => <div>{count}</div>} 
   </CounterState>
 );
@@ -144,9 +145,10 @@ Those new members will work even if you use `context`.
 ### Global initial state
 
 It's possible to pass `initialState` to `Provider`:
+
 ```jsx
 const initialState = {
-  foo: {
+  counter1: {
     count: 10
   }
 };
@@ -157,9 +159,49 @@ const App = () => (
   </Provider>
 );
 ```
-This way, all `State` with `context="foo"` will start with `{ count: 10 }`
+
+This way, all `State` with `context="counter1"` will start with `{ count: 10 }`
 
 > Note: while using context, only the `initialState` of the first `State` in the tree will be considered. `Provider` will always take precedence over `State`.
+
+### State in lifecycle methods
+
+As stated in the [official docs](https://reactjs.org/docs/context.html#accessing-context-in-lifecycle-methods), to access state in lifecycle methods you can just pass the state down as a prop to another component and use it just like another prop:
+
+```jsx
+class CounterButton extends React.Component {
+  componentDidMount() {
+    this.props.state.increment(1);
+  }
+
+  render() {
+    const { increment } = this.props.state;
+    return <button onClick={() => increment(1)}>Increment</button>;
+  }
+}
+
+export default props => (
+  <CounterState context="counter1">
+    {state => <CounterButton {...props} state={state} />}
+  </CounterState>
+);
+```
+
+Another alternative is to use <https://github.com/reactions/component>:
+
+```jsx
+import Component from "@reactions/component";
+
+const CounterButton = () => (
+  <CounterState context="counter1">
+    {({ increment }) => (
+      <Component didMount={() => increment(1)}>
+        <button onClick={() => increment(1)}>Increment</button>
+      </Component>
+    )}
+  </CounterState>
+);
+```
 
 ### Testing
 
