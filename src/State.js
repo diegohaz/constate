@@ -26,7 +26,7 @@ class State extends React.Component {
 
   state = this.props.initialState;
 
-  onSetState = (...args) => this.setState(...args);
+  changeState = (...args) => this.setState(...args);
 
   render() {
     if (this.props.context) {
@@ -37,7 +37,7 @@ class State extends React.Component {
 
     return children({
       ...this.state,
-      ...(actions && mapStateToActions(this.onSetState, actions)),
+      ...(actions && mapStateToActions(this.changeState, actions)),
       ...(selectors && mapStateToSelectors(this.state, selectors))
     });
   }
