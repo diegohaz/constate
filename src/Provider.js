@@ -20,7 +20,10 @@ class Provider extends React.Component {
 
   changeState = fn => {
     this.setState(state => ({
-      state: fn(state.state)
+      state: {
+        ...state.state,
+        ...fn(state.state)
+      }
     }));
   };
 
