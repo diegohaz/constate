@@ -11,10 +11,10 @@ const wrap = (initialState, props, providerProps) =>
     </Provider>
   );
 
-const getState = wrapper =>
+const getState = (wrapper, selector = "div") =>
   wrapper
     .update()
-    .find("div")
+    .find(selector)
     .prop("state");
 
 const createTests = props => () => {
@@ -107,6 +107,35 @@ describe("global", () => {
       count: 0,
       foo: "bar"
     });
+  });
+
+  test("global multiple contexts", () => {
+    const initialState = { foo: { count: 0 }, bar: { count: 1 } };
+    const actions = {
+      increment: amount => state => ({ count: state.count + amount })
+    };
+    const wrapper = mount(
+      <Provider initialState={initialState}>
+        <State context="foo" actions={actions}>
+          {state => <div state={state} />}
+        </State>
+        <State context="bar" actions={actions}>
+          {state => <span state={state} />}
+        </State>
+      </Provider>
+    );
+    expect(getState(wrapper, "div")).toEqual({
+      count: 0,
+      increment: expect.any(Function)
+    });
+    expect(getState(wrapper, "span")).toEqual({
+      count: 1,
+      increment: expect.any(Function)
+    });
+    getState(wrapper, "div").increment(2);
+    expect(getState(wrapper, "div").count).toBe(2);
+    getState(wrapper, "span").increment(2);
+    expect(getState(wrapper, "span").count).toBe(3);
   });
 
   test("global initialState overrides local initialState", () => {
