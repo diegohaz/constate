@@ -258,6 +258,7 @@ Make sure to install dependencies (`yarn` or `npm install`) and to lint and test
 
 -   Side effects / async actions ([#1](https://github.com/diegohaz/constate/issues/1))
 -   Middlewares? ([create an issue](https://github.com/diegohaz/constate/issues/new) if you find a use case for this)
+-   Debugger/devtools
 
 ## License
 
