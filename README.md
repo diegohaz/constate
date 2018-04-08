@@ -57,7 +57,7 @@ export const selectors = {
 const CounterState = props => (
   <State
     initialState={initialState}
-    actions={actiosn}
+    actions={actions}
     selectors={selectors}
     {...props}
   />
