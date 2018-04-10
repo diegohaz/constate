@@ -15,7 +15,16 @@
 
 ~2kB React state management library that lets you work with local state and scale up to global state with ease when needed. 
 
-Demo: <https://codesandbox.io/s/7p2qv6mmq>
+Demo & Playgroud: <https://codesandbox.io/s/7p2qv6mmq>
+
+<br>
+<hr>
+<p align="center">
+If you find this useful, please don't forget to star ⭐️ the repo, as this will help to promote the project.<br>
+Follow me on <a href="https://twitter.com/diegohaz">Twitter</a> and <a href="https://github.com/diegohaz">GitHub</a> to keep updated about this project and <a href="https://github.com/diegohaz?tab=repositories">others</a>.
+</p>
+<hr>
+<br>
 
 ## Install
 
