@@ -14,7 +14,8 @@ class ConsumerChild extends React.Component {
     context: PropTypes.string
   };
 
-  componentDidMount() {
+  constructor(props) {
+    super(props);
     const { context, initialState, setState } = this.props;
     setState(state => ({
       [context]: { ...initialState, ...state[context] }
