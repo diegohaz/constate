@@ -41,6 +41,7 @@ npm i -S constate
 -   [Composing state](#composing-state)
 -   [Global initial state](#global-initial-state)
 -   [State in lifecycle methods](#state-in-lifecycle-methods)
+-   [Call selectors in actions](#call-selectors-in-actions)
 -   [Testing](#testing)
 
 ### Local state
@@ -210,6 +211,21 @@ const CounterButton = () => (
     )}
   </CounterState>
 );
+```
+
+### Call selectors in actions
+
+This is just JavaScript:
+```jsx
+export const selectors = {
+  isEven: () => state => state.count % 2 === 0
+};
+
+export const actions = {
+  increment: () => state => ({
+    count: state.count + (selectors.isEven()(state) ? 2 : 1)
+  })
+};
 ```
 
 ### Testing
