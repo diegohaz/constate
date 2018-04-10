@@ -285,6 +285,7 @@ Make sure to install dependencies (`yarn` or `npm install`) and to lint and test
 -   Middlewares? ([create an issue](https://github.com/diegohaz/constate/issues/new) if you find a use case for this)
 -   Debugger/devtools
 -   Memoize selectors
+-   Global actions/selectors
 
 ## License
 
