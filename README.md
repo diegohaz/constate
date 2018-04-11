@@ -32,7 +32,28 @@ Follow me on <a href="https://twitter.com/diegohaz">Twitter</a> and <a href="htt
 npm i constate
 ```
 
-## Usage
+## Quick start
+
+```jsx
+import React from "react";
+import ReactDOM from "react-dom";
+import { State } from "constate";
+
+const Counter = () => (
+  <State
+    initialState={{ count: 0 }}
+    actions={{ increment: () => state => ({ count: state.count + 1 }) }}
+  />
+    {({ count, increment }) => (
+      <button onClick={increment}>{count}</button>
+    )}
+  </State>
+);
+
+ReactDOM.render(<Counter />, document.getElementById("root"));
+```
+
+## Guide
 
 **Table of Contents**
 
