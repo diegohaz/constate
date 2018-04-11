@@ -39,11 +39,14 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { State } from "constate";
 
+const initialState = { count: 0 };
+
+const actions = {
+  increment: () => state => ({ count: state.count + 1 })
+};
+
 const Counter = () => (
-  <State
-    initialState={{ count: 0 }}
-    actions={{ increment: () => state => ({ count: state.count + 1 }) }}
-  />
+  <State initialState={initialState} actions={actions}>
     {({ count, increment }) => (
       <button onClick={increment}>{count}</button>
     )}
