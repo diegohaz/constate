@@ -29,7 +29,7 @@ Follow me on <a href="https://twitter.com/diegohaz">Twitter</a> and <a href="htt
 ## Install
 
 ```sh
-npm i -S constate
+npm i constate
 ```
 
 ## Usage
