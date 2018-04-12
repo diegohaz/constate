@@ -296,7 +296,7 @@ type ProviderProps = {
 };
 ```
 
-## Contributing 👭👬
+## Contributing 👥
 
 If you find a bug, please [create an issue](https://github.com/diegohaz/constate/issues/new) providing instructions to reproduce it. It's always very appreciable if you find the time to fix it. In this case, please [submit a PR](https://github.com/diegohaz/constate/pulls).
 
