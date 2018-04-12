@@ -3,14 +3,6 @@ import PropTypes from "prop-types";
 import Consumer from "./Consumer";
 import { mapStateToActions, mapStateToSelectors } from "./utils";
 
-/**
- * @class State
- * @prop {Function} children
- * @prop {Object=} initialState
- * @prop {Object=} actions
- * @prop {Object=} selectors
- * @prop {String=} context
- */
 class State extends React.Component {
   static propTypes = {
     children: PropTypes.func.isRequired,
