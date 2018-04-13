@@ -37,7 +37,6 @@ npm i constate
 
 ```jsx
 import React from "react";
-import ReactDOM from "react-dom";
 import { State } from "constate";
 
 const initialState = { count: 0 };
@@ -53,8 +52,6 @@ const Counter = () => (
     )}
   </State>
 );
-
-ReactDOM.render(<Counter />, document.getElementById("root"));
 ```
 
 ## Guide 📖
