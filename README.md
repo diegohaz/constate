@@ -54,6 +54,8 @@ const Counter = () => (
 );
 ```
 
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/38770201-59f82fec-3fe5-11e8-9cd0-4dacf3d12f27.gif" alt="Example"></p>
+
 ## Guide 📖
 
 **Table of Contents**
