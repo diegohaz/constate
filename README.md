@@ -141,6 +141,8 @@ const App = () => (
 );
 ```
 
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/38770261-8b108952-3fe6-11e8-98c9-c181d0d8b51e.gif" alt="Example"></p>
+
 ### Composing state
 
 This is still React, so you can pass new properties to `CounterState`, making it really composable.
@@ -171,10 +173,14 @@ export const actions = {
 
 const CounterButton = () => (
   <CounterState initialState={initialState} actions={actions}>
-    {({ decrement }) => <button onClick={() => decrement(1)}>Decrement</button>}
+    {({ count, decrement }) => (
+      <button onClick={() => decrement(1)}>{count}</button>
+    )}
   </CounterState>
 );
 ```
+
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/38770260-8ad70bb4-3fe6-11e8-91a6-1589be04ed9e.gif" alt="Example"></p>
 
 Those new members will work even if you use `context`.
 
