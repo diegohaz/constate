@@ -112,6 +112,8 @@ const CounterButton = () => (
 );
 ```
 
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/38770128-2d92da2a-3fe4-11e8-858f-b5cba87ce686.gif" alt="Example"></p>
+
 ### Global state
 
 Whenever you need to share state between components and/or feel the need to have a global state, you can pass a `context` property to `State` and wrap your app with `Provider`:
