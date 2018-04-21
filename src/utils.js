@@ -15,3 +15,12 @@ export const mapStateToSelectors = (state, selectorsMap) =>
     }),
     {}
   );
+
+export const mapStateToEffects = (arg, effectsMap) =>
+  Object.keys(effectsMap).reduce(
+    (finalEffects, effectKey) => ({
+      ...finalEffects,
+      [effectKey]: (...args) => effectsMap[effectKey](...args)(arg)
+    }),
+    {}
+  );

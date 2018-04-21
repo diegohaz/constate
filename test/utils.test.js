@@ -1,4 +1,8 @@
-import { mapStateToActions, mapStateToSelectors } from "../src/utils";
+import {
+  mapStateToActions,
+  mapStateToSelectors,
+  mapStateToEffects
+} from "../src/utils";
 
 test("mapStateToActions", () => {
   const setState = jest.fn(fn => fn(2));
@@ -16,4 +20,13 @@ test("mapStateToSelectors", () => {
   };
   const result = mapStateToSelectors(state, selectorsMap);
   expect(result.foo(1)).toBe(2);
+});
+
+test("mapStateToEffects", () => {
+  const arg = { foo: "foo", bar: "bar" };
+  const effectsMap = {
+    foo: baz => ({ foo, bar }) => foo + bar + baz
+  };
+  const result = mapStateToEffects(arg, effectsMap);
+  expect(result.foo("baz")).toBe("foobarbaz");
 });

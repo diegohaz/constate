@@ -9,6 +9,7 @@ class State extends React.Component {
     initialState: PropTypes.object,
     actions: PropTypes.objectOf(PropTypes.func),
     selectors: PropTypes.objectOf(PropTypes.func),
+    effects: PropTypes.objectOf(PropTypes.func),
     context: PropTypes.string
   };
 
@@ -18,19 +19,21 @@ class State extends React.Component {
 
   state = this.props.initialState;
 
-  changeState = (...args) => this.setState(...args);
+  handleSetState = (...args) => this.setState(...args);
 
   render() {
     if (this.props.context) {
       return <Consumer {...this.props} />;
     }
 
-    const { children, actions, selectors } = this.props;
+    const { children, actions, selectors, effects } = this.props;
+    const effectsArg = { state: this.state, setState: this.handleSetState };
 
     return children({
       ...this.state,
-      ...(actions && mapStateToActions(this.changeState, actions)),
-      ...(selectors && mapStateToSelectors(this.state, selectors))
+      ...(actions && mapStateToActions(this.handleSetState, actions)),
+      ...(selectors && mapStateToSelectors(this.state, selectors)),
+      ...(effects && mapStateToSelectors(effectsArg, effects))
     });
   }
 }

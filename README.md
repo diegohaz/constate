@@ -63,9 +63,11 @@ const Counter = () => (
 -   [Local state](#local-state)
 -   [Global state](#global-state)
 -   [Composing state](#composing-state)
+-   [Effects](#effects)
 -   [Global initial state](#global-initial-state)
 -   [State in lifecycle methods](#state-in-lifecycle-methods)
 -   [Call selectors in actions](#call-selectors-in-actions)
+-   [Call actions in effects](#call-actions-in-effects)
 -   [Testing](#testing)
 
 ### Local state
@@ -184,6 +186,30 @@ const CounterButton = () => (
 
 Those new members will work even if you use `context`.
 
+
+### Effects
+
+An effect is a method that receives both `state` and `setState`. This is useful if you need to perform side effects, like `async` actions, or just want to use `setState`.
+
+```jsx
+export const effects = {
+  tick: () => ({ setState }) => {
+    setTimeout(() => {
+      setState(state => ({ count: state.count + 1 }));
+      effects.tick()({ setState })
+    }, 1000);
+  }
+};
+
+const AutomaticCounterButton = () => (
+  <CounterState effects={effects}>
+    {({ count, tick }) => (
+      <button onClick={tick}>{count}</button>
+    )}
+  </CounterState>
+);
+```
+
 ### Global initial state
 
 It's possible to pass `initialState` to `Provider`:
@@ -248,6 +274,7 @@ const CounterButton = () => (
 ### Call selectors in actions
 
 This is just JavaScript:
+
 ```jsx
 export const selectors = {
   isEven: () => state => state.count % 2 === 0
@@ -257,6 +284,23 @@ export const actions = {
   increment: () => state => ({
     count: state.count + (selectors.isEven()(state) ? 2 : 1)
   })
+};
+```
+
+### Call actions in effects
+
+Aren't you already convinced that this is JavaScript?
+
+```jsx
+const increment = amount => state => ({ count: state.count + amount })
+
+export const effects = {
+  tick: amount => ({ setState }) => {
+    setTimeout(() => {
+      setState(increment(amount));
+      effects.tick(amount)({ setState })
+    }, 1000);
+  }
 };
 ```
 
@@ -282,6 +326,29 @@ test("selectors", () => {
 });
 ```
 
+Testing `effects` can be a little tricky depending on how you implement them. This is how we can test our `tick` effect with [Jest](https://facebook.github.io/jest):
+
+```jsx
+import { effects } from "./CounterState";
+
+test("tick", () => {
+  jest.useFakeTimers();
+
+  let state = { count: 0 };
+  const setState = fn => {
+    state = fn(state);
+  };
+
+  effects.tick()({ state, setState });
+
+  jest.advanceTimersByTime(1000);
+  expect(state).toEqual({ count: 1 });
+
+  jest.advanceTimersByTime(1000);
+  expect(state).toEqual({ count: 2 });
+});
+```
+
 ## API 🧐
 
 ```js
@@ -289,11 +356,14 @@ type Action = () => (state: Object) => Object;
 
 type Selector = () => (state: Object) => any;
 
+type Effect = () => ({ state: Object, setState: Function }) => void;
+
 type StateProps = {
   children: (state: Object) => React.Node,
   initialState: Object,
   actions: { [string]: Action },
   selectors: { [string]: Selector },
+  effects: { [string]: Effect },
   context: string
 };
 
@@ -311,7 +381,6 @@ If you're a beginner, it'll be a pleasure to help you contribute. You can start 
 
 ## TODO 📝
 
--   Side effects / async actions ([#1](https://github.com/diegohaz/constate/issues/1))
 -   Middlewares? ([create an issue](https://github.com/diegohaz/constate/issues/new) if you find a use case for this)
 -   Debugger/devtools
 -   Memoize selectors

@@ -13,7 +13,7 @@ class Provider extends React.Component {
     initialState: {}
   };
 
-  changeState = fn => {
+  handleSetState = fn => {
     this.setState(state => ({
       state: {
         ...state.state,
@@ -24,7 +24,7 @@ class Provider extends React.Component {
 
   state = {
     state: this.props.initialState,
-    setState: this.changeState
+    setState: this.handleSetState
   };
 
   render() {

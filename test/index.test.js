@@ -87,6 +87,26 @@ const createTests = props => () => {
     });
     expect(getState(wrapper).getParity()).toBe("even");
   });
+
+  test("effects", () => {
+    jest.useFakeTimers();
+    const initialState = { count: 0 };
+    const increment = amount => state => ({ count: state.count + amount });
+    const effects = {
+      tick: () => ({ setState }) => {
+        setState(increment(1));
+        setTimeout(() => effects.tick()({ setState }), 1000);
+      }
+    };
+    const wrapper = wrap(initialState, { effects, ...props });
+    expect(getState(wrapper)).toEqual({ count: 0, tick: expect.any(Function) });
+    getState(wrapper).tick();
+    expect(getState(wrapper).count).toBe(1);
+    jest.advanceTimersByTime(1000);
+    expect(getState(wrapper).count).toBe(2);
+    jest.advanceTimersByTime(1000);
+    expect(getState(wrapper).count).toBe(3);
+  });
 };
 
 describe("local", createTests());
