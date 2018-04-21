@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Consumer from "./Consumer";
-import { mapStateToActions, mapStateToSelectors } from "./utils";
+import { mapSetStateToActions, mapArgumentToFunctions } from "./utils";
 
 class State extends React.Component {
   static propTypes = {
@@ -31,9 +31,9 @@ class State extends React.Component {
 
     return children({
       ...this.state,
-      ...(actions && mapStateToActions(this.handleSetState, actions)),
-      ...(selectors && mapStateToSelectors(this.state, selectors)),
-      ...(effects && mapStateToSelectors(effectsArg, effects))
+      ...(actions && mapSetStateToActions(this.handleSetState, actions)),
+      ...(selectors && mapArgumentToFunctions(this.state, selectors)),
+      ...(effects && mapArgumentToFunctions(effectsArg, effects))
     });
   }
 }

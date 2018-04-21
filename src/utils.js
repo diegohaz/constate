@@ -1,26 +1,14 @@
-export const mapStateToActions = (setState, actionsMap) =>
-  Object.keys(actionsMap).reduce(
-    (finalActions, actionKey) => ({
-      ...finalActions,
-      [actionKey]: (...args) => setState(actionsMap[actionKey](...args))
+const mapWith = (map, transform) =>
+  Object.keys(map).reduce(
+    (final, key) => ({
+      ...final,
+      [key]: transform(map[key])
     }),
     {}
   );
 
-export const mapStateToSelectors = (state, selectorsMap) =>
-  Object.keys(selectorsMap).reduce(
-    (finalSelectors, selectorKey) => ({
-      ...finalSelectors,
-      [selectorKey]: (...args) => selectorsMap[selectorKey](...args)(state)
-    }),
-    {}
-  );
+export const mapSetStateToActions = (setState, actionsMap) =>
+  mapWith(actionsMap, action => (...args) => setState(action(...args)));
 
-export const mapStateToEffects = (arg, effectsMap) =>
-  Object.keys(effectsMap).reduce(
-    (finalEffects, effectKey) => ({
-      ...finalEffects,
-      [effectKey]: (...args) => effectsMap[effectKey](...args)(arg)
-    }),
-    {}
-  );
+export const mapArgumentToFunctions = (argument, fnMap) =>
+  mapWith(fnMap, fn => (...args) => fn(...args)(argument));

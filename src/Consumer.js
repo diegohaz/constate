@@ -1,11 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Context from "./Context";
-import {
-  mapStateToActions,
-  mapStateToSelectors,
-  mapStateToEffects
-} from "./utils";
+import { mapSetStateToActions, mapArgumentToFunctions } from "./utils";
 
 class ConsumerChild extends React.Component {
   static propTypes = {
@@ -35,28 +31,15 @@ class ConsumerChild extends React.Component {
   };
 
   render() {
-    const { context, children } = this.props;
+    const { context, children, actions, selectors, effects } = this.props;
     const state = this.props.state[context] || {};
-
-    const actions =
-      this.props.actions &&
-      mapStateToActions(this.handleSetState, this.props.actions);
-
-    const selectors =
-      this.props.selectors && mapStateToSelectors(state, this.props.selectors);
-
-    const effects =
-      this.props.effects &&
-      mapStateToEffects(
-        { state, setState: this.handleSetState },
-        this.props.effects
-      );
+    const effectsArg = { state, setState: this.handleSetState };
 
     return children({
       ...state,
-      ...actions,
-      ...selectors,
-      ...effects
+      ...(actions && mapSetStateToActions(this.handleSetState, actions)),
+      ...(selectors && mapArgumentToFunctions(state, selectors)),
+      ...(effects && mapArgumentToFunctions(effectsArg, effects))
     });
   }
 }
