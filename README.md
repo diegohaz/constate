@@ -54,7 +54,7 @@ const Counter = () => (
 );
 ```
 
-<p align="center"><img src="https://user-images.githubusercontent.com/3068563/38770201-59f82fec-3fe5-11e8-9cd0-4dacf3d12f27.gif" alt="Example"></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095434-ba7c42c2-4616-11e8-9836-f46ea572c170.gif" alt="Example"></p>
 
 ## Guide 📖
 
@@ -116,7 +116,7 @@ const CounterButton = () => (
 );
 ```
 
-<p align="center"><img src="https://user-images.githubusercontent.com/3068563/38770128-2d92da2a-3fe4-11e8-858f-b5cba87ce686.gif" alt="Example"></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095320-f1595764-4614-11e8-98e3-343042cef61c.gif" alt="Example"></p>
 
 ### Global state
 
@@ -143,7 +143,7 @@ const App = () => (
 );
 ```
 
-<p align="center"><img src="https://user-images.githubusercontent.com/3068563/38770261-8b108952-3fe6-11e8-98c9-c181d0d8b51e.gif" alt="Example"></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095299-b176af2a-4614-11e8-99ce-4980bdf2f139.gif" alt="Example"></p>
 
 ### Composing state
 
@@ -182,7 +182,7 @@ const CounterButton = () => (
 );
 ```
 
-<p align="center"><img src="https://user-images.githubusercontent.com/3068563/38770260-8ad70bb4-3fe6-11e8-91a6-1589be04ed9e.gif" alt="Example"></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095340-51373818-4615-11e8-9b76-dd883e9065fb.gif" alt="Example"></p>
 
 Those new members will work even if you use `context`.
 
@@ -209,6 +209,8 @@ const AutomaticCounterButton = () => (
   </CounterState>
 );
 ```
+
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095395-46d82eb2-4616-11e8-9e15-e5bb5041b4a8.gif" alt="Example"></p>
 
 ### Global initial state
 
