@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Context from "./Context";
-import { mapStateToActions, mapStateToSelectors } from "./utils";
+import { mapSetStateToActions, mapArgumentToFunctions } from "./utils";
 
 class ConsumerChild extends React.Component {
   static propTypes = {
@@ -10,6 +10,7 @@ class ConsumerChild extends React.Component {
     setState: PropTypes.func.isRequired,
     actions: PropTypes.objectOf(PropTypes.func),
     selectors: PropTypes.objectOf(PropTypes.func),
+    effects: PropTypes.objectOf(PropTypes.func),
     children: PropTypes.func.isRequired,
     context: PropTypes.string
   };
@@ -22,27 +23,23 @@ class ConsumerChild extends React.Component {
     }));
   }
 
+  handleSetState = fn => {
+    const { setState, context } = this.props;
+    return setState(state => ({
+      [context]: { ...state[context], ...fn(state[context]) }
+    }));
+  };
+
   render() {
-    const { setState, state, context, children } = this.props;
-
-    const actions =
-      this.props.actions &&
-      mapStateToActions(
-        fn =>
-          setState(s => ({
-            [context]: { ...s[context], ...fn(s[context]) }
-          })),
-        this.props.actions
-      );
-
-    const selectors =
-      this.props.selectors &&
-      mapStateToSelectors(state[context] || {}, this.props.selectors);
+    const { context, children, actions, selectors, effects } = this.props;
+    const state = this.props.state[context] || {};
+    const effectsArg = { state, setState: this.handleSetState };
 
     return children({
-      ...state[context],
-      ...actions,
-      ...selectors
+      ...state,
+      ...(actions && mapSetStateToActions(this.handleSetState, actions)),
+      ...(selectors && mapArgumentToFunctions(state, selectors)),
+      ...(effects && mapArgumentToFunctions(effectsArg, effects))
     });
   }
 }
