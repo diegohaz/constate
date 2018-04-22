@@ -383,10 +383,10 @@ If you're a beginner, it'll be a pleasure to help you contribute. You can start 
 
 ## TODO 📝
 
+-   Built in lifecycles ([#7](https://github.com/diegohaz/constate/issues/7))
 -   Middlewares? ([create an issue](https://github.com/diegohaz/constate/issues/new) if you find a use case for this)
 -   Debugger/devtools
 -   Memoize selectors
--   Global actions/selectors
 
 ## License ⚖️
 
