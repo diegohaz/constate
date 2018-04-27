@@ -1,13 +1,13 @@
 import React from "react";
 import { mount } from "enzyme";
-import { State, Provider } from "../src";
+import { Container, Provider } from "../src";
 
 const wrap = (initialState, props, providerProps) =>
   mount(
     <Provider {...providerProps}>
-      <State initialState={initialState} {...props}>
+      <Container initialState={initialState} {...props}>
         {state => <div state={state} />}
-      </State>
+      </Container>
     </Provider>
   );
 
@@ -136,12 +136,12 @@ describe("global", () => {
     };
     const wrapper = mount(
       <Provider initialState={initialState}>
-        <State context="foo" actions={actions}>
+        <Container context="foo" actions={actions}>
           {state => <div state={state} />}
-        </State>
-        <State context="bar" actions={actions}>
+        </Container>
+        <Container context="bar" actions={actions}>
           {state => <span state={state} />}
-        </State>
+        </Container>
       </Provider>
     );
     expect(getState(wrapper, "div")).toEqual({

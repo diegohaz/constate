@@ -17,11 +17,16 @@ class ConsumerChild extends React.Component {
 
   constructor(props) {
     super(props);
-    const { context, initialState, setState } = this.props;
-    setState(state => ({
-      [context]: { ...initialState, ...state[context] }
-    }));
+    const { state, context, initialState } = this.props;
+    if (!state[context]) {
+      this.handleSetState(prevState => ({ ...initialState, ...prevState }));
+    }
   }
+
+  getMethodsArg = () => ({
+    state: this.props.state[this.props.context] || {},
+    setState: this.handleSetState
+  });
 
   handleSetState = fn => {
     const { setState, context } = this.props;
@@ -31,15 +36,14 @@ class ConsumerChild extends React.Component {
   };
 
   render() {
-    const { context, children, actions, selectors, effects } = this.props;
-    const state = this.props.state[context] || {};
-    const effectsArg = { state, setState: this.handleSetState };
+    const { children, actions, selectors, effects } = this.props;
+    const { state, setState } = this.getMethodsArg();
 
     return children({
       ...state,
-      ...(actions && mapSetStateToActions(this.handleSetState, actions)),
+      ...(actions && mapSetStateToActions(setState, actions)),
       ...(selectors && mapArgumentToFunctions(state, selectors)),
-      ...(effects && mapArgumentToFunctions(effectsArg, effects))
+      ...(effects && mapArgumentToFunctions({ state, setState }, effects))
     });
   }
 }

@@ -38,7 +38,7 @@ npm i constate
 
 ```jsx
 import React from "react";
-import { State } from "constate";
+import { Container } from "constate";
 
 const initialState = { count: 0 };
 
@@ -47,11 +47,11 @@ const actions = {
 };
 
 const Counter = () => (
-  <State initialState={initialState} actions={actions}>
+  <Container initialState={initialState} actions={actions}>
     {({ count, increment }) => (
       <button onClick={increment}>{count}</button>
     )}
-  </State>
+  </Container>
 );
 ```
 
@@ -73,11 +73,11 @@ const Counter = () => (
 
 ### Local state
 
-You can start by creating your `State` component:
+You can start by creating your `Container` component:
 
 ```jsx
 import React from "react";
-import { State } from "constate";
+import { Container } from "constate";
 
 export const initialState = {
   count: 0
@@ -91,8 +91,8 @@ export const selectors = {
   getParity: () => state => (state.count % 2 === 0 ? "even" : "odd")
 };
 
-const CounterState = props => (
-  <State
+const CounterContainer = props => (
+  <Container
     initialState={initialState}
     actions={actions}
     selectors={selectors}
@@ -100,7 +100,7 @@ const CounterState = props => (
   />
 );
 
-export default CounterState;
+export default CounterContainer;
 ```
 
 > Note: the reason we're exporting `initialState`, `actions` and `selectors` is to make [testing](#testing) easier.
@@ -109,11 +109,11 @@ Then, just use it elsewhere:
 
 ```jsx
 const CounterButton = () => (
-  <CounterState>
+  <CounterContainer>
     {({ count, increment, getParity }) => (
       <button onClick={() => increment(1)}>{count} {getParity()}</button>
     )}
-  </CounterState>
+  </CounterContainer>
 );
 ```
 
@@ -121,19 +121,19 @@ const CounterButton = () => (
 
 ### Global state
 
-Whenever you need to share state between components and/or feel the need to have a global state, you can pass a `context` property to `State` and wrap your app with `Provider`:
+Whenever you need to share state between components and/or feel the need to have a global state, you can pass a `context` property to `Container` and wrap your app with `Provider`:
 
 ```jsx
 const CounterButton = () => (
-  <CounterState context="counter1">
+  <CounterContainer context="counter1">
     {({ increment }) => <button onClick={() => increment(1)}>Increment</button>}
-  </CounterState>
+  </CounterContainer>
 );
 
 const CounterValue = () => (
-  <CounterState context="counter1">
+  <CounterContainer context="counter1">
     {({ count }) => <div>{count}</div>} 
-  </CounterState>
+  </CounterContainer>
 );
 
 const App = () => (
@@ -148,13 +148,13 @@ const App = () => (
 
 ### Composing state
 
-This is still React, so you can pass new properties to `CounterState`, making it really composable.
+This is still React, so you can pass new properties to `CounterContainer`, making it really composable.
 
-First, let's change our `CounterState` so as to receive new properties:
+First, let's change our `CounterContainer` so as to receive new properties:
 
 ```jsx
-const CounterState = props => (
-  <State
+const CounterContainer = props => (
+  <Container
     {...props}
     initialState={{ ...initialState, ...props.initialState }}
     actions={{ ...actions, ...props.actions }}
@@ -163,7 +163,7 @@ const CounterState = props => (
 );
 ```
 
-Now we can pass new `initialState`, `actions` and `selectors` to `CounterState`:
+Now we can pass new `initialState`, `actions` and `selectors` to `CounterContainer`:
 
 ```jsx
 export const initialState = {
@@ -175,11 +175,11 @@ export const actions = {
 };
 
 const CounterButton = () => (
-  <CounterState initialState={initialState} actions={actions}>
+  <CounterContainer initialState={initialState} actions={actions}>
     {({ count, decrement }) => (
       <button onClick={() => decrement(1)}>{count}</button>
     )}
-  </CounterState>
+  </CounterContainer>
 );
 ```
 
@@ -203,11 +203,11 @@ export const effects = {
 };
 
 const AutomaticCounterButton = () => (
-  <CounterState effects={effects}>
+  <CounterContainer effects={effects}>
     {({ count, tick }) => (
       <button onClick={tick}>{count}</button>
     )}
-  </CounterState>
+  </CounterContainer>
 );
 ```
 
@@ -231,9 +231,9 @@ const App = () => (
 );
 ```
 
-This way, all `State` with `context="counter1"` will start with `{ count: 10 }`
+This way, all `Container`s with `context="counter1"` will start with `{ count: 10 }`
 
-> Note: while using context, only the `initialState` of the first `State` in the tree will be considered. `Provider` will always take precedence over `State`.
+> Note: while using context, only the `initialState` of the first `Container` in the tree will be considered. `Provider` will always take precedence over `Container`.
 
 ### State in lifecycle methods
 
@@ -252,9 +252,9 @@ class CounterButton extends React.Component {
 }
 
 export default props => (
-  <CounterState context="counter1">
+  <CounterContainer context="counter1">
     {state => <CounterButton {...props} state={state} />}
-  </CounterState>
+  </CounterContainer>
 );
 ```
 
@@ -264,13 +264,13 @@ Another alternative is to use <https://github.com/reactions/component>:
 import Component from "@reactions/component";
 
 const CounterButton = () => (
-  <CounterState context="counter1">
+  <CounterContainer context="counter1">
     {({ increment }) => (
       <Component didMount={() => increment(1)}>
         <button onClick={() => increment(1)}>Increment</button>
       </Component>
     )}
-  </CounterState>
+  </CounterContainer>
 );
 ```
 
@@ -312,7 +312,7 @@ export const effects = {
 `actions` and `selectors` are pure functions. Testing is pretty straightfoward:
 
 ```js
-import { initialState, actions, selectors } from "./CounterState";
+import { initialState, actions, selectors } from "./CounterContainer";
 
 test("initialState", () => {
   expect(initialState).toEqual({ count: 0 });
@@ -332,7 +332,7 @@ test("selectors", () => {
 Testing `effects` can be a little tricky depending on how you implement them. This is how we can test our `tick` effect with [Jest](https://facebook.github.io/jest):
 
 ```jsx
-import { effects } from "./CounterState";
+import { effects } from "./CounterContainer";
 
 test("tick", () => {
   jest.useFakeTimers();
@@ -361,7 +361,7 @@ type Selector = () => (state: Object) => any;
 
 type Effect = () => ({ state: Object, setState: Function }) => void;
 
-type StateProps = {
+type ContainerProps = {
   children: (state: Object) => React.Node,
   initialState: Object,
   actions: { [string]: Action },
