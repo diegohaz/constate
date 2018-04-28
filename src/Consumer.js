@@ -1,49 +1,125 @@
+/* eslint-disable react/prop-types */
 import React from "react";
-import PropTypes from "prop-types";
 import Context from "./Context";
 import { mapSetStateToActions, mapArgumentToFunctions } from "./utils";
 
 class ConsumerChild extends React.Component {
-  static propTypes = {
-    initialState: PropTypes.object,
-    state: PropTypes.object.isRequired,
-    setState: PropTypes.func.isRequired,
-    actions: PropTypes.objectOf(PropTypes.func),
-    selectors: PropTypes.objectOf(PropTypes.func),
-    effects: PropTypes.objectOf(PropTypes.func),
-    children: PropTypes.func.isRequired,
-    context: PropTypes.string
-  };
+  // não pode ficar aqui. tem que ficar no provider como state
+  // ou deixar no próprio state mesmo
+  // counter1: { initialized: 2, mounted: 2 }
+  static all = [];
+  static initialized = [];
+  static mounted = [];
 
   constructor(props) {
     super(props);
-    const { state, context, initialState } = this.props;
+    const { state, context, initialState, onInit } = this.props;
     if (!state[context]) {
-      this.handleSetState(prevState => ({ ...initialState, ...prevState }));
+      this.handleSetState(
+        prevState => ({ ...initialState, ...prevState }),
+        () => {
+          if (
+            typeof onInit === "function" &&
+            ConsumerChild.initialized.indexOf(context) < 0
+          ) {
+            onInit({
+              state: this.props.state[context],
+              setState: this.handleSetState
+            });
+            ConsumerChild.initialized.push(context);
+          }
+        },
+        false
+      );
+    } else if (
+      typeof onInit === "function" &&
+      ConsumerChild.initialized.indexOf(context) < 0
+    ) {
+      onInit({
+        state: state[context],
+        setState: this.handleSetState
+      });
+      ConsumerChild.initialized.push(context);
     }
   }
 
-  getMethodsArg = () => ({
-    state: this.props.state[this.props.context] || {},
-    setState: this.handleSetState
-  });
+  componentDidMount() {
+    const { context, onMount, state, initialState } = this.props;
+    if (
+      typeof onMount === "function" &&
+      ConsumerChild.mounted.indexOf(context) < 0
+    ) {
+      onMount({
+        state: { ...initialState, ...state[context] },
+        setState: this.handleSetState
+      });
+      ConsumerChild.mounted.push(context);
+    }
+    ConsumerChild.all.push(context);
+  }
 
-  handleSetState = fn => {
-    const { setState, context } = this.props;
-    return setState(state => ({
-      [context]: { ...state[context], ...fn(state[context]) }
-    }));
+  componentWillUnmount() {
+    const { state, context, onBeforeUnmount } = this.props;
+    const index = ConsumerChild.all.indexOf(context);
+    ConsumerChild.all.splice(index, 1);
+    console.log(ConsumerChild.all);
+    if (
+      ConsumerChild.all.indexOf(context) < 0 &&
+      typeof onBeforeUnmount === "function"
+    ) {
+      onBeforeUnmount({
+        state: state[context],
+        setState: (fn, cb) => this.handleSetState(fn, cb, false)
+      });
+    }
+  }
+
+  handleSetState = (fn, cb, emitUpdate = true) => {
+    const { context, onUpdate, initialState } = this.props;
+    const prevState = { ...initialState, ...this.props.state[context] };
+    const setState = (f, c) =>
+      this.props.setState(
+        state => ({
+          [context]: { ...state[context], ...f(state[context]) }
+        }),
+        c
+      );
+
+    if (emitUpdate) {
+      return setState(fn, () => {
+        if (typeof onUpdate === "function") {
+          onUpdate({
+            state: { ...initialState, ...this.props.state[context] },
+            prevState,
+            setState
+          });
+        }
+        if (cb) cb();
+      });
+    }
+    return setState(fn, cb);
   };
 
   render() {
-    const { children, actions, selectors, effects } = this.props;
-    const { state, setState } = this.getMethodsArg();
+    const {
+      context,
+      state,
+      children,
+      actions,
+      selectors,
+      effects
+    } = this.props;
+
+    const effectsArg = {
+      state: state[context],
+      setState: this.handleSetState
+    };
 
     return children({
-      ...state,
-      ...(actions && mapSetStateToActions(setState, actions)),
-      ...(selectors && mapArgumentToFunctions(state, selectors)),
-      ...(effects && mapArgumentToFunctions({ state, setState }, effects))
+      ...state[context],
+      ...(actions && mapSetStateToActions(this.handleSetState, actions)),
+      ...(selectors && mapArgumentToFunctions(state[context], selectors)),
+      ...(effects && mapArgumentToFunctions(effectsArg, effects))
     });
   }
 }

@@ -10,21 +10,59 @@ class Container extends React.Component {
     actions: PropTypes.objectOf(PropTypes.func),
     selectors: PropTypes.objectOf(PropTypes.func),
     effects: PropTypes.objectOf(PropTypes.func),
-    context: PropTypes.string
+    context: PropTypes.string,
+    onInit: PropTypes.func,
+    onMount: PropTypes.func,
+    onUpdate: PropTypes.func,
+    onBeforeUnmount: PropTypes.func
   };
 
   static defaultProps = {
     initialState: {}
   };
 
+  constructor(props) {
+    super(props);
+    const { onInit, context } = props;
+    if (!context && typeof onInit === "function") {
+      const setState = fn => {
+        this.state = { ...this.state, ...fn(this.state) };
+      };
+      onInit({ state: this.state, setState });
+    }
+  }
+
   state = this.props.initialState;
 
-  getMethodsArg = () => ({
-    state: this.state,
-    setState: this.handleSetState
-  });
+  componentDidMount() {
+    const { context, onMount } = this.props;
+    if (!context && typeof onMount === "function") {
+      onMount({ state: this.state, setState: this.handleSetState });
+    }
+  }
 
-  handleSetState = (...args) => this.setState(...args);
+  componentWillUnmount() {
+    const { context, onBeforeUnmount } = this.props;
+    if (!context && typeof onBeforeUnmount === "function") {
+      onBeforeUnmount({ state: this.state, setState: () => {} });
+    }
+  }
+
+  handleSetState = (fn, cb) => {
+    const prevState = this.state;
+
+    this.setState(fn, () => {
+      const { onUpdate } = this.props;
+      if (typeof onUpdate === "function") {
+        onUpdate({
+          state: this.state,
+          prevState,
+          setState: f => this.setState(f)
+        });
+      }
+      if (cb) cb();
+    });
+  };
 
   render() {
     if (this.props.context) {
@@ -32,12 +70,13 @@ class Container extends React.Component {
     }
 
     const { children, actions, selectors, effects } = this.props;
+    const effectsArg = { state: this.state, setState: this.handleSetState };
 
     return children({
       ...this.state,
       ...(actions && mapSetStateToActions(this.handleSetState, actions)),
       ...(selectors && mapArgumentToFunctions(this.state, selectors)),
-      ...(effects && mapArgumentToFunctions(this.getMethodsArg(), effects))
+      ...(effects && mapArgumentToFunctions(effectsArg, effects))
     });
   }
 }

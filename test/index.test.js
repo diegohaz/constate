@@ -107,6 +107,52 @@ const createTests = props => () => {
     jest.advanceTimersByTime(1000);
     expect(getState(wrapper).count).toBe(3);
   });
+
+  test("onInit", () => {
+    const initialState = { count: 0 };
+    const onInit = ({ state, setState }) => {
+      if (state.count === 0) {
+        setState(prevState => ({ count: prevState.count + 10 }));
+      }
+    };
+    const wrapper = wrap(initialState, { onInit, ...props });
+    expect(getState(wrapper)).toEqual({ count: 10 });
+  });
+
+  test("onMount", () => {
+    const initialState = { count: 0 };
+    const onMount = jest.fn(({ state, setState }) => {
+      if (state.count === 0) {
+        setState(prevState => ({ count: prevState.count + 10 }));
+      }
+    });
+    const wrapper = wrap(initialState, { onMount, ...props });
+    expect(onMount).toHaveBeenCalledTimes(1);
+    expect(getState(wrapper)).toEqual({ count: 10 });
+  });
+
+  test("onUpdate", () => {
+    const initialState = { count: 0 };
+    const actions = {
+      increment: amount => state => ({ count: state.count + amount })
+    };
+    const onUpdate = jest.fn(({ prevState, setState }) => {
+      if (prevState.count === 0) {
+        setState(actions.increment(10));
+      }
+    });
+    const wrapper = wrap(initialState, { onUpdate, actions, ...props });
+    getState(wrapper).increment(10);
+    expect(onUpdate).toHaveBeenCalledTimes(1);
+    expect(getState(wrapper).count).toBe(20);
+  });
+
+  test("onBeforeUnmount", () => {
+    const onBeforeUnmount = jest.fn();
+    const wrapper = wrap(undefined, { onBeforeUnmount, ...props });
+    wrapper.unmount();
+    expect(onBeforeUnmount).toHaveBeenCalledTimes(1);
+  });
 };
 
 describe("local", createTests());
@@ -168,6 +214,41 @@ describe("global", () => {
     expect(getState(wrapper)).toEqual({
       count: 0
     });
+  });
+
+  test("only the first onInit should be called", () => {
+    const initialState = { count: 0 };
+    const onInit = jest.fn();
+    wrap(initialState, { onInit, context: "counter1" });
+    expect(onInit).toHaveBeenCalledTimes(1);
+    wrap(initialState, { onInit, context: "counter1" });
+    expect(onInit).toHaveBeenCalledTimes(1);
+  });
+
+  test("only the first onMount should be called", () => {
+    const initialState = { count: 0 };
+    const onMount = jest.fn();
+    wrap(initialState, { onMount, context: "counter1" });
+    expect(onMount).toHaveBeenCalledTimes(1);
+    wrap(initialState, { onMount, context: "counter1" });
+    expect(onMount).toHaveBeenCalledTimes(1);
+  });
+
+  test("only the last onBeforeUnmount should be called", () => {
+    const initialState = { count: 0 };
+    const onBeforeUnmount = jest.fn();
+    const wrapper1 = wrap(initialState, {
+      onBeforeUnmount,
+      context: "counter1"
+    });
+    const wrapper2 = wrap(initialState, {
+      onBeforeUnmount,
+      context: "counter1"
+    });
+    wrapper1.unmount();
+    expect(onBeforeUnmount).toHaveBeenCalledTimes(1);
+    wrapper2.unmount();
+    expect(onBeforeUnmount).toHaveBeenCalledTimes(1);
   });
 
   createTests({ context: "foo" })();

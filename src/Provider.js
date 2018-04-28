@@ -13,13 +13,16 @@ class Provider extends React.Component {
     initialState: {}
   };
 
-  handleSetState = fn => {
-    this.setState(state => ({
-      state: {
-        ...state.state,
-        ...fn(state.state)
-      }
-    }));
+  handleSetState = (fn, cb) => {
+    this.setState(
+      state => ({
+        state: {
+          ...state.state,
+          ...fn(state.state)
+        }
+      }),
+      cb
+    );
   };
 
   state = {
