@@ -25,8 +25,12 @@ class Container extends React.Component {
     super(props);
     const { onInit, context } = props;
     if (!context && typeof onInit === "function") {
-      const setState = fn => {
+      const setState = (fn, cb) => {
+        if (this.mounted) {
+          return this.handleSetState(fn, cb);
+        }
         this.state = { ...this.state, ...fn(this.state) };
+        return cb && cb();
       };
       onInit({ state: this.state, setState });
     }
@@ -36,6 +40,7 @@ class Container extends React.Component {
 
   componentDidMount() {
     const { context, onMount } = this.props;
+    this.mounted = true;
     if (!context && typeof onMount === "function") {
       onMount({ state: this.state, setState: this.handleSetState });
     }
@@ -43,10 +48,13 @@ class Container extends React.Component {
 
   componentWillUnmount() {
     const { context, onBeforeUnmount } = this.props;
+    this.mounted = false;
     if (!context && typeof onBeforeUnmount === "function") {
       onBeforeUnmount({ state: this.state, setState: () => {} });
     }
   }
+
+  mounted = false;
 
   handleSetState = (fn, cb) => {
     const prevState = this.state;

@@ -28,6 +28,8 @@ class Provider extends React.Component {
   state = {
     state: this.props.initialState,
     setState: this.handleSetState
+    // consumers: { counter1: [Object] }
+    // setConsumers
   };
 
   render() {

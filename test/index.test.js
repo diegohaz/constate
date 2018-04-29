@@ -119,6 +119,20 @@ const createTests = props => () => {
     expect(getState(wrapper)).toEqual({ count: 10 });
   });
 
+  test("onInit delayed", () => {
+    jest.useFakeTimers();
+    const initialState = { count: 0 };
+    const onInit = ({ setState }) => {
+      setTimeout(() => {
+        setState(prevState => ({ count: prevState.count + 10 }));
+      }, 1000);
+    };
+    const wrapper = wrap(initialState, { onInit, ...props });
+    expect(getState(wrapper)).toEqual({ count: 0 });
+    jest.advanceTimersByTime(1000);
+    expect(getState(wrapper)).toEqual({ count: 10 });
+  });
+
   test("onMount", () => {
     const initialState = { count: 0 };
     const onMount = jest.fn(({ state, setState }) => {
@@ -150,6 +164,8 @@ const createTests = props => () => {
   test("onBeforeUnmount", () => {
     const onBeforeUnmount = jest.fn();
     const wrapper = wrap(undefined, { onBeforeUnmount, ...props });
+    // wrong
+    // can't unmount provider
     wrapper.unmount();
     expect(onBeforeUnmount).toHaveBeenCalledTimes(1);
   });
@@ -248,6 +264,7 @@ describe("global", () => {
 
   test("only the last onBeforeUnmount should be called", () => {
     const onBeforeUnmount = jest.fn();
+    // adjust
     const Component = props => (
       <Provider>
         {!props.hide1 && (
