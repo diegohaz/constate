@@ -3,75 +3,75 @@ import React from "react";
 import Context from "./Context";
 import { mapSetStateToActions, mapArgumentToFunctions } from "./utils";
 
-class ConsumerChild extends React.Component {
-  // não pode ficar aqui. tem que ficar no provider como state
-  // ou deixar no próprio state mesmo
-  // counter1: { initialized: 2, mounted: 2 }
-  static all = [];
-  static initialized = [];
-  static mounted = [];
+const initialized = (state, context) =>
+  state.$initialized && state.$initialized[context];
+const mounted = (state, context) => state.$mounted && state.$mounted[context];
 
+class ConsumerChild extends React.Component {
   constructor(props) {
     super(props);
-    const { state, context, initialState, onInit } = this.props;
+    const { state, setState, context, initialState, onInit } = this.props;
+
+    setState(prevState => {
+      if (!initialized(prevState, context) && typeof onInit === "function") {
+        onInit({
+          state: { ...initialState, ...prevState[context] },
+          setState: this.handleSetState
+        });
+        return {
+          $initialized: { ...prevState.$initialized, [context]: true }
+        };
+      }
+      return {};
+    });
+
     if (!state[context]) {
       this.handleSetState(
         prevState => ({ ...initialState, ...prevState }),
-        () => {
-          if (
-            typeof onInit === "function" &&
-            ConsumerChild.initialized.indexOf(context) < 0
-          ) {
-            onInit({
-              state: this.props.state[context],
-              setState: this.handleSetState
-            });
-            ConsumerChild.initialized.push(context);
-          }
-        },
+        () => {},
         false
       );
-    } else if (
-      typeof onInit === "function" &&
-      ConsumerChild.initialized.indexOf(context) < 0
-    ) {
-      onInit({
-        state: state[context],
-        setState: this.handleSetState
-      });
-      ConsumerChild.initialized.push(context);
     }
   }
 
   componentDidMount() {
-    const { context, onMount, state, initialState } = this.props;
-    if (
-      typeof onMount === "function" &&
-      ConsumerChild.mounted.indexOf(context) < 0
-    ) {
-      onMount({
-        state: { ...initialState, ...state[context] },
-        setState: this.handleSetState
-      });
-      ConsumerChild.mounted.push(context);
-    }
-    ConsumerChild.all.push(context);
+    const { context, onMount, state, setState, initialState } = this.props;
+    setState(prevState => {
+      if (typeof onMount === "function" && !mounted(prevState, context)) {
+        onMount({
+          state: { ...initialState, ...prevState[context] },
+          setState: this.handleSetState
+        });
+      }
+      return {
+        $mounted: {
+          ...prevState.$mounted,
+          [context]: mounted(state, context)
+            ? prevState.$mounted[context] + 1
+            : 1
+        }
+      };
+    });
   }
 
   componentWillUnmount() {
-    const { state, context, onBeforeUnmount } = this.props;
-    const index = ConsumerChild.all.indexOf(context);
-    ConsumerChild.all.splice(index, 1);
-    console.log(ConsumerChild.all);
-    if (
-      ConsumerChild.all.indexOf(context) < 0 &&
-      typeof onBeforeUnmount === "function"
-    ) {
-      onBeforeUnmount({
-        state: state[context],
-        setState: (fn, cb) => this.handleSetState(fn, cb, false)
-      });
-    }
+    const { setState, context, onBeforeUnmount } = this.props;
+    setState(prevState => {
+      if (
+        typeof onBeforeUnmount === "function" &&
+        mounted(prevState, context) === 1
+      ) {
+        onBeforeUnmount({
+          state: prevState[context],
+          setState: (fn, cb) => this.handleSetState(fn, cb, false)
+        });
+      }
+      return {
+        $mounted: {
+          [context]: prevState.$mounted[context] - 1
+        }
+      };
+    });
   }
 
   handleSetState = (fn, cb, emitUpdate = true) => {

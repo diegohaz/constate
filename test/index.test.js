@@ -217,38 +217,78 @@ describe("global", () => {
   });
 
   test("only the first onInit should be called", () => {
-    const initialState = { count: 0 };
     const onInit = jest.fn();
-    wrap(initialState, { onInit, context: "counter1" });
-    expect(onInit).toHaveBeenCalledTimes(1);
-    wrap(initialState, { onInit, context: "counter1" });
+    mount(
+      <Provider>
+        <Container context="foo" onInit={onInit}>
+          {state => <div state={state} />}
+        </Container>
+        <Container context="foo" onInit={onInit}>
+          {state => <span state={state} />}
+        </Container>
+      </Provider>
+    );
     expect(onInit).toHaveBeenCalledTimes(1);
   });
 
   test("only the first onMount should be called", () => {
-    const initialState = { count: 0 };
     const onMount = jest.fn();
-    wrap(initialState, { onMount, context: "counter1" });
-    expect(onMount).toHaveBeenCalledTimes(1);
-    wrap(initialState, { onMount, context: "counter1" });
+    mount(
+      <Provider>
+        <Container context="foo" onMount={onMount}>
+          {state => <div state={state} />}
+        </Container>
+        <Container context="foo" onMount={onMount}>
+          {state => <span state={state} />}
+        </Container>
+      </Provider>
+    );
     expect(onMount).toHaveBeenCalledTimes(1);
   });
 
   test("only the last onBeforeUnmount should be called", () => {
-    const initialState = { count: 0 };
     const onBeforeUnmount = jest.fn();
-    const wrapper1 = wrap(initialState, {
-      onBeforeUnmount,
-      context: "counter1"
-    });
-    const wrapper2 = wrap(initialState, {
-      onBeforeUnmount,
-      context: "counter1"
-    });
-    wrapper1.unmount();
+    const Component = props => (
+      <Provider>
+        {!props.hide1 && (
+          <Container context="foo" onBeforeUnmount={onBeforeUnmount}>
+            {state => <div state={state} />}
+          </Container>
+        )}
+        {!props.hide2 && (
+          <Container context="foo" onBeforeUnmount={onBeforeUnmount}>
+            {state => <span state={state} />}
+          </Container>
+        )}
+        <div />
+      </Provider>
+    );
+    const wrapper = mount(<Component />);
+    wrapper.setProps({ hide1: true });
     expect(onBeforeUnmount).toHaveBeenCalledTimes(1);
-    wrapper2.unmount();
+    wrapper.setProps({ hide2: true });
     expect(onBeforeUnmount).toHaveBeenCalledTimes(1);
+  });
+
+  test("first initialState should take precedence over others", () => {
+    const wrapper = mount(
+      <Provider>
+        <Container initialState={{ count: 0 }} context="foo">
+          {state => <div state={state} />}
+        </Container>
+        <Container initialState={{ count: 10, foo: "bar" }} context="foo">
+          {state => <span state={state} />}
+        </Container>
+      </Provider>
+    );
+    expect(getState(wrapper, "div")).toEqual({
+      count: 0,
+      foo: "bar"
+    });
+    expect(getState(wrapper, "span")).toEqual({
+      count: 0,
+      foo: "bar"
+    });
   });
 
   createTests({ context: "foo" })();
