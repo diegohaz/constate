@@ -262,6 +262,31 @@ describe("global", () => {
     expect(onMount).toHaveBeenCalledTimes(1);
   });
 
+  test("onUpdate should be called only for the first mounted container", () => {
+    const onUpdate = jest.fn();
+    const initialState = { count: 0 };
+    const actions = {
+      increment: () => state => ({ count: state.count + 1 })
+    };
+    const MyContainer = props => (
+      <Container
+        context="foo"
+        onUpdate={onUpdate}
+        initialState={initialState}
+        actions={actions}
+        {...props}
+      />
+    );
+    const wrapper = mount(
+      <Provider>
+        <MyContainer>{state => <div state={state} />}</MyContainer>
+        <MyContainer>{state => <span state={state} />}</MyContainer>
+      </Provider>
+    );
+    getState(wrapper, "div").increment();
+    expect(onUpdate).toHaveBeenCalledTimes(1);
+  });
+
   test("only the last onBeforeUnmount should be called", () => {
     const onBeforeUnmount = jest.fn();
     // adjust
