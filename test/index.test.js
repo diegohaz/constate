@@ -161,13 +161,21 @@ const createTests = props => () => {
     expect(getState(wrapper).count).toBe(20);
   });
 
-  test("onBeforeUnmount", () => {
-    const onBeforeUnmount = jest.fn();
-    const wrapper = wrap(undefined, { onBeforeUnmount, ...props });
-    // wrong
-    // can't unmount provider
-    wrapper.unmount();
-    expect(onBeforeUnmount).toHaveBeenCalledTimes(1);
+  test("onUnmount", () => {
+    const onUnmount = jest.fn();
+    const Component = props => (
+      <Provider>
+        {!props.hide && (
+          <Container onUnmount={onUnmount}>
+            {state => <div state={state} />}
+          </Container>
+        )}
+      </Provider>
+    );
+    const wrapper = mount(<Component />);
+    expect(onUnmount).not.toHaveBeenCalled();
+    wrapper.setProps({ hide: true });
+    expect(onUnmount).toHaveBeenCalledTimes(1);
   });
 };
 
@@ -287,18 +295,18 @@ describe("global", () => {
     expect(onUpdate).toHaveBeenCalledTimes(1);
   });
 
-  test("only the last onBeforeUnmount should be called", () => {
-    const onBeforeUnmount = jest.fn();
+  test("only the last onUnmount should be called", () => {
+    const onUnmount = jest.fn();
     // adjust
     const Component = props => (
       <Provider>
         {!props.hide1 && (
-          <Container context="foo" onBeforeUnmount={onBeforeUnmount}>
+          <Container context="foo" onUnmount={onUnmount}>
             {state => <div state={state} />}
           </Container>
         )}
         {!props.hide2 && (
-          <Container context="foo" onBeforeUnmount={onBeforeUnmount}>
+          <Container context="foo" onUnmount={onUnmount}>
             {state => <span state={state} />}
           </Container>
         )}
@@ -307,9 +315,9 @@ describe("global", () => {
     );
     const wrapper = mount(<Component />);
     wrapper.setProps({ hide1: true });
-    expect(onBeforeUnmount).toHaveBeenCalledTimes(1);
+    expect(onUnmount).toHaveBeenCalledTimes(1);
     wrapper.setProps({ hide2: true });
-    expect(onBeforeUnmount).toHaveBeenCalledTimes(1);
+    expect(onUnmount).toHaveBeenCalledTimes(1);
   });
 
   test("first initialState should take precedence over others", () => {

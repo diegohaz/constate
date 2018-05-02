@@ -14,7 +14,7 @@ class Container extends React.Component {
     onInit: PropTypes.func,
     onMount: PropTypes.func,
     onUpdate: PropTypes.func,
-    onBeforeUnmount: PropTypes.func
+    onUnmount: PropTypes.func
   };
 
   static defaultProps = {
@@ -47,10 +47,10 @@ class Container extends React.Component {
   }
 
   componentWillUnmount() {
-    const { context, onBeforeUnmount } = this.props;
+    const { context, onUnmount } = this.props;
     this.mounted = false;
-    if (!context && typeof onBeforeUnmount === "function") {
-      onBeforeUnmount({ state: this.state, setState: () => {} });
+    if (!context && typeof onUnmount === "function") {
+      onUnmount({ state: this.state, setState: () => {} });
     }
   }
 

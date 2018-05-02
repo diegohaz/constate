@@ -8,7 +8,7 @@ const initialized = (state, context) =>
 const mounted = (state, context) => state.$mounted && state.$mounted[context];
 
 // only the first initialized consumer should trigger onInit, onMount and onUpdate
-// only the last unmounted consumer should trigger onBeforeUnmount
+// only the last unmounted consumer should trigger onUnmount
 // actually, the current behavior is: onUpdate is triggered only for the component
 // that called the action
 class ConsumerChild extends React.Component {
@@ -59,13 +59,13 @@ class ConsumerChild extends React.Component {
   }
 
   componentWillUnmount() {
-    const { setState, context, onBeforeUnmount } = this.props;
+    const { setState, context, onUnmount } = this.props;
     setState(prevState => {
       if (
-        typeof onBeforeUnmount === "function" &&
+        typeof onUnmount === "function" &&
         mounted(prevState, context) === 1
       ) {
-        onBeforeUnmount({
+        onUnmount({
           state: prevState[context],
           setState: (fn, cb) => this.handleSetState(fn, cb, false)
         });
