@@ -2,6 +2,11 @@ import React from "react";
 import { mount } from "enzyme";
 import { Container, Provider } from "../src";
 
+// TEST SETSTATE CALLBACK
+// TEST UNMOUNT SETSTATE
+// TEST ONUPDATE ON LIFECYCLES (ONMOUNT, ONINIT DELAYED, ONUNMOUNT)
+// TEST DELAYED DIDMOUNT, ONUPDATE AND UNMOUNT
+
 const wrap = (initialState, props, providerProps) =>
   mount(
     <Provider {...providerProps}>
@@ -297,7 +302,6 @@ describe("global", () => {
 
   test("only the last onUnmount should be called", () => {
     const onUnmount = jest.fn();
-    // adjust
     const Component = props => (
       <Provider>
         {!props.hide1 && (

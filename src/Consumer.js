@@ -1,17 +1,23 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import Context from "./Context";
 import { mapSetStateToActions, mapArgumentToFunctions } from "./utils";
 
 const initialized = (state, context) =>
   state.$initialized && state.$initialized[context];
 const mounted = (state, context) => state.$mounted && state.$mounted[context];
 
-// only the first initialized consumer should trigger onInit, onMount and onUpdate
-// only the last unmounted consumer should trigger onUnmount
-// actually, the current behavior is: onUpdate is triggered only for the component
-// that called the action
-class ConsumerChild extends React.Component {
+// CAN'T WRAP LIFECYCLE CALLS IN SETSTATE
+
+// Warning: An update (setState, replaceState, or forceUpdate) was scheduled from
+// inside an update function. Update functions should be pure, with zero side-effects.
+// Consider using componentDidUpdate or a callback.
+
+// AN OPTION IS TO USE SETSTATE CALLBACK AND
+// INITIALIZED() SHOULD CHECK IF IT'S THE FIRST INITIALIZED (MAYBE A COUNTER OR INSTANCE)
+// SAME FOR ONMOUNT
+// UNMOUNT SHOULD DECREMENT OR REMOVE THE INSTANCE AND FINALLY CHECK IF THERE'S ZERO OR NO INSTANCE
+
+class Consumer extends React.Component {
   constructor(props) {
     super(props);
     const { state, setState, context, initialState, onInit } = this.props;
@@ -41,13 +47,23 @@ class ConsumerChild extends React.Component {
   componentDidMount() {
     const { context, onMount, state, setState, initialState } = this.props;
     setState(prevState => {
+      let foo;
       if (typeof onMount === "function" && !mounted(prevState, context)) {
         onMount({
           state: { ...initialState, ...prevState[context] },
-          setState: this.handleSetState
+          // can't use cb here
+          // also needs to trigger onUpdate
+          // IT'LL NOT WORK ON DELAYED DIDMOUNT
+          setState: (fn, cb) => {
+            foo = fn(prevState[context]);
+          }
         });
       }
       return {
+        [context]: {
+          ...prevState[context],
+          ...foo
+        },
         $mounted: {
           ...prevState.$mounted,
           [context]: mounted(state, context)
@@ -127,11 +143,5 @@ class ConsumerChild extends React.Component {
     });
   }
 }
-
-const Consumer = props => (
-  <Context.Consumer>
-    {context => <ConsumerChild {...context} {...props} />}
-  </Context.Consumer>
-);
 
 export default Consumer;
