@@ -2,10 +2,10 @@ import React from "react";
 import { mount } from "enzyme";
 import { Container, Provider } from "../src";
 
-// TEST SETSTATE CALLBACK
 // TEST UNMOUNT SETSTATE
-// TEST ONUPDATE ON LIFECYCLES (ONMOUNT, ONINIT DELAYED, ONUNMOUNT)
-// TEST DELAYED DIDMOUNT, ONUPDATE AND UNMOUNT
+// TEST UNMOUNT SETSTATE CALLBACK
+// TEST DELAYED UNMOUNT SETSTATE
+// TEST ONUPDATE ON LIFECYCLES (ONMOUNT, ONINIT - SHOULD NOT TRIGGER, ONINIT DELAYED, ONUNMOUNT AND ALSO ONUPDATE)
 
 const wrap = (initialState, props, providerProps) =>
   mount(
@@ -113,6 +113,23 @@ const createTests = props => () => {
     expect(getState(wrapper).count).toBe(3);
   });
 
+  test("effects with setState callback", () => {
+    const initialState = { count: 0 };
+    const increment = amount => state => ({ count: state.count + amount });
+    const effects = {
+      tick: () => ({ setState }) => {
+        setState(increment(1), () => {
+          setState(increment(10), () => {
+            setState(increment(100));
+          });
+        });
+      }
+    };
+    const wrapper = wrap(initialState, { effects, ...props });
+    getState(wrapper).tick();
+    expect(getState(wrapper).count).toBe(111);
+  });
+
   test("onInit", () => {
     const initialState = { count: 0 };
     const onInit = ({ state, setState }) => {
@@ -122,6 +139,20 @@ const createTests = props => () => {
     };
     const wrapper = wrap(initialState, { onInit, ...props });
     expect(getState(wrapper)).toEqual({ count: 10 });
+  });
+
+  test("onInit with setState callback", () => {
+    const initialState = { count: 0 };
+    const increment = amount => state => ({ count: state.count + amount });
+    const onInit = ({ setState }) => {
+      setState(increment(1), () => {
+        setState(increment(10), () => {
+          setState(increment(100));
+        });
+      });
+    };
+    const wrapper = wrap(initialState, { onInit, ...props });
+    expect(getState(wrapper)).toEqual({ count: 111 });
   });
 
   test("onInit delayed", () => {
@@ -150,6 +181,34 @@ const createTests = props => () => {
     expect(getState(wrapper)).toEqual({ count: 10 });
   });
 
+  test("onMount with setState callback", () => {
+    const initialState = { count: 0 };
+    const increment = amount => state => ({ count: state.count + amount });
+    const onMount = ({ setState }) => {
+      setState(increment(1), () => {
+        setState(increment(10), () => {
+          setState(increment(100));
+        });
+      });
+    };
+    const wrapper = wrap(initialState, { onMount, ...props });
+    expect(getState(wrapper)).toEqual({ count: 111 });
+  });
+
+  test("onMount delayed", () => {
+    jest.useFakeTimers();
+    const initialState = { count: 0 };
+    const onMount = ({ setState }) => {
+      setTimeout(() => {
+        setState(prevState => ({ count: prevState.count + 10 }));
+      }, 1000);
+    };
+    const wrapper = wrap(initialState, { onMount, ...props });
+    expect(getState(wrapper)).toEqual({ count: 0 });
+    jest.advanceTimersByTime(1000);
+    expect(getState(wrapper)).toEqual({ count: 10 });
+  });
+
   test("onUpdate", () => {
     const initialState = { count: 0 };
     const actions = {
@@ -163,6 +222,41 @@ const createTests = props => () => {
     const wrapper = wrap(initialState, { onUpdate, actions, ...props });
     getState(wrapper).increment(10);
     expect(onUpdate).toHaveBeenCalledTimes(1);
+    expect(getState(wrapper).count).toBe(20);
+  });
+
+  test("onUpdate with setState callback", () => {
+    const initialState = { count: 0 };
+    const actions = {
+      increment: amount => state => ({ count: state.count + amount })
+    };
+    const onUpdate = ({ setState }) => {
+      setState(actions.increment(1), () => {
+        setState(actions.increment(10), () => {
+          setState(actions.increment(100));
+        });
+      });
+    };
+    const wrapper = wrap(initialState, { onUpdate, actions, ...props });
+    getState(wrapper).increment(1);
+    expect(getState(wrapper).count).toBe(112);
+  });
+
+  test("onUpdate delayed", () => {
+    jest.useFakeTimers();
+    const initialState = { count: 0 };
+    const actions = {
+      increment: amount => state => ({ count: state.count + amount })
+    };
+    const onUpdate = ({ setState }) => {
+      setTimeout(() => {
+        setState(actions.increment(10));
+      }, 1000);
+    };
+    const wrapper = wrap(initialState, { onUpdate, actions, ...props });
+    getState(wrapper).increment(10);
+    expect(getState(wrapper).count).toBe(10);
+    jest.advanceTimersByTime(1000);
     expect(getState(wrapper).count).toBe(20);
   });
 

@@ -66,7 +66,7 @@ class Container extends React.Component {
         onUpdate({
           state: this.state,
           prevState,
-          setState: f => this.setState(f)
+          setState: (f, c) => this.setState(f, c)
         });
       }
       if (cb) cb();
