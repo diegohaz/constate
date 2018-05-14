@@ -13,6 +13,25 @@ class Provider extends React.Component {
     initialState: {}
   };
 
+  initialized = {};
+  mounted = {};
+
+  getInitialized = context => this.initialized[context] || 0;
+  getMounted = context => this.mounted[context] || 0;
+
+  init = context => {
+    this.initialized[context] = this.getInitialized(context) + 1;
+  };
+
+  mount = context => {
+    this.mounted[context] = this.getMounted(context) + 1;
+  };
+
+  unmount = context => {
+    this.initialized[context] = this.getInitialized(context) - 1;
+    this.mounted[context] = this.getMounted(context) - 1;
+  };
+
   handleSetState = (fn, cb) => {
     this.setState(
       state => ({
@@ -27,7 +46,12 @@ class Provider extends React.Component {
 
   state = {
     state: this.props.initialState,
-    setState: this.handleSetState
+    setState: this.handleSetState,
+    getInitialized: this.getInitialized,
+    getMounted: this.getMounted,
+    init: this.init,
+    mount: this.mount,
+    unmount: this.unmount
   };
 
   render() {
