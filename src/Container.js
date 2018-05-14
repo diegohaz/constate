@@ -22,18 +22,11 @@ class Container extends React.Component {
     initialState: {}
   };
 
-  constructor(props) {
-    super(props);
-    const { onInit, context } = props;
+  constructor(...args) {
+    super(...args);
+    const { context, onInit } = this.props;
     if (!context && typeof onInit === "function") {
-      const setState = (fn, cb) => {
-        if (this.mounted) {
-          return this.handleSetState(fn, cb);
-        }
-        this.state = { ...this.state, ...fn(this.state) };
-        return cb && cb();
-      };
-      onInit({ state: this.state, setState });
+      onInit({ state: this.state, setState: this.handleSetState });
     }
   }
 
@@ -60,15 +53,29 @@ class Container extends React.Component {
   handleSetState = (fn, cb) => {
     const prevState = this.state;
 
-    this.setState(fn, () => {
+    const callOnUpdate = () => {
       const { onUpdate } = this.props;
       if (typeof onUpdate === "function") {
         onUpdate({
-          state: this.state,
           prevState,
-          setState: (f, c) => this.setState(f, c)
+          state: this.state,
+          setState: (...args) => this.setState(...args)
         });
       }
+    };
+
+    if (!this.mounted) {
+      this.state = {
+        ...this.state,
+        ...fn(this.state)
+      };
+      callOnUpdate();
+      if (cb) cb();
+      return;
+    }
+
+    this.setState(fn, () => {
+      callOnUpdate();
       if (cb) cb();
     });
   };
