@@ -1,11 +1,11 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { mount } from "enzyme";
-import { Container, Provider } from "../src";
+import { Container, Provider, Context } from "../src";
 
-// TEST UNMOUNT SETSTATE
-// TEST UNMOUNT SETSTATE CALLBACK
-// TEST DELAYED UNMOUNT SETSTATE
 // TEST ONUPDATE ON LIFECYCLES (ONMOUNT, ONINIT - SHOULD NOT TRIGGER, ONINIT DELAYED, ONUNMOUNT AND ALSO ONUPDATE)
+
+const increment = (amount = 1) => state => ({ count: state.count + amount });
 
 const wrap = (initialState, props, providerProps) =>
   mount(
@@ -37,9 +37,7 @@ const createTests = props => () => {
 
   test("actions", () => {
     const initialState = { count: 0 };
-    const actions = {
-      increment: amount => state => ({ count: state.count + amount })
-    };
+    const actions = { increment };
     const wrapper = wrap(initialState, { actions, ...props });
     expect(getState(wrapper)).toEqual({
       count: 0,
@@ -51,9 +49,7 @@ const createTests = props => () => {
 
   test("actions with mutiple initialState", () => {
     const initialState = { count: 0, foo: "bar" };
-    const actions = {
-      increment: amount => state => ({ count: state.count + amount })
-    };
+    const actions = { increment };
     const wrapper = wrap(initialState, { actions, ...props });
     expect(getState(wrapper)).toEqual({
       count: 0,
@@ -96,7 +92,6 @@ const createTests = props => () => {
   test("effects", () => {
     jest.useFakeTimers();
     const initialState = { count: 0 };
-    const increment = amount => state => ({ count: state.count + amount });
     const effects = {
       tick: () => ({ setState }) => {
         setState(increment(1));
@@ -115,7 +110,6 @@ const createTests = props => () => {
 
   test("effects with setState callback", () => {
     const initialState = { count: 0 };
-    const increment = amount => state => ({ count: state.count + amount });
     const effects = {
       tick: () => ({ setState }) => {
         setState(increment(1), () => {
@@ -134,7 +128,7 @@ const createTests = props => () => {
     const initialState = { count: 0 };
     const onInit = ({ state, setState }) => {
       if (state.count === 0) {
-        setState(prevState => ({ count: prevState.count + 10 }));
+        setState(increment(10));
       }
     };
     const wrapper = wrap(initialState, { onInit, ...props });
@@ -143,7 +137,6 @@ const createTests = props => () => {
 
   test("onInit with setState callback", () => {
     const initialState = { count: 0 };
-    const increment = amount => state => ({ count: state.count + amount });
     const onInit = ({ setState }) => {
       setState(increment(1), () => {
         setState(increment(10), () => {
@@ -159,9 +152,7 @@ const createTests = props => () => {
     jest.useFakeTimers();
     const initialState = { count: 0 };
     const onInit = ({ setState }) => {
-      setTimeout(() => {
-        setState(prevState => ({ count: prevState.count + 10 }));
-      }, 1000);
+      setTimeout(() => setState(increment(10)), 1000);
     };
     const wrapper = wrap(initialState, { onInit, ...props });
     expect(getState(wrapper)).toEqual({ count: 0 });
@@ -173,7 +164,7 @@ const createTests = props => () => {
     const initialState = { count: 0 };
     const onMount = jest.fn(({ state, setState }) => {
       if (state.count === 0) {
-        setState(prevState => ({ count: prevState.count + 10 }));
+        setState(increment(10));
       }
     });
     const wrapper = wrap(initialState, { onMount, ...props });
@@ -183,7 +174,6 @@ const createTests = props => () => {
 
   test("onMount with setState callback", () => {
     const initialState = { count: 0 };
-    const increment = amount => state => ({ count: state.count + amount });
     const onMount = ({ setState }) => {
       setState(increment(1), () => {
         setState(increment(10), () => {
@@ -199,9 +189,7 @@ const createTests = props => () => {
     jest.useFakeTimers();
     const initialState = { count: 0 };
     const onMount = ({ setState }) => {
-      setTimeout(() => {
-        setState(prevState => ({ count: prevState.count + 10 }));
-      }, 1000);
+      setTimeout(() => setState(increment(10)), 1000);
     };
     const wrapper = wrap(initialState, { onMount, ...props });
     expect(getState(wrapper)).toEqual({ count: 0 });
@@ -211,12 +199,10 @@ const createTests = props => () => {
 
   test("onUpdate", () => {
     const initialState = { count: 0 };
-    const actions = {
-      increment: amount => state => ({ count: state.count + amount })
-    };
+    const actions = { increment };
     const onUpdate = jest.fn(({ prevState, setState }) => {
       if (prevState.count === 0) {
-        setState(actions.increment(10));
+        setState(increment(10));
       }
     });
     const wrapper = wrap(initialState, { onUpdate, actions, ...props });
@@ -227,13 +213,11 @@ const createTests = props => () => {
 
   test("onUpdate with setState callback", () => {
     const initialState = { count: 0 };
-    const actions = {
-      increment: amount => state => ({ count: state.count + amount })
-    };
+    const actions = { increment };
     const onUpdate = ({ setState }) => {
-      setState(actions.increment(1), () => {
-        setState(actions.increment(10), () => {
-          setState(actions.increment(100));
+      setState(increment(1), () => {
+        setState(increment(10), () => {
+          setState(increment(100));
         });
       });
     };
@@ -245,13 +229,9 @@ const createTests = props => () => {
   test("onUpdate delayed", () => {
     jest.useFakeTimers();
     const initialState = { count: 0 };
-    const actions = {
-      increment: amount => state => ({ count: state.count + amount })
-    };
+    const actions = { increment };
     const onUpdate = ({ setState }) => {
-      setTimeout(() => {
-        setState(actions.increment(10));
-      }, 1000);
+      setTimeout(() => setState(increment(10)), 1000);
     };
     const wrapper = wrap(initialState, { onUpdate, actions, ...props });
     getState(wrapper).increment(10);
@@ -261,11 +241,15 @@ const createTests = props => () => {
   });
 
   test("onUnmount", () => {
-    const onUnmount = jest.fn();
-    const Component = props => (
+    const initialState = { count: 0 };
+    const onUnmount = jest.fn(({ state, setState }) => {
+      expect(state).toEqual(initialState);
+      expect(setState).toEqual(expect.any(Function));
+    });
+    const Component = ({ hide }) => (
       <Provider>
-        {!props.hide && (
-          <Container onUnmount={onUnmount}>
+        {!hide && (
+          <Container initialState={initialState} onUnmount={onUnmount}>
             {state => <div state={state} />}
           </Container>
         )}
@@ -280,8 +264,8 @@ const createTests = props => () => {
 
 describe("local", createTests());
 
-describe("global", () => {
-  test("global initialState", () => {
+describe("context", () => {
+  test("initialState", () => {
     const initialState = { foo: { count: 0 } };
     const wrapper = wrap(undefined, { context: "foo" }, { initialState });
     expect(getState(wrapper)).toEqual({
@@ -289,7 +273,7 @@ describe("global", () => {
     });
   });
 
-  test("global multiple initialState", () => {
+  test("multiple initialState", () => {
     const initialState = { foo: { count: 0, foo: "bar" }, bar: {} };
     const wrapper = wrap(undefined, { context: "foo" }, { initialState });
     expect(getState(wrapper)).toEqual({
@@ -298,11 +282,9 @@ describe("global", () => {
     });
   });
 
-  test("global multiple contexts", () => {
+  test("multiple contexts", () => {
     const initialState = { foo: { count: 0 }, bar: { count: 1 } };
-    const actions = {
-      increment: amount => state => ({ count: state.count + amount })
-    };
+    const actions = { increment };
     const wrapper = mount(
       <Provider initialState={initialState}>
         <Container context="foo" actions={actions}>
@@ -327,7 +309,7 @@ describe("global", () => {
     expect(getState(wrapper, "span").count).toBe(3);
   });
 
-  test("global initialState overrides local initialState", () => {
+  test("context initialState overrides local initialState", () => {
     const initialState = { foo: { count: 0 } };
     const wrapper = wrap(
       undefined,
@@ -369,8 +351,9 @@ describe("global", () => {
     expect(onMount).toHaveBeenCalledTimes(1);
   });
 
-  test("onUpdate should be called only for the first mounted container", () => {
-    const onUpdate = jest.fn();
+  test("onUpdate should be called only for the for the caller container", () => {
+    const onUpdate1 = jest.fn();
+    const onUpdate2 = jest.fn();
     const initialState = { count: 0 };
     const actions = {
       increment: () => state => ({ count: state.count + 1 })
@@ -378,7 +361,6 @@ describe("global", () => {
     const MyContainer = props => (
       <Container
         context="foo"
-        onUpdate={onUpdate}
         initialState={initialState}
         actions={actions}
         {...props}
@@ -386,36 +368,131 @@ describe("global", () => {
     );
     const wrapper = mount(
       <Provider>
-        <MyContainer>{state => <div state={state} />}</MyContainer>
-        <MyContainer>{state => <span state={state} />}</MyContainer>
+        <MyContainer onUpdate={onUpdate1}>
+          {state => <div state={state} />}
+        </MyContainer>
+        <MyContainer onUpdate={onUpdate2}>
+          {state => <span state={state} />}
+        </MyContainer>
       </Provider>
     );
     getState(wrapper, "div").increment();
-    expect(onUpdate).toHaveBeenCalledTimes(1);
+    expect(onUpdate1).toHaveBeenCalledTimes(1);
+    expect(onUpdate2).toHaveBeenCalledTimes(0);
+    getState(wrapper, "span").increment();
+    expect(onUpdate1).toHaveBeenCalledTimes(1);
+    expect(onUpdate2).toHaveBeenCalledTimes(1);
   });
 
-  test("only the last onUnmount should be called", () => {
+  test("onUnmount should be called only or the last unmounted container", () => {
     const onUnmount = jest.fn();
-    const Component = props => (
+    const Component = ({ hide1, hide2 }) => (
       <Provider>
-        {!props.hide1 && (
+        {!hide1 && (
           <Container context="foo" onUnmount={onUnmount}>
             {state => <div state={state} />}
           </Container>
         )}
-        {!props.hide2 && (
+        {!hide2 && (
           <Container context="foo" onUnmount={onUnmount}>
             {state => <span state={state} />}
           </Container>
         )}
-        <div />
       </Provider>
     );
     const wrapper = mount(<Component />);
     wrapper.setProps({ hide1: true });
-    expect(onUnmount).toHaveBeenCalledTimes(1);
+    expect(onUnmount).toHaveBeenCalledTimes(0);
     wrapper.setProps({ hide2: true });
     expect(onUnmount).toHaveBeenCalledTimes(1);
+  });
+
+  test("onUnmount setState", () => {
+    const initialState = { count: 0 };
+    const onUnmount = ({ setState }) => {
+      setState(increment(10));
+    };
+    const Component = ({ hide }) => (
+      <Provider>
+        {!hide && (
+          <Container
+            context="foo"
+            onUnmount={onUnmount}
+            initialState={initialState}
+          >
+            {state => <div state={state} />}
+          </Container>
+        )}
+        <Context.Consumer>
+          {ctx => <span state={ctx.state.foo} />}
+        </Context.Consumer>
+      </Provider>
+    );
+    const wrapper = mount(<Component />);
+    expect(getState(wrapper, "span")).toEqual({ count: 0 });
+    wrapper.setProps({ hide: true });
+    expect(getState(wrapper, "span")).toEqual({ count: 10 });
+  });
+
+  test("onUnmount setState callback", () => {
+    const initialState = { count: 0 };
+    const onUnmount = ({ setState }) => {
+      setState(increment(1), () => {
+        setState(increment(10), () => {
+          setState(increment(100));
+        });
+      });
+    };
+    const Component = ({ hide }) => (
+      <Provider>
+        {!hide && (
+          <Container
+            context="foo"
+            onUnmount={onUnmount}
+            initialState={initialState}
+          >
+            {state => <div state={state} />}
+          </Container>
+        )}
+        <Context.Consumer>
+          {ctx => <span state={ctx.state.foo} />}
+        </Context.Consumer>
+      </Provider>
+    );
+    const wrapper = mount(<Component />);
+    expect(getState(wrapper, "span")).toEqual({ count: 0 });
+    wrapper.setProps({ hide: true });
+    expect(getState(wrapper, "span")).toEqual({ count: 111 });
+  });
+
+  test("onUnmount delayed", () => {
+    jest.useFakeTimers();
+    const initialState = { count: 0 };
+    const onUnmount = ({ setState }) => {
+      setTimeout(() => setState(increment(10)), 1000);
+    };
+    const Component = ({ hide }) => (
+      <Provider>
+        {!hide && (
+          <Container
+            context="foo"
+            onUnmount={onUnmount}
+            initialState={initialState}
+          >
+            {state => <div state={state} />}
+          </Container>
+        )}
+        <Context.Consumer>
+          {ctx => <span state={ctx.state.foo} />}
+        </Context.Consumer>
+      </Provider>
+    );
+    const wrapper = mount(<Component />);
+    expect(getState(wrapper, "span")).toEqual({ count: 0 });
+    wrapper.setProps({ hide: true });
+    expect(getState(wrapper, "span")).toEqual({ count: 0 });
+    jest.advanceTimersByTime(1000);
+    expect(getState(wrapper, "span")).toEqual({ count: 10 });
   });
 
   test("first initialState should take precedence over others", () => {
