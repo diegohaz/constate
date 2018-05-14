@@ -3,8 +3,6 @@ import React from "react";
 import { mount } from "enzyme";
 import { Container, Provider, Context } from "../src";
 
-// TEST ONUPDATE ON LIFECYCLES (ONMOUNT, ONINIT - SHOULD NOT TRIGGER, ONINIT DELAYED, ONUNMOUNT AND ALSO ONUPDATE)
-
 const increment = (amount = 1) => state => ({ count: state.count + amount });
 
 const wrap = (initialState, props, providerProps) =>
@@ -240,6 +238,39 @@ const createTests = props => () => {
     expect(getState(wrapper).count).toBe(20);
   });
 
+  test("onUpdate should be triggered on onInit", () => {
+    const initialState = { count: 0 };
+    const onInit = ({ setState }) => {
+      setState(increment(10));
+    };
+    const onUpdate = jest.fn();
+    wrap(initialState, { onUpdate, onInit, ...props });
+    expect(onUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  test("onUpdate should be triggered on onMount", () => {
+    const initialState = { count: 0 };
+    const onMount = ({ setState }) => {
+      setState(increment(10));
+    };
+    const onUpdate = jest.fn();
+    wrap(initialState, { onUpdate, onMount, ...props });
+    expect(onUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  test("onUpdate should not be triggered on onUpdate", () => {
+    const initialState = { count: 0 };
+    const actions = { increment };
+    const onUpdate = jest.fn(({ setState }) => {
+      setState(increment(10));
+    });
+    const wrapper = wrap(initialState, { onUpdate, actions, ...props });
+    expect(onUpdate).toHaveBeenCalledTimes(0);
+    getState(wrapper).increment(10);
+    expect(onUpdate).toHaveBeenCalledTimes(1);
+    expect(getState(wrapper).count).toBe(20);
+  });
+
   test("onUnmount", () => {
     const initialState = { count: 0 };
     const onUnmount = jest.fn(({ state, setState }) => {
@@ -262,7 +293,28 @@ const createTests = props => () => {
   });
 };
 
-describe("local", createTests());
+describe("local", () => {
+  test("onUnmount setState is noop", () => {
+    const initialState = { count: 0 };
+    const onUnmount = jest.fn(({ setState }) => {
+      setState(increment(10));
+    });
+    const Component = ({ hide }) => (
+      <Provider>
+        {!hide && (
+          <Container initialState={initialState} onUnmount={onUnmount}>
+            {state => <div state={state} />}
+          </Container>
+        )}
+      </Provider>
+    );
+    const wrapper = mount(<Component />);
+    wrapper.setProps({ hide: true });
+    expect(onUnmount).toHaveBeenCalledTimes(1);
+  });
+
+  createTests()();
+});
 
 describe("context", () => {
   test("initialState", () => {
@@ -323,14 +375,13 @@ describe("context", () => {
 
   test("only the first onInit should be called", () => {
     const onInit = jest.fn();
+    const MyContainer = props => (
+      <Container context="foo" onInit={onInit} {...props} />
+    );
     mount(
       <Provider>
-        <Container context="foo" onInit={onInit}>
-          {state => <div state={state} />}
-        </Container>
-        <Container context="foo" onInit={onInit}>
-          {state => <span state={state} />}
-        </Container>
+        <MyContainer>{state => <div state={state} />}</MyContainer>
+        <MyContainer>{state => <span state={state} />}</MyContainer>
       </Provider>
     );
     expect(onInit).toHaveBeenCalledTimes(1);
@@ -338,26 +389,23 @@ describe("context", () => {
 
   test("only the first onMount should be called", () => {
     const onMount = jest.fn();
+    const MyContainer = props => (
+      <Container context="foo" onMount={onMount} {...props} />
+    );
     mount(
       <Provider>
-        <Container context="foo" onMount={onMount}>
-          {state => <div state={state} />}
-        </Container>
-        <Container context="foo" onMount={onMount}>
-          {state => <span state={state} />}
-        </Container>
+        <MyContainer>{state => <div state={state} />}</MyContainer>
+        <MyContainer>{state => <span state={state} />}</MyContainer>
       </Provider>
     );
     expect(onMount).toHaveBeenCalledTimes(1);
   });
 
-  test("onUpdate should be called only for the for the caller container", () => {
+  test("onUpdate should be called only for the caller container", () => {
     const onUpdate1 = jest.fn();
     const onUpdate2 = jest.fn();
     const initialState = { count: 0 };
-    const actions = {
-      increment: () => state => ({ count: state.count + 1 })
-    };
+    const actions = { increment };
     const MyContainer = props => (
       <Container
         context="foo"
@@ -384,20 +432,41 @@ describe("context", () => {
     expect(onUpdate2).toHaveBeenCalledTimes(1);
   });
 
-  test("onUnmount should be called only or the last unmounted container", () => {
+  test("onUpdate should be trigerred on onUnmount", () => {
+    const initialState = { count: 0 };
+    const onUpdate = jest.fn();
+    const onUnmount = ({ setState }) => {
+      setState(increment(10));
+    };
+    const Component = ({ hide }) => (
+      <Provider>
+        {!hide && (
+          <Container
+            context="foo"
+            onUpdate={onUpdate}
+            onUnmount={onUnmount}
+            initialState={initialState}
+          >
+            {() => <div />}
+          </Container>
+        )}
+      </Provider>
+    );
+    const wrapper = mount(<Component />);
+    expect(onUpdate).toHaveBeenCalledTimes(0);
+    wrapper.setProps({ hide: true });
+    expect(onUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  test("onUnmount should be called only for the last unmounted container", () => {
     const onUnmount = jest.fn();
+    const MyContainer = props => (
+      <Container context="foo" onUnmount={onUnmount} {...props} />
+    );
     const Component = ({ hide1, hide2 }) => (
       <Provider>
-        {!hide1 && (
-          <Container context="foo" onUnmount={onUnmount}>
-            {state => <div state={state} />}
-          </Container>
-        )}
-        {!hide2 && (
-          <Container context="foo" onUnmount={onUnmount}>
-            {state => <span state={state} />}
-          </Container>
-        )}
+        {!hide1 && <MyContainer>{() => <div />}</MyContainer>}
+        {!hide2 && <MyContainer>{() => <span />}</MyContainer>}
       </Provider>
     );
     const wrapper = mount(<Component />);
@@ -420,7 +489,7 @@ describe("context", () => {
             onUnmount={onUnmount}
             initialState={initialState}
           >
-            {state => <div state={state} />}
+            {() => <div />}
           </Container>
         )}
         <Context.Consumer>
@@ -451,7 +520,7 @@ describe("context", () => {
             onUnmount={onUnmount}
             initialState={initialState}
           >
-            {state => <div state={state} />}
+            {() => <div />}
           </Container>
         )}
         <Context.Consumer>
@@ -479,7 +548,7 @@ describe("context", () => {
             onUnmount={onUnmount}
             initialState={initialState}
           >
-            {state => <div state={state} />}
+            {() => <div />}
           </Container>
         )}
         <Context.Consumer>
