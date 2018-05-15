@@ -51,7 +51,6 @@ const Counter = () => (
   - [`selectors`](#selectors)
   - [`effects`](#effects)
   - [`context`](#context)
-  - [`onInit`](#onInit)
   - [`onMount`](#onMount)
   - [`onUpdate`](#onUpdate)
   - [`onUnmount`](#onUnmount)
@@ -227,31 +226,6 @@ const App = () => (
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095299-b176af2a-4614-11e8-99ce-4980bdf2f139.gif" alt="Example"></p>
 
-### `onInit`
-
-```js
-type OnInit = ({ state: Object, setState: Function }) => void;
-```
-
-This is a function called inside `Container`'s `constructor`. That is, right after it has been instantiated, and before it has been mounted. The function receives both `state` and `setState`.
-
-> Note: when using [`context`](#context), all `Container`s of the same context behave as a single unit, which means that `onInit` will be called only for the first initialized `Container` of each context.
-
-```jsx
-const initialState = { count: 0 };
-
-const onInit = ({ setState }) => {
-  const fn = () => setState(state => ({ count: state.count + 1 }));
-  setInterval(fn, 1000);
-};
-
-const Counter = () => (
-  <Container initialState={initialState} onInit={onInit}>
-    {({ count }) => <button>{count}</button>}
-  </Container>
-);
-```
-
 ### `onMount`
 
 ```js
@@ -290,7 +264,7 @@ This is a function called every time `setState` is called, either internally wit
 ```jsx
 const initialState = { count: 0 };
 
-const onInit = ({ setState }) => {
+const onMount = ({ setState }) => {
   const fn = () => setState(state => ({ count: state.count + 1 }));
   setInterval(fn, 1000);
 };
@@ -302,7 +276,7 @@ const onUpdate = ({ state, setState }) => {
 };
 
 const Counter = () => (
-  <Container initialState={initialState} onInit={onInit} onUpdate={onUpdate}>
+  <Container initialState={initialState} onMount={onMount} onUpdate={onUpdate}>
     {({ count }) => <button>{count}</button>}
   </Container>
 );
@@ -321,7 +295,7 @@ This is a function called inside `Container`'s `componentWillUnmount`. It receiv
 ```jsx
 const initialState = { count: 0 };
 
-const onInit = ({ setState }) => {
+const onMount = ({ setState }) => {
   const fn = () => setState(state => ({ count: state.count + 1 }));
   const interval = setInterval(fn, 1000);
   setState({ interval });
@@ -332,7 +306,7 @@ const onUnmount = ({ state }) => {
 };
 
 const Counter = () => (
-  <Container initialState={initialState} onInit={onInit} onUnmount={onUnmout}>
+  <Container initialState={initialState} onMount={onMount} onUnmount={onUnmout}>
     {({ count }) => <button>{count}</button>}
   </Container>
 );

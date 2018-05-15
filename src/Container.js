@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Context from "./Context";
 import Consumer from "./Consumer";
+import ContextContainer from "./ContextContainer";
 import { mapSetStateToActions, mapArgumentToFunctions } from "./utils";
 
 class Container extends React.Component {
@@ -12,7 +12,6 @@ class Container extends React.Component {
     selectors: PropTypes.objectOf(PropTypes.func),
     effects: PropTypes.objectOf(PropTypes.func),
     context: PropTypes.string,
-    onInit: PropTypes.func,
     onMount: PropTypes.func,
     onUpdate: PropTypes.func,
     onUnmount: PropTypes.func
@@ -22,19 +21,10 @@ class Container extends React.Component {
     initialState: {}
   };
 
-  constructor(...args) {
-    super(...args);
-    const { context, onInit } = this.props;
-    if (!context && typeof onInit === "function") {
-      onInit({ state: this.state, setState: this.handleSetState });
-    }
-  }
-
   state = this.props.initialState;
 
   componentDidMount() {
     const { context, onMount } = this.props;
-    this.mounted = true;
     if (!context && typeof onMount === "function") {
       onMount({ state: this.state, setState: this.handleSetState });
     }
@@ -42,40 +32,22 @@ class Container extends React.Component {
 
   componentWillUnmount() {
     const { context, onUnmount } = this.props;
-    this.mounted = false;
     if (!context && typeof onUnmount === "function") {
       onUnmount({ state: this.state, setState: () => {} });
     }
   }
 
-  mounted = false;
-
   handleSetState = (fn, cb) => {
     const prevState = this.state;
 
-    const callOnUpdate = () => {
-      const { onUpdate } = this.props;
-      if (typeof onUpdate === "function") {
-        onUpdate({
+    this.setState(fn, () => {
+      if (typeof this.props.onUpdate === "function") {
+        this.props.onUpdate({
           prevState,
           state: this.state,
-          setState: (...args) => this.setState(...args)
+          setState: this.handleSetState
         });
       }
-    };
-
-    if (!this.mounted) {
-      this.state = {
-        ...this.state,
-        ...fn(this.state)
-      };
-      callOnUpdate();
-      if (cb) cb();
-      return;
-    }
-
-    this.setState(fn, () => {
-      callOnUpdate();
       if (cb) cb();
     });
   };
@@ -83,9 +55,9 @@ class Container extends React.Component {
   render() {
     if (this.props.context) {
       return (
-        <Context.Consumer>
-          {state => <Consumer {...state} {...this.props} />}
-        </Context.Consumer>
+        <Consumer>
+          {state => <ContextContainer {...state} {...this.props} />}
+        </Consumer>
       );
     }
 

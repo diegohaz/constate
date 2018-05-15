@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import { mount } from "enzyme";
-import { Container, Provider, Context } from "../src";
+import { Container, Provider, Consumer } from "../src";
 
 const increment = (amount = 1) => state => ({ count: state.count + amount });
 
@@ -122,42 +122,6 @@ const createTests = props => () => {
     expect(getState(wrapper).count).toBe(111);
   });
 
-  test("onInit", () => {
-    const initialState = { count: 0 };
-    const onInit = ({ state, setState }) => {
-      if (state.count === 0) {
-        setState(increment(10));
-      }
-    };
-    const wrapper = wrap(initialState, { onInit, ...props });
-    expect(getState(wrapper)).toEqual({ count: 10 });
-  });
-
-  test("onInit with setState callback", () => {
-    const initialState = { count: 0 };
-    const onInit = ({ setState }) => {
-      setState(increment(1), () => {
-        setState(increment(10), () => {
-          setState(increment(100));
-        });
-      });
-    };
-    const wrapper = wrap(initialState, { onInit, ...props });
-    expect(getState(wrapper)).toEqual({ count: 111 });
-  });
-
-  test("onInit delayed", () => {
-    jest.useFakeTimers();
-    const initialState = { count: 0 };
-    const onInit = ({ setState }) => {
-      setTimeout(() => setState(increment(10)), 1000);
-    };
-    const wrapper = wrap(initialState, { onInit, ...props });
-    expect(getState(wrapper)).toEqual({ count: 0 });
-    jest.advanceTimersByTime(1000);
-    expect(getState(wrapper)).toEqual({ count: 10 });
-  });
-
   test("onMount", () => {
     const initialState = { count: 0 };
     const onMount = jest.fn(({ state, setState }) => {
@@ -205,19 +169,21 @@ const createTests = props => () => {
     });
     const wrapper = wrap(initialState, { onUpdate, actions, ...props });
     getState(wrapper).increment(10);
-    expect(onUpdate).toHaveBeenCalledTimes(1);
+    expect(onUpdate).toHaveBeenCalledTimes(2);
     expect(getState(wrapper).count).toBe(20);
   });
 
   test("onUpdate with setState callback", () => {
     const initialState = { count: 0 };
     const actions = { increment };
-    const onUpdate = ({ setState }) => {
-      setState(increment(1), () => {
-        setState(increment(10), () => {
-          setState(increment(100));
+    const onUpdate = ({ prevState, setState }) => {
+      if (prevState.count === 0) {
+        setState(increment(1), () => {
+          setState(increment(10), () => {
+            setState(increment(100));
+          });
         });
-      });
+      }
     };
     const wrapper = wrap(initialState, { onUpdate, actions, ...props });
     getState(wrapper).increment(1);
@@ -238,16 +204,6 @@ const createTests = props => () => {
     expect(getState(wrapper).count).toBe(20);
   });
 
-  test("onUpdate should be triggered on onInit", () => {
-    const initialState = { count: 0 };
-    const onInit = ({ setState }) => {
-      setState(increment(10));
-    };
-    const onUpdate = jest.fn();
-    wrap(initialState, { onUpdate, onInit, ...props });
-    expect(onUpdate).toHaveBeenCalledTimes(1);
-  });
-
   test("onUpdate should be triggered on onMount", () => {
     const initialState = { count: 0 };
     const onMount = ({ setState }) => {
@@ -258,17 +214,19 @@ const createTests = props => () => {
     expect(onUpdate).toHaveBeenCalledTimes(1);
   });
 
-  test("onUpdate should not be triggered on onUpdate", () => {
+  test("onUpdate should be triggered on onUpdate", () => {
     const initialState = { count: 0 };
     const actions = { increment };
-    const onUpdate = jest.fn(({ setState }) => {
-      setState(increment(10));
+    const onUpdate = jest.fn(({ state, setState }) => {
+      if (state.count <= 20) {
+        setState(increment(10));
+      }
     });
     const wrapper = wrap(initialState, { onUpdate, actions, ...props });
     expect(onUpdate).toHaveBeenCalledTimes(0);
     getState(wrapper).increment(10);
-    expect(onUpdate).toHaveBeenCalledTimes(1);
-    expect(getState(wrapper).count).toBe(20);
+    expect(onUpdate).toHaveBeenCalledTimes(3);
+    expect(getState(wrapper).count).toBe(30);
   });
 
   test("onUnmount", () => {
@@ -371,20 +329,6 @@ describe("context", () => {
     expect(getState(wrapper)).toEqual({
       count: 0
     });
-  });
-
-  test("only the first onInit should be called", () => {
-    const onInit = jest.fn();
-    const MyContainer = props => (
-      <Container context="foo" onInit={onInit} {...props} />
-    );
-    mount(
-      <Provider>
-        <MyContainer>{state => <div state={state} />}</MyContainer>
-        <MyContainer>{state => <span state={state} />}</MyContainer>
-      </Provider>
-    );
-    expect(onInit).toHaveBeenCalledTimes(1);
   });
 
   test("only the first onMount should be called", () => {
@@ -492,9 +436,7 @@ describe("context", () => {
             {() => <div />}
           </Container>
         )}
-        <Context.Consumer>
-          {ctx => <span state={ctx.state.foo} />}
-        </Context.Consumer>
+        <Consumer>{ctx => <span state={ctx.state.foo} />}</Consumer>
       </Provider>
     );
     const wrapper = mount(<Component />);
@@ -523,9 +465,7 @@ describe("context", () => {
             {() => <div />}
           </Container>
         )}
-        <Context.Consumer>
-          {ctx => <span state={ctx.state.foo} />}
-        </Context.Consumer>
+        <Consumer>{ctx => <span state={ctx.state.foo} />}</Consumer>
       </Provider>
     );
     const wrapper = mount(<Component />);
@@ -551,9 +491,7 @@ describe("context", () => {
             {() => <div />}
           </Container>
         )}
-        <Context.Consumer>
-          {ctx => <span state={ctx.state.foo} />}
-        </Context.Consumer>
+        <Consumer>{ctx => <span state={ctx.state.foo} />}</Consumer>
       </Provider>
     );
     const wrapper = mount(<Component />);

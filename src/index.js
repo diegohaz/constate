@@ -1,5 +1,4 @@
 export Consumer from "./Consumer";
 export Container from "./Container";
-export Context from "./Context";
+export ContextContainer from "./ContextContainer";
 export Provider from "./Provider";
-export State from "./State";
