@@ -56,7 +56,6 @@ const Counter = () => (
   - [`onUnmount`](#onUnmount)
 - [`Provider`](#provider)
   - [`initialState`](#initialstate-1)
-- [`Consumer`](#consumer)
 - [Composing](#composing)
 - [Testing](#testing)
 
@@ -243,7 +242,7 @@ const initialState = { count: 0 };
 
 const onMount = ({ setState }) => {
   const fn = () => setState(state => ({ count: state.count + 1 }));
-  document.body.addEventListener("scroll", fn);
+  document.body.addEventListener("mousemove", fn);
 };
 
 const Counter = () => (
@@ -333,15 +332,96 @@ const App = () => (
     ...
   </Provider>
 );
-````
+```
 
 This way, all `Container`s with `context="counter1"` will start with `{ count: 10 }`.
 
 > Note: when using [`context`](#context), only the `initialState` of the first `Container` in the tree will be considered. `Provider` will always take precedence over `Container`.
 
-## `Consumer`
+## Composing
 
+Since `Container` is just a React component, you can create `Container`s that accepts new properties, making them really composable. 
 
+For example, let's create a composable `CounterContainer`:
+
+```jsx
+const increment = () => state => ({ count: state.count + 1 });
+
+const CounterContainer = ({ initialState, actions, ...props }) => (
+  <Container
+    initialState={{ count: 0, ...initialState }}
+    actions={{ increment, ...actions }}
+    {...props}
+  />
+);
+```
+
+Then, we can use it to create a `DecrementableCounterContainer`:
+
+```jsx
+const decrement = () => state => ({ count: state.count - 1 });
+
+const DecrementableCounterContainer = ({ actions, ...props }) => (
+  <CounterContainer actions={{ decrement, ...actions }} {...props} />
+);
+```
+
+Finally, we can use it on our other components:
+
+```jsx
+const CounterButton = () => (
+  <DecrementableCounterContainer initialState={{ count: 10 }}>
+    {({ count, decrement }) => <button onClick={decrement}>{count}</button>}
+  </DecrementableCounterContainer>
+);
+```
+
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095340-51373818-4615-11e8-9b76-dd883e9065fb.gif" alt="Example"></p>
+
+## Testing
+
+[`actions`](#actions) and [`selectors`](#selectors) are pure functions. Testing is pretty straightfoward:
+
+```js
+import { initialState, actions, selectors } from "./CounterContainer";
+
+test("initialState", () => {
+  expect(initialState).toEqual({ count: 0 });
+});
+
+test("actions", () => {
+  expect(actions.increment(1)({ count: 0 })).toEqual({ count: 1 });
+  expect(actions.increment(-1)({ count: 1 })).toEqual({ count: 0 });
+});
+
+test("selectors", () => {
+  expect(selectors.getParity()({ count: 0 })).toBe("even");
+  expect(selectors.getParity()({ count: 1 })).toBe("odd");
+});
+```
+
+Testing [`effects`](#effects) and lifecycle methods can be a little tricky depending on how you implement them. This is how we can test our `tick` effect with [Jest](https://facebook.github.io/jest):
+
+```jsx
+import { effects } from "./CounterContainer";
+
+test("tick", () => {
+  jest.useFakeTimers();
+
+  let state = { count: 0 };
+  const setState = fn => {
+    state = fn(state);
+  };
+
+  effects.tick()({ state, setState });
+
+  jest.advanceTimersByTime(1000);
+  expect(state).toEqual({ count: 1 });
+
+  jest.advanceTimersByTime(1000);
+  expect(state).toEqual({ count: 2 });
+});
+```
 
 ## Contributing
 
