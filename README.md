@@ -14,12 +14,12 @@
 
 > context + state = constate
 
-Tiny React state management library that lets you work with [local state](#local-state) and scale up to [global state](#global-state) with ease when needed.
+Tiny React state management library that lets you work with [local state](#actions) and scale up to [global state](#context) with ease when needed.
 
 👓 [**Read the introductory article**](https://medium.freecodecamp.org/reacts-new-context-api-how-to-toggle-between-local-and-global-state-c6ace81443d0)<br>
 🎮 [**Play with the demo**](https://codesandbox.io/s/7p2qv6mmq)
 
-## Quick start
+<br><br>
 
 ```jsx
 import React from "react";
@@ -42,7 +42,7 @@ const Counter = () => (
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095434-ba7c42c2-4616-11e8-9836-f46ea572c170.gif" alt="Example"></p>
 
-## Table of Contents
+**Table of Contents**
 
 - [Installation](#installation)
 - [`Container`](#container)
@@ -56,6 +56,8 @@ const Counter = () => (
   - [`onUnmount`](#onUnmount)
 - [`Provider`](#provider)
   - [`initialState`](#initialstate-1)
+- [`Consumer`](#consumer)
+- [Composing](#composing)
 - [Testing](#testing)
 
 ## Installation
@@ -257,7 +259,7 @@ const Counter = () => (
 type OnUpdate = ({ prevState: Object, state: Object, setState: Function }) => void;
 ```
 
-This is a function called every time `setState` is called, either internally with [`actions`](#actions) or directly with [`effects`](#effects) and other lifecycle methods, including `onUpdate` itself.
+This is a function called every time `setState` is called, either internally with [`actions`](#actions) or directly with [`effects`](#effects) and lifecycle methods, including `onUpdate` itself.
 
 > Note: when using [`context`](#context), `onUpdate` will be triggered only once per `setState` call no matter how many `Container`s of the same context you have mounted.
 
@@ -271,6 +273,7 @@ const onMount = ({ setState }) => {
 
 const onUpdate = ({ state, setState }) => {
   if (state.count === 10) {
+    // reset counter
     setState({ count: 0 });
   }
 };
@@ -288,7 +291,7 @@ const Counter = () => (
 type OnUnmount = ({ state: Object, setState: Function }) => void;
 ```
 
-This is a function called inside `Container`'s `componentWillUnmount`. It receives both current `state` and `setState`, but the latter will have effect only if you're using [`context`](#context). Otherwise, it will be noop. This is useful for doing cleanups. 
+This is a function called inside `Container`'s `componentWillUnmount`. It receives both current `state` and `setState`, but the latter will have effect only if you're using [`context`](#context). Otherwise, it will be noop. This is useful for making cleanups. 
 
 > Note: when using [`context`](#context), all `Container`s of the same context behave as a single unit, which means that `onUnmount` will be called only when the last remaining `Container` of each context gets unmounted.
 
@@ -311,6 +314,34 @@ const Counter = () => (
   </Container>
 );
 ```
+
+## `Provider`
+
+### `initialState`
+
+It's possible to pass initialState to Provider:
+
+```jsx
+const initialState = {
+  counter1: {
+    count: 10
+  }
+};
+
+const App = () => (
+  <Provider initialState={initialState}>
+    ...
+  </Provider>
+);
+````
+
+This way, all `Container`s with `context="counter1"` will start with `{ count: 10 }`.
+
+> Note: when using [`context`](#context), only the `initialState` of the first `Container` in the tree will be considered. `Provider` will always take precedence over `Container`.
+
+## `Consumer`
+
+
 
 ## Contributing
 
