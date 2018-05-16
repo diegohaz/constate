@@ -126,7 +126,6 @@ const createTests = props => () => {
     expect.assertions(1);
     const effects = {
       tick: () => ({ self }) => {
-        console.log(self);
         expect(self).toBeInstanceOf(React.Component);
       }
     };
