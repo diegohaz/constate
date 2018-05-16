@@ -3,6 +3,23 @@ import React from "react";
 import { mount } from "enzyme";
 import { Container, Provider, Consumer } from "../src";
 
+/**
+ * Vamos lá:
+ * Não posso usar o self porque ele expõe a porra toda.
+ * Além disso, quando tiver context, o self tem que ser único.
+ * Isso porque o onMount pode ser executado num ContextContainer, e o onUnmount em outro.
+ * Assim, se o self for de cada instância, eles não vão ser os mesmos.
+ * Nesse caso, talvez seja melhor chamar de scope.
+ * Também é uma boa passar props no getArgs, uma vez que ela pode ser usada por effects
+ * pra carregar página 2 por exemplo.
+ * Claro, isso pode ser passado como argumento pros effects, mas não pros lifecycles.
+ * Claro que nos ContextContainer's só os props passados pro primeiro mounted serão usados.
+ * Ao passar props, deixar Container da mesma forma que ContextContainer.
+ * Removendo os props sobressalentes no ContextContainer.
+ * Vou ter que escrever uma API mount(Container), especialmente pra testes, pra moclar tudo.
+ * Melhor tirar o self.
+ */
+
 const increment = (amount = 1) => state => ({ count: state.count + amount });
 
 const wrap = (initialState, props, providerProps) =>
@@ -122,17 +139,6 @@ const createTests = props => () => {
     expect(getState(wrapper).count).toBe(111);
   });
 
-  test("effects self", () => {
-    expect.assertions(1);
-    const effects = {
-      tick: () => ({ self }) => {
-        expect(self).toBeInstanceOf(React.Component);
-      }
-    };
-    const wrapper = wrap(undefined, { effects, ...props });
-    getState(wrapper).tick();
-  });
-
   test("onMount", () => {
     const initialState = { count: 0 };
     const onMount = jest.fn(({ state, setState }) => {
@@ -168,14 +174,6 @@ const createTests = props => () => {
     expect(getState(wrapper)).toEqual({ count: 0 });
     jest.advanceTimersByTime(1000);
     expect(getState(wrapper)).toEqual({ count: 10 });
-  });
-
-  test("onMount self", () => {
-    expect.assertions(1);
-    const onMount = ({ self }) => {
-      expect(self).toBeInstanceOf(React.Component);
-    };
-    wrap(undefined, { onMount, ...props });
   });
 
   test("onUpdate", () => {
@@ -223,17 +221,6 @@ const createTests = props => () => {
     expect(getState(wrapper).count).toBe(20);
   });
 
-  test("onUpdate self", () => {
-    expect.assertions(1);
-    const initialState = { count: 0 };
-    const actions = { increment };
-    const onUpdate = ({ self }) => {
-      expect(self).toBeInstanceOf(React.Component);
-    };
-    const wrapper = wrap(initialState, { onUpdate, actions, ...props });
-    getState(wrapper).increment(1);
-  });
-
   test("onUpdate should be triggered on onMount", () => {
     const initialState = { count: 0 };
     const onMount = ({ setState }) => {
@@ -278,24 +265,6 @@ const createTests = props => () => {
     expect(onUnmount).not.toHaveBeenCalled();
     wrapper.setProps({ hide: true });
     expect(onUnmount).toHaveBeenCalledTimes(1);
-  });
-
-  test("onUnmount self", () => {
-    expect.assertions(1);
-    const onUnmount = jest.fn(({ self }) => {
-      expect(self).toBeInstanceOf(React.Component);
-    });
-    const Component = ({ hide }) => (
-      <Provider>
-        {!hide && (
-          <Container onUnmount={onUnmount}>
-            {state => <div state={state} />}
-          </Container>
-        )}
-      </Provider>
-    );
-    const wrapper = mount(<Component />);
-    wrapper.setProps({ hide: true });
   });
 };
 

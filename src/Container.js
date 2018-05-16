@@ -38,7 +38,6 @@ class Container extends React.Component {
   }
 
   getArgs = additionalArgs => ({
-    self: this,
     state: this.state,
     setState: this.handleSetState,
     ...additionalArgs

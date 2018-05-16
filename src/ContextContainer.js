@@ -28,7 +28,6 @@ class ContextContainer extends React.Component {
   }
 
   getArgs = additionalArgs => ({
-    self: this,
     state: this.getState(),
     setState: this.handleSetState,
     ...additionalArgs
