@@ -7,52 +7,52 @@ class ContextContainer extends React.Component {
     super(...args);
     const { state, context } = this.props;
     if (!state[context]) {
-      this.handleSetState(this.mergeState, undefined, false);
+      this.handleSetState(this.getState, undefined, false);
     }
   }
 
   componentDidMount() {
-    const { context, onMount, getMounted, mount, state } = this.props;
+    const { context, onMount, getMounted, mount } = this.props;
     if (!getMounted(context) && typeof onMount === "function") {
-      onMount({
-        state: this.mergeState(state[context]),
-        setState: this.handleSetState
-      });
+      onMount(this.getArgs());
     }
     mount(context);
   }
 
   componentWillUnmount() {
-    const { state, getMounted, unmount, context, onUnmount } = this.props;
+    const { getMounted, unmount, context, onUnmount } = this.props;
     if (getMounted(context) === 1 && typeof onUnmount === "function") {
-      onUnmount({
-        state: this.mergeState(state[context]),
-        setState: this.handleSetState
-      });
+      onUnmount(this.getArgs());
     }
     unmount(context);
   }
 
-  mergeState = state => ({ ...this.props.initialState, ...state });
+  getArgs = additionalArgs => ({
+    self: this,
+    state: this.getState(),
+    setState: this.handleSetState,
+    ...additionalArgs
+  });
+
+  getState = (state = this.props.state[this.props.context]) => ({
+    ...this.props.initialState,
+    ...state
+  });
 
   handleSetState = (fn, cb, emitUpdate = true) => {
     const { context, onUpdate, setState } = this.props;
-    const prevState = this.props.state[context];
+    const prevState = this.getState();
 
     const updater = state => ({
       [context]: {
-        ...state[context],
-        ...fn(state[context])
+        ...this.getState(state[context]),
+        ...fn(this.getState(state[context]))
       }
     });
 
     const callback = () => {
       if (emitUpdate && typeof onUpdate === "function") {
-        onUpdate({
-          prevState,
-          state: this.props.state[context],
-          setState: this.handleSetState
-        });
+        onUpdate(this.getArgs({ prevState }));
       }
       if (cb) cb();
     };
@@ -61,25 +61,12 @@ class ContextContainer extends React.Component {
   };
 
   render() {
-    const {
-      context,
-      state,
-      children,
-      actions,
-      selectors,
-      effects
-    } = this.props;
-
-    const effectsArg = {
-      state: state[context],
-      setState: this.handleSetState
-    };
-
+    const { children, actions, selectors, effects } = this.props;
     return children({
-      ...state[context],
+      ...this.getState(),
       ...(actions && mapSetStateToActions(this.handleSetState, actions)),
-      ...(selectors && mapArgumentToFunctions(state[context], selectors)),
-      ...(effects && mapArgumentToFunctions(effectsArg, effects))
+      ...(selectors && mapArgumentToFunctions(this.getState(), selectors)),
+      ...(effects && mapArgumentToFunctions(this.getArgs(), effects))
     });
   }
 }

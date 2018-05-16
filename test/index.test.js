@@ -122,6 +122,18 @@ const createTests = props => () => {
     expect(getState(wrapper).count).toBe(111);
   });
 
+  test("effects self", () => {
+    expect.assertions(1);
+    const effects = {
+      tick: () => ({ self }) => {
+        console.log(self);
+        expect(self).toBeInstanceOf(React.Component);
+      }
+    };
+    const wrapper = wrap(undefined, { effects, ...props });
+    getState(wrapper).tick();
+  });
+
   test("onMount", () => {
     const initialState = { count: 0 };
     const onMount = jest.fn(({ state, setState }) => {
@@ -157,6 +169,14 @@ const createTests = props => () => {
     expect(getState(wrapper)).toEqual({ count: 0 });
     jest.advanceTimersByTime(1000);
     expect(getState(wrapper)).toEqual({ count: 10 });
+  });
+
+  test("onMount self", () => {
+    expect.assertions(1);
+    const onMount = ({ self }) => {
+      expect(self).toBeInstanceOf(React.Component);
+    };
+    wrap(undefined, { onMount, ...props });
   });
 
   test("onUpdate", () => {
@@ -204,6 +224,17 @@ const createTests = props => () => {
     expect(getState(wrapper).count).toBe(20);
   });
 
+  test("onUpdate self", () => {
+    expect.assertions(1);
+    const initialState = { count: 0 };
+    const actions = { increment };
+    const onUpdate = ({ self }) => {
+      expect(self).toBeInstanceOf(React.Component);
+    };
+    const wrapper = wrap(initialState, { onUpdate, actions, ...props });
+    getState(wrapper).increment(1);
+  });
+
   test("onUpdate should be triggered on onMount", () => {
     const initialState = { count: 0 };
     const onMount = ({ setState }) => {
@@ -248,6 +279,24 @@ const createTests = props => () => {
     expect(onUnmount).not.toHaveBeenCalled();
     wrapper.setProps({ hide: true });
     expect(onUnmount).toHaveBeenCalledTimes(1);
+  });
+
+  test("onUnmount self", () => {
+    expect.assertions(1);
+    const onUnmount = jest.fn(({ self }) => {
+      expect(self).toBeInstanceOf(React.Component);
+    });
+    const Component = ({ hide }) => (
+      <Provider>
+        {!hide && (
+          <Container onUnmount={onUnmount}>
+            {state => <div state={state} />}
+          </Container>
+        )}
+      </Provider>
+    );
+    const wrapper = mount(<Component />);
+    wrapper.setProps({ hide: true });
   });
 };
 

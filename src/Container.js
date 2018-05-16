@@ -26,27 +26,30 @@ class Container extends React.Component {
   componentDidMount() {
     const { context, onMount } = this.props;
     if (!context && typeof onMount === "function") {
-      onMount({ state: this.state, setState: this.handleSetState });
+      onMount(this.getArgs());
     }
   }
 
   componentWillUnmount() {
     const { context, onUnmount } = this.props;
     if (!context && typeof onUnmount === "function") {
-      onUnmount({ state: this.state, setState: () => {} });
+      onUnmount(this.getArgs({ setState: () => {} }));
     }
   }
+
+  getArgs = additionalArgs => ({
+    self: this,
+    state: this.state,
+    setState: this.handleSetState,
+    ...additionalArgs
+  });
 
   handleSetState = (fn, cb) => {
     const prevState = this.state;
 
     this.setState(fn, () => {
       if (typeof this.props.onUpdate === "function") {
-        this.props.onUpdate({
-          prevState,
-          state: this.state,
-          setState: this.handleSetState
-        });
+        this.props.onUpdate(this.getArgs({ prevState }));
       }
       if (cb) cb();
     });
@@ -62,13 +65,12 @@ class Container extends React.Component {
     }
 
     const { children, actions, selectors, effects } = this.props;
-    const effectsArg = { state: this.state, setState: this.handleSetState };
 
     return children({
       ...this.state,
       ...(actions && mapSetStateToActions(this.handleSetState, actions)),
       ...(selectors && mapArgumentToFunctions(this.state, selectors)),
-      ...(effects && mapArgumentToFunctions(effectsArg, effects))
+      ...(effects && mapArgumentToFunctions(this.getArgs(), effects))
     });
   }
 }
