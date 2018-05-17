@@ -3,23 +3,6 @@ import React from "react";
 import { mount } from "enzyme";
 import { Container, Provider, Consumer } from "../src";
 
-/**
- * Vamos lá:
- * Não posso usar o self porque ele expõe a porra toda.
- * Além disso, quando tiver context, o self tem que ser único.
- * Isso porque o onMount pode ser executado num ContextContainer, e o onUnmount em outro.
- * Assim, se o self for de cada instância, eles não vão ser os mesmos.
- * Nesse caso, talvez seja melhor chamar de scope.
- * Também é uma boa passar props no getArgs, uma vez que ela pode ser usada por effects
- * pra carregar página 2 por exemplo.
- * Claro, isso pode ser passado como argumento pros effects, mas não pros lifecycles.
- * Claro que nos ContextContainer's só os props passados pro primeiro mounted serão usados.
- * Ao passar props, deixar Container da mesma forma que ContextContainer.
- * Removendo os props sobressalentes no ContextContainer.
- * Vou ter que escrever uma API mount(Container), especialmente pra testes, pra moclar tudo.
- * Melhor tirar o self.
- */
-
 const increment = (amount = 1) => state => ({ count: state.count + amount });
 
 const wrap = (initialState, props, providerProps) =>
