@@ -14,27 +14,12 @@
 
 > context + state = constate
 
-Tiny React state management library that lets you work with [local state](#local-state) and scale up to [global state](#global-state) with ease when needed.
+Tiny React state management library that lets you work with [local state](#actions) and scale up to [global state](#context) with ease when needed.
 
 👓 [**Read the introductory article**](https://medium.freecodecamp.org/reacts-new-context-api-how-to-toggle-between-local-and-global-state-c6ace81443d0)<br>
 🎮 [**Play with the demo**](https://codesandbox.io/s/7p2qv6mmq)
 
-<br>
-<hr>
-<p align="center">
-If you find this useful, please don't forget to star ⭐️ the repo, as this will help to promote the project.<br>
-Follow me on <a href="https://twitter.com/diegohaz">Twitter</a> and <a href="https://github.com/diegohaz">GitHub</a> to keep updated about this project and <a href="https://github.com/diegohaz?tab=repositories">others</a>.
-</p>
-<hr>
-<br>
-
-## Install 📦
-
-```sh
-npm i constate
-```
-
-## Quick start 💥
+<br><br>
 
 ```jsx
 import React from "react";
@@ -57,82 +42,178 @@ const Counter = () => (
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095434-ba7c42c2-4616-11e8-9836-f46ea572c170.gif" alt="Example"></p>
 
-## Guide 📖
-
 **Table of Contents**
 
--   [Local state](#local-state)
--   [Global state](#global-state)
--   [Composing state](#composing-state)
--   [Effects](#effects)
--   [Global initial state](#global-initial-state)
--   [State in lifecycle methods](#state-in-lifecycle-methods)
--   [Call selectors in actions](#call-selectors-in-actions)
--   [Call actions in effects](#call-actions-in-effects)
--   [Testing](#testing)
+- [Installation](#installation)
+- [`Container`](#container)
+  - [`initialState`](#initialstate)
+  - [`actions`](#actions)
+  - [`selectors`](#selectors)
+  - [`effects`](#effects)
+  - [`context`](#context)
+  - [`onMount`](#onMount)
+  - [`onUpdate`](#onUpdate)
+  - [`onUnmount`](#onUnmount)
+- [`Provider`](#provider)
+  - [`initialState`](#initialstate-1)
+- [Composing](#composing)
+- [Testing](#testing)
 
-### Local state
+## Installation
 
-You can start by creating your `Container` component:
+```sh
+npm i constate
+```
+
+## `Container`
+
+> In computer science, a **container** is a class, a data structure, or an abstract data type (ADT) whose instances are collections of other objects. In other words, they store objects in an organized way that follows specific access rules.
+>
+> — <https://en.wikipedia.org/wiki/Container_(abstract_data_type)>
+
+### `initialState`
+
+```js
+type initialState = Object;
+```
+
+Use this prop to define the initial state of the container.
 
 ```jsx
-import React from "react";
-import { Container } from "constate";
+const initialState = { count: 0 };
 
-export const initialState = {
-  count: 0
+const Counter = () => (
+  <Container initialState={initialState}>
+    {({ count }) => <button>{count}</button>}
+  </Container>
+);
+```
+
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/40029572-206945be-579a-11e8-95ad-4613adf73da4.png" width="55" alt="Example"></p>
+
+### `actions`
+
+```js
+type Actions = {
+  [string]: () => (state: Object) => Object
+};
+```
+
+An action is a method that returns an `updater` function, which will be, internally, passed as an argument to React `setState`. Actions will be exposed, then, together with state within the child function.
+
+```jsx
+const initialState = { count: 0 };
+
+const actions = {
+  increment: amount => state => ({ state.count + amount })
 };
 
-export const actions = {
-  increment: amount => state => ({ count: state.count + amount })
+const Counter = () => (
+  <Container initialState={initialState} actions={actions}>
+    {({ count, increment }) => (
+      <button onClick={() => increment(1)}>{count}</button>
+    )}
+  </Container>
+);
+```
+
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095434-ba7c42c2-4616-11e8-9836-f46ea572c170.gif" alt="Example"></p>
+
+### `selectors`
+
+```js
+type Selectors = {
+  [string]: () => (state: Object) => any
+};
+```
+
+A selector is a method that returns a function, which receives the current state and should return something (the thing being selected).
+
+```jsx
+const initialState = { count: 0 };
+
+const actions = {
+  increment: amount => state => ({ state.count + amount })
 };
 
-export const selectors = {
+const selectors = {
   getParity: () => state => (state.count % 2 === 0 ? "even" : "odd")
 };
 
-const CounterContainer = props => (
+const Counter = () => (
   <Container
     initialState={initialState}
     actions={actions}
     selectors={selectors}
-    {...props}
-  />
-);
-
-export default CounterContainer;
-```
-
-> Note: the reason we're exporting `initialState`, `actions` and `selectors` is to make [testing](#testing) easier.
-
-Then, just use it elsewhere:
-
-```jsx
-const CounterButton = () => (
-  <CounterContainer>
+  >
     {({ count, increment, getParity }) => (
       <button onClick={() => increment(1)}>{count} {getParity()}</button>
     )}
-  </CounterContainer>
+  </Container>
 );
 ```
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095320-f1595764-4614-11e8-98e3-343042cef61c.gif" alt="Example"></p>
 
-### Global state
+### `effects`
 
-Whenever you need to share state between components and/or feel the need to have a global state, you can pass a `context` property to `Container` and wrap your app with `Provider`:
+```js
+type Effects = {
+  [string]: () => ({ state: Object, setState: Function }) => void
+};
+```
+
+An effect is a method that returns a function, which receives both `state` and `setState`. This is useful if you need to perform side effects, like async actions, or just want to use `setState`.
 
 ```jsx
+const initialState = { count: 0 };
+
+const effects = {
+  tick: () => ({ setState }) => {
+    const fn = () => setState(state => ({ count: state.count + 1 }));
+    setInterval(fn, 1000);
+  }
+};
+
+const Counter = () => (
+  <Container initialState={initialState} effects={effects}>
+    {({ count, tick }) => (
+      <button onClick={tick}>{count}</button>
+    )}
+  </Container>
+);
+```
+
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095395-46d82eb2-4616-11e8-9e15-e5bb5041b4a8.gif" alt="Example"></p>
+
+### `context`
+
+```js
+type Context = string;
+```
+
+Whenever you need to share state between components and/or feel the need to have a global state, you can pass a `context` prop to `Container` and wrap your app with `Provider`.
+
+```jsx
+import { Provider, Container } from "constate";
+
+const CounterContainer = props => (
+  <Container
+    initialState={{ count: 0 }}
+    actions={{ increment: () => state => ({ count: state.count + 1 }) }}
+    {...props}
+  />
+);
+
 const CounterButton = () => (
   <CounterContainer context="counter1">
-    {({ increment }) => <button onClick={() => increment(1)}>Increment</button>}
+    {({ increment }) => <button onClick={increment}>Increment</button>}
   </CounterContainer>
 );
 
 const CounterValue = () => (
   <CounterContainer context="counter1">
-    {({ count }) => <div>{count}</div>} 
+    {({ count }) => <div>{count}</div>}
   </CounterContainer>
 );
 
@@ -146,76 +227,98 @@ const App = () => (
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095299-b176af2a-4614-11e8-99ce-4980bdf2f139.gif" alt="Example"></p>
 
-### Composing state
+### `onMount`
 
-This is still React, so you can pass new properties to `CounterContainer`, making it really composable.
+```js
+type OnMount = ({ state: Object, setState: Function }) => void;
+```
 
-First, let's change our `CounterContainer` so as to receive new properties:
+This is a function called inside `Container`'s `componentDidMount`.
+
+> Note: when using [`context`](#context), all `Container`s of the same context behave as a single unit, which means that `onMount` will be called only for the first mounted `Container` of each context.
 
 ```jsx
-const CounterContainer = props => (
-  <Container
-    {...props}
-    initialState={{ ...initialState, ...props.initialState }}
-    actions={{ ...actions, ...props.actions }}
-    selectors={{ ...selectors, ...props.selectors }}
-  />
+const initialState = { count: 0 };
+
+const onMount = ({ setState }) => {
+  const fn = () => setState(state => ({ count: state.count + 1 }));
+  document.body.addEventListener("mousemove", fn);
+};
+
+const Counter = () => (
+  <Container initialState={initialState} onMount={onMount}>
+    {({ count }) => <button>{count}</button>}
+  </Container>
 );
 ```
 
-Now we can pass new `initialState`, `actions` and `selectors` to `CounterContainer`:
+### `onUpdate`
 
-```jsx
-export const initialState = {
-  count: 10
-};
-
-export const actions = {
-  decrement: amount => state => ({ count: state.count - amount })
-};
-
-const CounterButton = () => (
-  <CounterContainer initialState={initialState} actions={actions}>
-    {({ count, decrement }) => (
-      <button onClick={() => decrement(1)}>{count}</button>
-    )}
-  </CounterContainer>
-);
+```js
+type OnUpdate = ({ prevState: Object, state: Object, setState: Function }) => void;
 ```
 
-<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095340-51373818-4615-11e8-9b76-dd883e9065fb.gif" alt="Example"></p>
+This is a function called every time `setState` is called, either internally with [`actions`](#actions) or directly with [`effects`](#effects) and lifecycle methods, including `onUpdate` itself.
 
-Those new members will work even if you use `context`.
-
-
-### Effects
-
-An effect is a method that receives both `state` and `setState`. This is useful if you need to perform side effects, like `async` actions, or just want to use `setState`.
+> Note: when using [`context`](#context), `onUpdate` will be triggered only once per `setState` call no matter how many `Container`s of the same context you have mounted.
 
 ```jsx
-export const effects = {
-  tick: () => ({ setState }) => {
-    setTimeout(() => {
-      setState(state => ({ count: state.count + 1 }));
-      effects.tick()({ setState })
-    }, 1000);
+const initialState = { count: 0 };
+
+const onMount = ({ setState }) => {
+  const fn = () => setState(state => ({ count: state.count + 1 }));
+  setInterval(fn, 1000);
+};
+
+const onUpdate = ({ state, setState }) => {
+  if (state.count === 5) {
+    // reset counter
+    setState({ count: 0 });
   }
 };
 
-const AutomaticCounterButton = () => (
-  <CounterContainer effects={effects}>
-    {({ count, tick }) => (
-      <button onClick={tick}>{count}</button>
-    )}
-  </CounterContainer>
+const Counter = () => (
+  <Container initialState={initialState} onMount={onMount} onUpdate={onUpdate}>
+    {({ count }) => <button>{count}</button>}
+  </Container>
 );
 ```
 
-<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095395-46d82eb2-4616-11e8-9e15-e5bb5041b4a8.gif" alt="Example"></p>
+### `onUnmount`
 
-### Global initial state
+```js
+type OnUnmount = ({ state: Object, setState: Function }) => void;
+```
 
-It's possible to pass `initialState` to `Provider`:
+This is a function called inside `Container`'s `componentWillUnmount`. It receives both current `state` and `setState`, but the latter will have effect only if you're using [`context`](#context). Otherwise, it will be noop. This is useful for making cleanups. 
+
+> Note: when using [`context`](#context), all `Container`s of the same context behave as a single unit, which means that `onUnmount` will be called only when the last remaining `Container` of each context gets unmounted.
+
+```jsx
+const initialState = { count: 0 };
+
+const onMount = ({ setState }) => {
+  const fn = () => setState(state => ({ count: state.count + 1 }));
+  const interval = setInterval(fn, 1000);
+  setState({ interval });
+};
+
+const onUnmount = ({ state }) => {
+  clearInterval(state.interval);
+};
+
+const Counter = () => (
+  <Container initialState={initialState} onMount={onMount} onUnmount={onUnmout}>
+    {({ count }) => <button>{count}</button>}
+  </Container>
+);
+```
+
+## `Provider`
+
+### `initialState`
+
+It's possible to pass initialState to Provider:
 
 ```jsx
 const initialState = {
@@ -231,85 +334,53 @@ const App = () => (
 );
 ```
 
-This way, all `Container`s with `context="counter1"` will start with `{ count: 10 }`
+This way, all `Container`s with `context="counter1"` will start with `{ count: 10 }`.
 
-> Note: while using context, only the `initialState` of the first `Container` in the tree will be considered. `Provider` will always take precedence over `Container`.
+> Note: when using [`context`](#context), only the `initialState` of the first `Container` in the tree will be considered. `Provider` will always take precedence over `Container`.
 
-### State in lifecycle methods
+## Composing
 
-As stated in the [official docs](https://reactjs.org/docs/context.html#accessing-context-in-lifecycle-methods), to access state in lifecycle methods you can just pass the state down as a prop to another component and use it just like another prop:
+Since `Container` is just a React component, you can create `Container`s that accepts new properties, making them really composable. 
+
+For example, let's create a composable `CounterContainer`:
 
 ```jsx
-class CounterButton extends React.Component {
-  componentDidMount() {
-    this.props.state.increment(1);
-  }
+const increment = () => state => ({ count: state.count + 1 });
 
-  render() {
-    const { increment } = this.props.state;
-    return <button onClick={() => increment(1)}>Increment</button>;
-  }
-}
-
-export default props => (
-  <CounterContainer context="counter1">
-    {state => <CounterButton {...props} state={state} />}
-  </CounterContainer>
+const CounterContainer = ({ initialState, actions, ...props }) => (
+  <Container
+    initialState={{ count: 0, ...initialState }}
+    actions={{ increment, ...actions }}
+    {...props}
+  />
 );
 ```
 
-Another alternative is to use <https://github.com/reactions/component>:
+Then, we can use it to create a `DecrementableCounterContainer`:
 
 ```jsx
-import Component from "@reactions/component";
+const decrement = () => state => ({ count: state.count - 1 });
 
+const DecrementableCounterContainer = ({ actions, ...props }) => (
+  <CounterContainer actions={{ decrement, ...actions }} {...props} />
+);
+```
+
+Finally, we can use it on our other components:
+
+```jsx
 const CounterButton = () => (
-  <CounterContainer context="counter1">
-    {({ increment }) => (
-      <Component didMount={() => increment(1)}>
-        <button onClick={() => increment(1)}>Increment</button>
-      </Component>
-    )}
-  </CounterContainer>
+  <DecrementableCounterContainer initialState={{ count: 10 }}>
+    {({ count, decrement }) => <button onClick={decrement}>{count}</button>}
+  </DecrementableCounterContainer>
 );
 ```
 
-### Call selectors in actions
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095340-51373818-4615-11e8-9b76-dd883e9065fb.gif" alt="Example"></p>
 
-This is just JavaScript:
+## Testing
 
-```jsx
-export const selectors = {
-  isEven: () => state => state.count % 2 === 0
-};
-
-export const actions = {
-  increment: () => state => ({
-    count: state.count + (selectors.isEven()(state) ? 2 : 1)
-  })
-};
-```
-
-### Call actions in effects
-
-Aren't you already convinced that this is JavaScript?
-
-```jsx
-const increment = amount => state => ({ count: state.count + amount })
-
-export const effects = {
-  tick: amount => ({ setState }) => {
-    setTimeout(() => {
-      setState(increment(amount));
-      effects.tick(amount)({ setState })
-    }, 1000);
-  }
-};
-```
-
-### Testing
-
-`actions` and `selectors` are pure functions. Testing is pretty straightfoward:
+[`actions`](#actions) and [`selectors`](#selectors) are pure functions. Testing is pretty straightfoward:
 
 ```js
 import { initialState, actions, selectors } from "./CounterContainer";
@@ -329,7 +400,7 @@ test("selectors", () => {
 });
 ```
 
-Testing `effects` can be a little tricky depending on how you implement them. This is how we can test our `tick` effect with [Jest](https://facebook.github.io/jest):
+Testing [`effects`](#effects) and lifecycle methods can be a little tricky depending on how you implement them. This is how we can test our `tick` effect with [Jest](https://facebook.github.io/jest):
 
 ```jsx
 import { effects } from "./CounterContainer";
@@ -352,43 +423,18 @@ test("tick", () => {
 });
 ```
 
-## API 🧐
-
-```js
-type Action = () => (state: Object) => Object;
-
-type Selector = () => (state: Object) => any;
-
-type Effect = () => ({ state: Object, setState: Function }) => void;
-
-type ContainerProps = {
-  children: (state: Object) => React.Node,
-  initialState: Object,
-  actions: { [string]: Action },
-  selectors: { [string]: Selector },
-  effects: { [string]: Effect },
-  context: string
-};
-
-type ProviderProps = {
-  children: React.Node,
-  initialState: Object
-};
-```
-
-## Contributing 👥
+## Contributing
 
 If you find a bug, please [create an issue](https://github.com/diegohaz/constate/issues/new) providing instructions to reproduce it. It's always very appreciable if you find the time to fix it. In this case, please [submit a PR](https://github.com/diegohaz/constate/pulls).
 
 If you're a beginner, it'll be a pleasure to help you contribute. You can start by reading [the beginner's guide to contributing to a GitHub project](https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/).
 
-## TODO 📝
+## TODO
 
--   Built in lifecycles ([#7](https://github.com/diegohaz/constate/issues/7))
 -   Middlewares? ([create an issue](https://github.com/diegohaz/constate/issues/new) if you find a use case for this)
 -   Debugger/devtools
 -   Memoize selectors
 
-## License ⚖️
+## License
 
 MIT © [Diego Haz](https://github.com/diegohaz)

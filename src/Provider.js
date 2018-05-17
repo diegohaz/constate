@@ -13,18 +13,36 @@ class Provider extends React.Component {
     initialState: {}
   };
 
-  handleSetState = fn => {
-    this.setState(state => ({
-      state: {
-        ...state.state,
-        ...fn(state.state)
-      }
-    }));
+  mounted = {};
+
+  getMounted = context => this.mounted[context] || 0;
+
+  mount = context => {
+    this.mounted[context] = this.getMounted(context) + 1;
+  };
+
+  unmount = context => {
+    this.mounted[context] = this.getMounted(context) - 1;
+  };
+
+  handleSetState = (fn, cb) => {
+    this.setState(
+      state => ({
+        state: {
+          ...state.state,
+          ...fn(state.state)
+        }
+      }),
+      cb
+    );
   };
 
   state = {
     state: this.props.initialState,
-    setState: this.handleSetState
+    setState: this.handleSetState,
+    getMounted: this.getMounted,
+    mount: this.mount,
+    unmount: this.unmount
   };
 
   render() {
