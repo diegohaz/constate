@@ -271,7 +271,7 @@ const onMount = ({ setState }) => {
 };
 
 const onUpdate = ({ state, setState }) => {
-  if (state.count === 10) {
+  if (state.count === 5) {
     // reset counter
     setState({ count: 0 });
   }
