@@ -252,6 +252,8 @@ const Counter = () => (
 );
 ```
 
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/40272346-be92ffb8-5b79-11e8-906f-a653e284002e.gif" alt="Example"></p>
+
 ### `onUpdate`
 
 ```js
@@ -284,6 +286,8 @@ const Counter = () => (
 );
 ```
 
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/40272385-512d74de-5b7a-11e8-85da-974e53c7887f.gif" alt="Example"></p>
+
 ### `onUnmount`
 
 ```js
@@ -308,11 +312,13 @@ const onUnmount = ({ state }) => {
 };
 
 const Counter = () => (
-  <Container initialState={initialState} onMount={onMount} onUnmount={onUnmout}>
+  <Container initialState={initialState} onMount={onMount} onUnmount={onUnmount}>
     {({ count }) => <button>{count}</button>}
   </Container>
 );
 ```
+
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/40272496-083be31c-5b7c-11e8-9e0e-5fa623495ed4.gif" alt="Example"></p>
 
 ## `Provider`
 
