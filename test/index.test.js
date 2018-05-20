@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { mount } from "enzyme";
-import { Container, Provider, Consumer } from "../src";
+import { mount as enzymeMount } from "enzyme";
+import { Container, Provider, Consumer, mount } from "../src";
 
 const increment = (amount = 1) => state => ({ count: state.count + amount });
 
-const wrap = (initialState, props, providerProps) =>
-  mount(
+const enzymeWrap = (initialState, props, providerProps) =>
+  enzymeMount(
     <Provider {...providerProps}>
       <Container initialState={initialState} {...props}>
         {state => <div state={state} />}
@@ -14,13 +14,18 @@ const wrap = (initialState, props, providerProps) =>
     </Provider>
   );
 
-const getState = (wrapper, selector = "div") =>
+const enzymeGetState = (wrapper, selector = "div") =>
   wrapper
     .update()
     .find(selector)
     .prop("state");
 
-const createTests = props => () => {
+const mountWrap = (initialState, props) =>
+  mount(p => <Container initialState={initialState} {...props} {...p} />);
+
+const mountGetState = wrapper => wrapper;
+
+const createTests = (props, getState, wrap) => () => {
   test("initialState", () => {
     const initialState = { foo: "bar" };
     const wrapper = wrap(initialState, props);
@@ -244,7 +249,7 @@ const createTests = props => () => {
         )}
       </Provider>
     );
-    const wrapper = mount(<Component />);
+    const wrapper = enzymeMount(<Component />);
     expect(onUnmount).not.toHaveBeenCalled();
     wrapper.setProps({ hide: true });
     expect(onUnmount).toHaveBeenCalledTimes(1);
@@ -266,27 +271,27 @@ describe("local", () => {
         )}
       </Provider>
     );
-    const wrapper = mount(<Component />);
+    const wrapper = enzymeMount(<Component />);
     wrapper.setProps({ hide: true });
     expect(onUnmount).toHaveBeenCalledTimes(1);
   });
 
-  createTests()();
+  createTests({}, enzymeGetState, enzymeWrap)();
 });
 
 describe("context", () => {
   test("initialState", () => {
     const initialState = { foo: { count: 0 } };
-    const wrapper = wrap(undefined, { context: "foo" }, { initialState });
-    expect(getState(wrapper)).toEqual({
+    const wrapper = enzymeWrap(undefined, { context: "foo" }, { initialState });
+    expect(enzymeGetState(wrapper)).toEqual({
       count: 0
     });
   });
 
   test("multiple initialState", () => {
     const initialState = { foo: { count: 0, foo: "bar" }, bar: {} };
-    const wrapper = wrap(undefined, { context: "foo" }, { initialState });
-    expect(getState(wrapper)).toEqual({
+    const wrapper = enzymeWrap(undefined, { context: "foo" }, { initialState });
+    expect(enzymeGetState(wrapper)).toEqual({
       count: 0,
       foo: "bar"
     });
@@ -295,7 +300,7 @@ describe("context", () => {
   test("multiple contexts", () => {
     const initialState = { foo: { count: 0 }, bar: { count: 1 } };
     const actions = { increment };
-    const wrapper = mount(
+    const wrapper = enzymeMount(
       <Provider initialState={initialState}>
         <Container context="foo" actions={actions}>
           {state => <div state={state} />}
@@ -305,28 +310,28 @@ describe("context", () => {
         </Container>
       </Provider>
     );
-    expect(getState(wrapper, "div")).toEqual({
+    expect(enzymeGetState(wrapper, "div")).toEqual({
       count: 0,
       increment: expect.any(Function)
     });
-    expect(getState(wrapper, "span")).toEqual({
+    expect(enzymeGetState(wrapper, "span")).toEqual({
       count: 1,
       increment: expect.any(Function)
     });
-    getState(wrapper, "div").increment(2);
-    expect(getState(wrapper, "div").count).toBe(2);
-    getState(wrapper, "span").increment(2);
-    expect(getState(wrapper, "span").count).toBe(3);
+    enzymeGetState(wrapper, "div").increment(2);
+    expect(enzymeGetState(wrapper, "div").count).toBe(2);
+    enzymeGetState(wrapper, "span").increment(2);
+    expect(enzymeGetState(wrapper, "span").count).toBe(3);
   });
 
   test("context initialState overrides local initialState", () => {
     const initialState = { foo: { count: 0 } };
-    const wrapper = wrap(
+    const wrapper = enzymeWrap(
       undefined,
       { context: "foo", initialState: { count: 1 } },
       { initialState }
     );
-    expect(getState(wrapper)).toEqual({
+    expect(enzymeGetState(wrapper)).toEqual({
       count: 0
     });
   });
@@ -336,7 +341,7 @@ describe("context", () => {
     const MyContainer = props => (
       <Container context="foo" onMount={onMount} {...props} />
     );
-    mount(
+    enzymeMount(
       <Provider>
         <MyContainer>{state => <div state={state} />}</MyContainer>
         <MyContainer>{state => <span state={state} />}</MyContainer>
@@ -358,7 +363,7 @@ describe("context", () => {
         {...props}
       />
     );
-    const wrapper = mount(
+    const wrapper = enzymeMount(
       <Provider>
         <MyContainer onUpdate={onUpdate1}>
           {state => <div state={state} />}
@@ -368,10 +373,10 @@ describe("context", () => {
         </MyContainer>
       </Provider>
     );
-    getState(wrapper, "div").increment();
+    enzymeGetState(wrapper, "div").increment();
     expect(onUpdate1).toHaveBeenCalledTimes(1);
     expect(onUpdate2).toHaveBeenCalledTimes(0);
-    getState(wrapper, "span").increment();
+    enzymeGetState(wrapper, "span").increment();
     expect(onUpdate1).toHaveBeenCalledTimes(1);
     expect(onUpdate2).toHaveBeenCalledTimes(1);
   });
@@ -396,7 +401,7 @@ describe("context", () => {
         )}
       </Provider>
     );
-    const wrapper = mount(<Component />);
+    const wrapper = enzymeMount(<Component />);
     expect(onUpdate).toHaveBeenCalledTimes(0);
     wrapper.setProps({ hide: true });
     expect(onUpdate).toHaveBeenCalledTimes(1);
@@ -413,7 +418,7 @@ describe("context", () => {
         {!hide2 && <MyContainer>{() => <span />}</MyContainer>}
       </Provider>
     );
-    const wrapper = mount(<Component />);
+    const wrapper = enzymeMount(<Component />);
     wrapper.setProps({ hide1: true });
     expect(onUnmount).toHaveBeenCalledTimes(0);
     wrapper.setProps({ hide2: true });
@@ -439,10 +444,10 @@ describe("context", () => {
         <Consumer>{ctx => <span state={ctx.state.foo} />}</Consumer>
       </Provider>
     );
-    const wrapper = mount(<Component />);
-    expect(getState(wrapper, "span")).toEqual({ count: 0 });
+    const wrapper = enzymeMount(<Component />);
+    expect(enzymeGetState(wrapper, "span")).toEqual({ count: 0 });
     wrapper.setProps({ hide: true });
-    expect(getState(wrapper, "span")).toEqual({ count: 10 });
+    expect(enzymeGetState(wrapper, "span")).toEqual({ count: 10 });
   });
 
   test("onUnmount setState callback", () => {
@@ -468,10 +473,10 @@ describe("context", () => {
         <Consumer>{ctx => <span state={ctx.state.foo} />}</Consumer>
       </Provider>
     );
-    const wrapper = mount(<Component />);
-    expect(getState(wrapper, "span")).toEqual({ count: 0 });
+    const wrapper = enzymeMount(<Component />);
+    expect(enzymeGetState(wrapper, "span")).toEqual({ count: 0 });
     wrapper.setProps({ hide: true });
-    expect(getState(wrapper, "span")).toEqual({ count: 111 });
+    expect(enzymeGetState(wrapper, "span")).toEqual({ count: 111 });
   });
 
   test("onUnmount delayed", () => {
@@ -494,16 +499,16 @@ describe("context", () => {
         <Consumer>{ctx => <span state={ctx.state.foo} />}</Consumer>
       </Provider>
     );
-    const wrapper = mount(<Component />);
-    expect(getState(wrapper, "span")).toEqual({ count: 0 });
+    const wrapper = enzymeMount(<Component />);
+    expect(enzymeGetState(wrapper, "span")).toEqual({ count: 0 });
     wrapper.setProps({ hide: true });
-    expect(getState(wrapper, "span")).toEqual({ count: 0 });
+    expect(enzymeGetState(wrapper, "span")).toEqual({ count: 0 });
     jest.advanceTimersByTime(1000);
-    expect(getState(wrapper, "span")).toEqual({ count: 10 });
+    expect(enzymeGetState(wrapper, "span")).toEqual({ count: 10 });
   });
 
   test("first initialState should take precedence over others", () => {
-    const wrapper = mount(
+    const wrapper = enzymeMount(
       <Provider>
         <Container initialState={{ count: 0 }} context="foo">
           {state => <div state={state} />}
@@ -513,15 +518,47 @@ describe("context", () => {
         </Container>
       </Provider>
     );
-    expect(getState(wrapper, "div")).toEqual({
+    expect(enzymeGetState(wrapper, "div")).toEqual({
       count: 0,
       foo: "bar"
     });
-    expect(getState(wrapper, "span")).toEqual({
+    expect(enzymeGetState(wrapper, "span")).toEqual({
       count: 0,
       foo: "bar"
     });
   });
 
-  createTests({ context: "foo" })();
+  createTests({ context: "foo" }, enzymeGetState, enzymeWrap)();
+});
+
+describe("mount", () => {
+  test("nested container", () => {
+    const CounterContainer = props => (
+      <Container initialState={{ count: 0 }} {...props} />
+    );
+    const IncrementableCounterContainer = props => (
+      <CounterContainer actions={{ increment }} {...props} />
+    );
+    const DecrementableIncrementableCounterContainer = () => (
+      <IncrementableCounterContainer
+        initialState={{ count: 10, foo: "bar" }}
+        actions={{ decrement: () => state => ({ count: state.count - 1 }) }}
+      />
+    );
+    const wrapper = mount(DecrementableIncrementableCounterContainer);
+    expect(wrapper).toEqual({
+      count: 10,
+      foo: "bar",
+      decrement: expect.any(Function)
+    });
+  });
+
+  test("React element", () => {
+    const wrapper = mount(
+      <Container initialState={{ count: 0 }}>{() => null}</Container>
+    );
+    expect(wrapper).toEqual({ count: 0 });
+  });
+
+  createTests({}, mountGetState, mountWrap)();
 });
