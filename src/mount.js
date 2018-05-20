@@ -1,6 +1,10 @@
 /* eslint-disable no-param-reassign, no-use-before-define, no-unused-expressions */
 import React from "react";
-import { mapSetStateToActions, mapArgumentToFunctions } from "./utils";
+import {
+  mapSetStateToActions,
+  mapArgumentToFunctions,
+  parseUpdater
+} from "./utils";
 
 const getProps = (Container, props) => {
   const getNextProps = rendered => {
@@ -39,13 +43,13 @@ const mount = Container => {
 
   const state = { ...initialState };
 
-  const setState = (fn, cb) => {
+  const setState = (updater, callback) => {
     const prevState = { ...state };
-    mapToDraft(fn(state), state);
-    if (typeof onUpdate === "function") {
+    mapToDraft(parseUpdater(updater, state), state);
+    if (onUpdate) {
       onUpdate(getArgs({ prevState }));
     }
-    cb && cb(state);
+    if (callback) callback();
   };
 
   const getArgs = additionalArgs => ({

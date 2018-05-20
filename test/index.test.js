@@ -65,6 +65,14 @@ const createTests = (props, getState, wrap) => () => {
     );
   });
 
+  test("actions without function", () => {
+    const initialState = { count: 10 };
+    const actions = { reset: () => ({ count: 0 }) };
+    const wrapper = wrap(initialState, { actions, ...props });
+    getState(wrapper).reset();
+    expect(getState(wrapper).count).toBe(0);
+  });
+
   test("selectors", () => {
     const initialState = { count: 0 };
     const selectors = {
@@ -109,6 +117,16 @@ const createTests = (props, getState, wrap) => () => {
     expect(getState(wrapper).count).toBe(2);
     jest.advanceTimersByTime(1000);
     expect(getState(wrapper).count).toBe(3);
+  });
+
+  test("effects with setState without function", () => {
+    const initialState = { count: 10 };
+    const effects = {
+      reset: () => ({ setState }) => setState({ count: 0 })
+    };
+    const wrapper = wrap(initialState, { effects, ...props });
+    getState(wrapper).reset();
+    expect(getState(wrapper).count).toBe(0);
   });
 
   test("effects with setState callback", () => {
@@ -352,7 +370,7 @@ describe("context", () => {
     expect(onMount).toHaveBeenCalledTimes(1);
   });
 
-  test("onUpdate should be called only for the first mounted container", () => {
+  test("onUpdate should be called only for the caller container", () => {
     const onUpdate1 = jest.fn();
     const onUpdate2 = jest.fn();
     const initialState = { count: 0 };
@@ -379,8 +397,8 @@ describe("context", () => {
     expect(onUpdate1).toHaveBeenCalledTimes(1);
     expect(onUpdate2).toHaveBeenCalledTimes(0);
     enzymeGetState(wrapper, "span").increment();
-    expect(onUpdate1).toHaveBeenCalledTimes(2);
-    expect(onUpdate2).toHaveBeenCalledTimes(0);
+    expect(onUpdate1).toHaveBeenCalledTimes(1);
+    expect(onUpdate2).toHaveBeenCalledTimes(1);
   });
 
   test("onUpdate should be trigerred on onUnmount", () => {

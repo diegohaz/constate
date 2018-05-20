@@ -2,7 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import Consumer from "./Consumer";
 import ContextContainer from "./ContextContainer";
-import { mapSetStateToActions, mapArgumentToFunctions } from "./utils";
+import {
+  mapSetStateToActions,
+  mapArgumentToFunctions,
+  parseUpdater
+} from "./utils";
 
 class Container extends React.Component {
   static propTypes = {
@@ -30,13 +34,6 @@ class Container extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { context, onUpdate } = this.props;
-    if (!context && onUpdate && prevState !== this.state) {
-      onUpdate(this.getArgs({ prevState }));
-    }
-  }
-
   componentWillUnmount() {
     const { context, onUnmount } = this.props;
     if (!context && onUnmount) {
@@ -50,7 +47,22 @@ class Container extends React.Component {
     ...additionalArgs
   });
 
-  handleSetState = this.setState.bind(this);
+  handleSetState = (updater, callback) => {
+    let prevState;
+
+    this.setState(
+      state => {
+        prevState = state;
+        return parseUpdater(updater, state);
+      },
+      () => {
+        if (this.props.onUpdate) {
+          this.props.onUpdate(this.getArgs({ prevState }));
+        }
+        if (callback) callback();
+      }
+    );
+  };
 
   render() {
     if (this.props.context) {

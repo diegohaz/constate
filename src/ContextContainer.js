@@ -1,27 +1,23 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { mapSetStateToActions, mapArgumentToFunctions } from "./utils";
+import {
+  mapSetStateToActions,
+  mapArgumentToFunctions,
+  parseUpdater
+} from "./utils";
 
 class ContextContainer extends React.Component {
   constructor(...args) {
     super(...args);
-    const {
-      getContextState,
-      setContextState,
-      context,
-      initialState
-    } = this.props;
-    if (!getContextState(context)) {
-      setContextState(context)(state => ({ ...initialState, ...state }));
-    }
+    const { setContextState, context, initialState } = this.props;
+    setContextState(context)(state => ({ ...initialState, ...state }));
   }
 
   componentDidMount() {
-    const { subscribe, context, onMount, onUpdate } = this.props;
+    const { subscribe, context, onMount } = this.props;
     this.unsubscribe = subscribe(
       context,
-      onMount && (() => onMount(this.getArgs())),
-      onUpdate && (prevState => onUpdate(this.getArgs({ prevState })))
+      onMount && (() => onMount(this.getArgs()))
     );
   }
 
@@ -31,12 +27,29 @@ class ContextContainer extends React.Component {
   }
 
   getArgs = additionalArgs => {
-    const { getContextState, setContextState, context } = this.props;
+    const { getContextState, context } = this.props;
     return {
       state: getContextState(context),
-      setState: setContextState(context),
+      setState: this.handleSetState,
       ...additionalArgs
     };
+  };
+
+  handleSetState = (updater, callback) => {
+    const { setContextState, context, onUpdate } = this.props;
+    const setState = setContextState(context);
+    let prevState;
+
+    setState(
+      state => {
+        prevState = state;
+        return parseUpdater(updater, state);
+      },
+      () => {
+        if (onUpdate) onUpdate(this.getArgs({ prevState }));
+        if (callback) callback();
+      }
+    );
   };
 
   render() {

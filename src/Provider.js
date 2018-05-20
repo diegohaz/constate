@@ -2,6 +2,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Context from "./Context";
+import { parseUpdater } from "./utils";
 
 class Provider extends React.Component {
   static propTypes = {
@@ -13,79 +14,41 @@ class Provider extends React.Component {
     initialState: {}
   };
 
-  componentDidUpdate(_, prevState) {
-    const contexts = Object.keys(this.updaters);
-    contexts.forEach(context => {
-      const prevContextState = this.getContextState(context, prevState);
-      const contextState = this.getContextState(context);
-      if (prevContextState && prevContextState !== contextState) {
-        const [updater] = this.updaters[context];
-        if (updater) updater(prevContextState);
-      }
-    });
-  }
-
   containers = {};
-  updaters = {};
 
-  subscribe = (context, onMount, onUpdate) => {
+  subscribe = (context, onMount) => {
     if (!this.containers[context]) {
       this.containers[context] = 0;
-      if (onMount) {
-        this.setState(null, onMount);
-      }
+      if (onMount) this.setState(null, onMount);
     }
-
     this.containers[context] += 1;
 
-    if (!this.updaters[context]) {
-      this.updaters[context] = [];
-    }
-
-    let updaterIndex = -1;
-
-    if (onUpdate) {
-      updaterIndex = this.updaters[context].length;
-      this.updaters[context].push(onUpdate);
-    }
-
     return onUnmount => {
-      if (this.containers[context] === 1 && onUnmount) {
-        onUnmount();
-      }
-
+      if (this.containers[context] === 1 && onUnmount) onUnmount();
       this.containers[context] -= 1;
-
-      if (updaterIndex !== -1) {
-        this.setState(null, () => {
-          this.updaters[context].splice(updaterIndex, 1);
-        });
-      }
     };
   };
 
   getContextState = (context, state = this.state) => state.state[context];
 
-  setContextState = context => (fn, cb) => {
-    const updater = state => ({
+  setContextState = context => (updater, callback) => {
+    const updaterFn = state => ({
       [context]: {
         ...state[context],
-        ...fn(state[context])
+        ...parseUpdater(updater, state[context])
       }
     });
-    this.handleSetState(updater, cb);
+    this.handleSetState(updaterFn, callback);
   };
 
-  handleSetState = (fn, cb) => {
-    this.setState(
-      state => ({
-        state: {
-          ...state.state,
-          ...fn(state.state)
-        }
-      }),
-      cb
-    );
+  handleSetState = (updater, callback) => {
+    const updaterFn = state => ({
+      state: {
+        ...state.state,
+        ...parseUpdater(updater, state.state)
+      }
+    });
+    this.setState(updaterFn, callback);
   };
 
   state = {
