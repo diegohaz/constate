@@ -56,7 +56,7 @@ class Container extends React.Component {
     if (this.props.context) {
       return (
         <Consumer>
-          {state => <ContextContainer {...state} {...this.props} />}
+          {props => <ContextContainer {...props} {...this.props} />}
         </Consumer>
       );
     }

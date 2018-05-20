@@ -13,14 +13,14 @@ class Provider extends React.Component {
     initialState: {}
   };
 
-  componentDidUpdate(_, prev) {
+  componentDidUpdate(_, prevState) {
     const contexts = Object.keys(this.updaters);
     contexts.forEach(context => {
-      const prevState = this.getContextState(context, prev);
-      const state = this.getContextState(context);
-      if (prevState && prevState !== state) {
+      const prevContextState = this.getContextState(context, prevState);
+      const contextState = this.getContextState(context);
+      if (prevContextState && prevContextState !== contextState) {
         const [updater] = this.updaters[context];
-        if (updater) updater(prevState);
+        if (updater) updater(prevContextState);
       }
     });
   }

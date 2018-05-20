@@ -18,7 +18,6 @@ class ContextContainer extends React.Component {
 
   componentDidMount() {
     const { subscribe, context, onMount, onUpdate } = this.props;
-
     this.unsubscribe = subscribe(
       context,
       onMount && (() => onMount(this.getArgs())),
@@ -41,24 +40,13 @@ class ContextContainer extends React.Component {
   };
 
   render() {
-    const {
-      context,
-      children,
-      actions,
-      selectors,
-      effects,
-      getContextState,
-      setContextState
-    } = this.props;
-
-    const state = getContextState(context);
-    const setState = setContextState(context);
-
+    const { children, actions, selectors, effects } = this.props;
+    const args = this.getArgs();
     return children({
-      ...state,
-      ...(actions && mapSetStateToActions(setState, actions)),
-      ...(selectors && mapArgumentToFunctions(state, selectors)),
-      ...(effects && mapArgumentToFunctions(this.getArgs(), effects))
+      ...args.state,
+      ...(actions && mapSetStateToActions(args.setState, actions)),
+      ...(selectors && mapArgumentToFunctions(args.state, selectors)),
+      ...(effects && mapArgumentToFunctions(args, effects))
     });
   }
 }
