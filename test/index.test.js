@@ -199,8 +199,10 @@ const createTests = (props, getState, wrap) => () => {
     jest.useFakeTimers();
     const initialState = { count: 0 };
     const actions = { increment };
-    const onUpdate = ({ setState }) => {
-      setTimeout(() => setState(increment(10)), 1000);
+    const onUpdate = ({ state, setState }) => {
+      if (state.count === 10) {
+        setTimeout(() => setState(increment(10)), 1000);
+      }
     };
     const wrapper = wrap(initialState, { onUpdate, actions, ...props });
     getState(wrapper).increment(10);
@@ -350,7 +352,7 @@ describe("context", () => {
     expect(onMount).toHaveBeenCalledTimes(1);
   });
 
-  test("onUpdate should be called only for the caller container", () => {
+  test("onUpdate should be called only for the first mounted container", () => {
     const onUpdate1 = jest.fn();
     const onUpdate2 = jest.fn();
     const initialState = { count: 0 };
@@ -377,8 +379,8 @@ describe("context", () => {
     expect(onUpdate1).toHaveBeenCalledTimes(1);
     expect(onUpdate2).toHaveBeenCalledTimes(0);
     enzymeGetState(wrapper, "span").increment();
-    expect(onUpdate1).toHaveBeenCalledTimes(1);
-    expect(onUpdate2).toHaveBeenCalledTimes(1);
+    expect(onUpdate1).toHaveBeenCalledTimes(2);
+    expect(onUpdate2).toHaveBeenCalledTimes(0);
   });
 
   test("onUpdate should be trigerred on onUnmount", () => {

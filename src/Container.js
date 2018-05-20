@@ -25,14 +25,21 @@ class Container extends React.Component {
 
   componentDidMount() {
     const { context, onMount } = this.props;
-    if (!context && typeof onMount === "function") {
+    if (!context && onMount) {
       onMount(this.getArgs());
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { context, onUpdate } = this.props;
+    if (!context && onUpdate && prevState !== this.state) {
+      onUpdate(this.getArgs({ prevState }));
     }
   }
 
   componentWillUnmount() {
     const { context, onUnmount } = this.props;
-    if (!context && typeof onUnmount === "function") {
+    if (!context && onUnmount) {
       onUnmount(this.getArgs({ setState: () => {} }));
     }
   }
@@ -43,16 +50,7 @@ class Container extends React.Component {
     ...additionalArgs
   });
 
-  handleSetState = (fn, cb) => {
-    const prevState = this.state;
-
-    this.setState(fn, () => {
-      if (typeof this.props.onUpdate === "function") {
-        this.props.onUpdate(this.getArgs({ prevState }));
-      }
-      if (cb) cb();
-    });
-  };
+  handleSetState = this.setState.bind(this);
 
   render() {
     if (this.props.context) {

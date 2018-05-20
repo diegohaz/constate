@@ -5,66 +5,59 @@ import { mapSetStateToActions, mapArgumentToFunctions } from "./utils";
 class ContextContainer extends React.Component {
   constructor(...args) {
     super(...args);
-    const { state, context } = this.props;
-    if (!state[context]) {
-      this.handleSetState(this.getState, undefined, false);
+    const {
+      getContextState,
+      setContextState,
+      context,
+      initialState
+    } = this.props;
+    if (!getContextState(context)) {
+      setContextState(context)(state => ({ ...initialState, ...state }));
     }
   }
 
   componentDidMount() {
-    const { context, onMount, getMounted, mount } = this.props;
-    if (!getMounted(context) && typeof onMount === "function") {
-      onMount(this.getArgs());
-    }
-    mount(context);
+    const { subscribe, context, onMount, onUpdate } = this.props;
+
+    this.unsubscribe = subscribe(
+      context,
+      onMount && (() => onMount(this.getArgs())),
+      onUpdate && (prevState => onUpdate(this.getArgs({ prevState })))
+    );
   }
 
   componentWillUnmount() {
-    const { getMounted, unmount, context, onUnmount } = this.props;
-    if (getMounted(context) === 1 && typeof onUnmount === "function") {
-      onUnmount(this.getArgs());
-    }
-    unmount(context);
+    const { onUnmount } = this.props;
+    this.unsubscribe(onUnmount && (() => onUnmount(this.getArgs())));
   }
 
-  getArgs = additionalArgs => ({
-    state: this.getState(),
-    setState: this.handleSetState,
-    ...additionalArgs
-  });
-
-  getState = (state = this.props.state[this.props.context]) => ({
-    ...this.props.initialState,
-    ...state
-  });
-
-  handleSetState = (fn, cb, emitUpdate = true) => {
-    const { context, onUpdate, setState } = this.props;
-    const prevState = this.getState();
-
-    const updater = state => ({
-      [context]: {
-        ...this.getState(state[context]),
-        ...fn(this.getState(state[context]))
-      }
-    });
-
-    const callback = () => {
-      if (emitUpdate && typeof onUpdate === "function") {
-        onUpdate(this.getArgs({ prevState }));
-      }
-      if (cb) cb();
+  getArgs = additionalArgs => {
+    const { getContextState, setContextState, context } = this.props;
+    return {
+      state: getContextState(context),
+      setState: setContextState(context),
+      ...additionalArgs
     };
-
-    setState(updater, callback);
   };
 
   render() {
-    const { children, actions, selectors, effects } = this.props;
+    const {
+      context,
+      children,
+      actions,
+      selectors,
+      effects,
+      getContextState,
+      setContextState
+    } = this.props;
+
+    const state = getContextState(context);
+    const setState = setContextState(context);
+
     return children({
-      ...this.getState(),
-      ...(actions && mapSetStateToActions(this.handleSetState, actions)),
-      ...(selectors && mapArgumentToFunctions(this.getState(), selectors)),
+      ...state,
+      ...(actions && mapSetStateToActions(setState, actions)),
+      ...(selectors && mapArgumentToFunctions(state, selectors)),
       ...(effects && mapArgumentToFunctions(this.getArgs(), effects))
     });
   }
