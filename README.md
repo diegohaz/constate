@@ -56,6 +56,7 @@ const Counter = () => (
   - [`onUnmount`](#onUnmount)
 - [`Provider`](#provider)
   - [`initialState`](#initialstate-1)
+- [`mount`](#mount)
 - [Composing](#composing)
 - [Testing](#testing)
 
@@ -344,6 +345,34 @@ This way, all `Container`s with `context="counter1"` will start with `{ count: 1
 
 > Note: when using [`context`](#context), only the `initialState` of the first `Container` in the tree will be considered. `Provider` will always take precedence over `Container`.
 
+## `mount`
+
+```js
+type Mount = (Container: Function | ReactElement) => Object;
+```
+
+> Note: this is an experimental feature
+
+With `mount`, you can have a stateful object representing the `Container`:
+
+```jsx
+import { Container, mount } from "constate";
+
+const CounterContainer = props => (
+  <Container
+    initialState={{ count: 0 }}
+    actions={{ increment: () => state => ({ count: state.count + 1 }) }}
+    {...props}
+  />
+);
+
+const state = mount(CounterContainer);
+
+console.log(state.count); // 0
+state.increment();
+console.log(state.count); // 1
+```
+
 ## Composing
 
 Since `Container` is just a React component, you can create `Container`s that accepts new properties, making them really composable. 
@@ -386,46 +415,57 @@ const CounterButton = () => (
 
 ## Testing
 
-[`actions`](#actions) and [`selectors`](#selectors) are pure functions. Testing is pretty straightfoward:
-
+[`actions`](#actions) and [`selectors`](#selectors) are pure functions and you can test them directly:
 ```js
-import { initialState, actions, selectors } from "./CounterContainer";
-
-test("initialState", () => {
-  expect(initialState).toEqual({ count: 0 });
+test("increment", () => {
+  expect(increment(1)({ count: 0 })).toEqual({ count: 1 });
+  expect(increment(-1)({ count: 1 })).toEqual({ count: 0 });
 });
 
-test("actions", () => {
-  expect(actions.increment(1)({ count: 0 })).toEqual({ count: 1 });
-  expect(actions.increment(-1)({ count: 1 })).toEqual({ count: 0 });
-});
-
-test("selectors", () => {
-  expect(selectors.getParity()({ count: 0 })).toBe("even");
-  expect(selectors.getParity()({ count: 1 })).toBe("odd");
+test("getParity", () => {
+  expect(getParity()({ count: 0 })).toBe("even");
+  expect(getParity()({ count: 1 })).toBe("odd");
 });
 ```
 
-Testing [`effects`](#effects) and lifecycle methods can be a little tricky depending on how you implement them. This is how we can test our `tick` effect with [Jest](https://facebook.github.io/jest):
+On the other hand, [`effects`](#effects) and lifecycle methods can be a little tricky to test depending on how you implement them.
+
+You can also use [`mount`](#mount) to create integration tests. This is how we can test our `CounterContainer` with its [`tick effect`](#effects):
 
 ```jsx
-import { effects } from "./CounterContainer";
+import { mount } from "constate";
+import CounterContainer from "./CounterContainer";
+
+test("initialState", () => {
+  const state = mount(CounterContainer);
+  expect(state.count).toBe(0);
+});
+
+test("increment", () => {
+  const state = mount(CounterContainer);
+  expect(state.count).toBe(0);
+  state.increment(1);
+  expect(state.count).toBe(1);
+  state.increment(-1);
+  expect(state.count).toBe(0);
+});
+
+test("getParity", () => {
+  const state = mount(<CounterContainer initialState={{ count: 1 }} />);
+  expect(state.getParity()).toBe("odd");
+});
 
 test("tick", () => {
   jest.useFakeTimers();
-
-  let state = { count: 0 };
-  const setState = fn => {
-    state = fn(state);
-  };
-
-  effects.tick()({ state, setState });
+  const state = mount(CounterContainer);
+  
+  state.tick();
 
   jest.advanceTimersByTime(1000);
-  expect(state).toEqual({ count: 1 });
+  expect(state.count).toBe(1);
 
   jest.advanceTimersByTime(1000);
-  expect(state).toEqual({ count: 2 });
+  expect(state.count).toBe(2);
 });
 ```
 
