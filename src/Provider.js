@@ -16,7 +16,7 @@ class Provider extends React.Component {
 
   containers = {};
 
-  subscribe = (context, onMount) => {
+  mount = (context, onMount) => {
     if (!this.containers[context]) {
       this.containers[context] = 0;
       if (onMount) this.setState(null, onMount);
@@ -54,7 +54,7 @@ class Provider extends React.Component {
   state = {
     state: this.props.initialState,
     setState: this.handleSetState,
-    subscribe: this.subscribe,
+    mount: this.mount,
     getContextState: this.getContextState,
     setContextState: this.setContextState
   };

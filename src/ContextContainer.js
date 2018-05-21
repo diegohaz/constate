@@ -14,16 +14,13 @@ class ContextContainer extends React.Component {
   }
 
   componentDidMount() {
-    const { subscribe, context, onMount } = this.props;
-    this.unsubscribe = subscribe(
-      context,
-      onMount && (() => onMount(this.getArgs()))
-    );
+    const { mount, context, onMount } = this.props;
+    this.unmount = mount(context, onMount && (() => onMount(this.getArgs())));
   }
 
   componentWillUnmount() {
     const { onUnmount } = this.props;
-    this.unsubscribe(onUnmount && (() => onUnmount(this.getArgs())));
+    this.unmount(onUnmount && (() => onUnmount(this.getArgs())));
   }
 
   getArgs = additionalArgs => {
