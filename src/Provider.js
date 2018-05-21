@@ -2,6 +2,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Context from "./Context";
+import { parseUpdater } from "./utils";
 
 class Provider extends React.Component {
   static propTypes = {
@@ -13,36 +14,49 @@ class Provider extends React.Component {
     initialState: {}
   };
 
-  mounted = {};
+  containers = {};
 
-  getMounted = context => this.mounted[context] || 0;
+  mount = (context, onMount) => {
+    if (!this.containers[context]) {
+      this.containers[context] = 0;
+      if (onMount) this.setState(null, onMount);
+    }
+    this.containers[context] += 1;
 
-  mount = context => {
-    this.mounted[context] = this.getMounted(context) + 1;
+    return onUnmount => {
+      if (this.containers[context] === 1 && onUnmount) onUnmount();
+      this.containers[context] -= 1;
+    };
   };
 
-  unmount = context => {
-    this.mounted[context] = this.getMounted(context) - 1;
+  getContextState = (context, state = this.state) => state.state[context];
+
+  setContextState = context => (updater, callback) => {
+    const updaterFn = state => ({
+      [context]: {
+        ...state[context],
+        ...parseUpdater(updater, state[context])
+      }
+    });
+    this.handleSetState(updaterFn, callback);
   };
 
-  handleSetState = (fn, cb) => {
-    this.setState(
-      state => ({
-        state: {
-          ...state.state,
-          ...fn(state.state)
-        }
-      }),
-      cb
-    );
+  handleSetState = (updater, callback) => {
+    const updaterFn = state => ({
+      state: {
+        ...state.state,
+        ...parseUpdater(updater, state.state)
+      }
+    });
+    this.setState(updaterFn, callback);
   };
 
   state = {
     state: this.props.initialState,
     setState: this.handleSetState,
-    getMounted: this.getMounted,
     mount: this.mount,
-    unmount: this.unmount
+    getContextState: this.getContextState,
+    setContextState: this.setContextState
   };
 
   render() {

@@ -12,3 +12,6 @@ export const mapSetStateToActions = (setState, actionsMap) =>
 
 export const mapArgumentToFunctions = (argument, fnMap) =>
   mapWith(fnMap, fn => (...args) => fn(...args)(argument));
+
+export const parseUpdater = (updater, state) =>
+  typeof updater === "function" ? updater(state) : updater;

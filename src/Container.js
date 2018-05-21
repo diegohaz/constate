@@ -2,7 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import Consumer from "./Consumer";
 import ContextContainer from "./ContextContainer";
-import { mapSetStateToActions, mapArgumentToFunctions } from "./utils";
+import {
+  mapSetStateToActions,
+  mapArgumentToFunctions,
+  parseUpdater
+} from "./utils";
 
 class Container extends React.Component {
   static propTypes = {
@@ -25,14 +29,14 @@ class Container extends React.Component {
 
   componentDidMount() {
     const { context, onMount } = this.props;
-    if (!context && typeof onMount === "function") {
+    if (!context && onMount) {
       onMount(this.getArgs());
     }
   }
 
   componentWillUnmount() {
     const { context, onUnmount } = this.props;
-    if (!context && typeof onUnmount === "function") {
+    if (!context && onUnmount) {
       onUnmount(this.getArgs({ setState: () => {} }));
     }
   }
@@ -43,22 +47,28 @@ class Container extends React.Component {
     ...additionalArgs
   });
 
-  handleSetState = (fn, cb) => {
-    const prevState = this.state;
+  handleSetState = (updater, callback) => {
+    let prevState;
 
-    this.setState(fn, () => {
-      if (typeof this.props.onUpdate === "function") {
-        this.props.onUpdate(this.getArgs({ prevState }));
+    this.setState(
+      state => {
+        prevState = state;
+        return parseUpdater(updater, state);
+      },
+      () => {
+        if (this.props.onUpdate) {
+          this.props.onUpdate(this.getArgs({ prevState }));
+        }
+        if (callback) callback();
       }
-      if (cb) cb();
-    });
+    );
   };
 
   render() {
     if (this.props.context) {
       return (
         <Consumer>
-          {state => <ContextContainer {...state} {...this.props} />}
+          {props => <ContextContainer {...props} {...this.props} />}
         </Consumer>
       );
     }

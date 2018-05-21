@@ -65,6 +65,14 @@ const createTests = (props, getState, wrap) => () => {
     );
   });
 
+  test("actions without function", () => {
+    const initialState = { count: 10 };
+    const actions = { reset: () => ({ count: 0 }) };
+    const wrapper = wrap(initialState, { actions, ...props });
+    getState(wrapper).reset();
+    expect(getState(wrapper).count).toBe(0);
+  });
+
   test("selectors", () => {
     const initialState = { count: 0 };
     const selectors = {
@@ -109,6 +117,16 @@ const createTests = (props, getState, wrap) => () => {
     expect(getState(wrapper).count).toBe(2);
     jest.advanceTimersByTime(1000);
     expect(getState(wrapper).count).toBe(3);
+  });
+
+  test("effects with setState without function", () => {
+    const initialState = { count: 10 };
+    const effects = {
+      reset: () => ({ setState }) => setState({ count: 0 })
+    };
+    const wrapper = wrap(initialState, { effects, ...props });
+    getState(wrapper).reset();
+    expect(getState(wrapper).count).toBe(0);
   });
 
   test("effects with setState callback", () => {
@@ -199,8 +217,10 @@ const createTests = (props, getState, wrap) => () => {
     jest.useFakeTimers();
     const initialState = { count: 0 };
     const actions = { increment };
-    const onUpdate = ({ setState }) => {
-      setTimeout(() => setState(increment(10)), 1000);
+    const onUpdate = ({ state, setState }) => {
+      if (state.count === 10) {
+        setTimeout(() => setState(increment(10)), 1000);
+      }
     };
     const wrapper = wrap(initialState, { onUpdate, actions, ...props });
     getState(wrapper).increment(10);
