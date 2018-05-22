@@ -96,7 +96,7 @@ const Counter = () => (
 
 ```js
 type Actions = {
-  [string]: () => (state: Object) => Object
+  [string]: () => ((state: Object) => Object) | Object
 };
 ```
 
@@ -106,7 +106,7 @@ An action is a method that returns an `updater` function, which will be, interna
 const initialState = { count: 0 };
 
 const actions = {
-  increment: amount => state => ({ state.count + amount })
+  increment: amount => state => ({ count: state.count + amount })
 };
 
 const Counter = () => (
@@ -116,6 +116,12 @@ const Counter = () => (
     )}
   </Container>
 );
+```
+
+You can also return the object directly if you don't need `state`:
+
+```js
+const setCount = count => ({ count })
 ```
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095434-ba7c42c2-4616-11e8-9836-f46ea572c170.gif" alt="Example"></p>
@@ -134,7 +140,7 @@ A selector is a method that returns a function, which receives the current state
 const initialState = { count: 0 };
 
 const actions = {
-  increment: amount => state => ({ state.count + amount })
+  increment: amount => state => ({ count: state.count + amount })
 };
 
 const selectors = {
