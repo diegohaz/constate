@@ -10,6 +10,7 @@
     "browser": true
   },
   "rules": {
+    "react/prop-types": "off",
     "import/no-extraneous-dependencies": "off",
     "react/forbid-prop-types": "off",
     "react/jsx-filename-extension": "off",

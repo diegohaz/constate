@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React from "react";
 import { mount as enzymeMount } from "enzyme";
 import { Container, Provider, Consumer, mount } from "../src";

@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import Consumer from "./Consumer";
 import ContextContainer from "./ContextContainer";
 import {
@@ -9,18 +8,6 @@ import {
 } from "./utils";
 
 class Container extends React.Component {
-  static propTypes = {
-    children: PropTypes.func.isRequired,
-    initialState: PropTypes.object,
-    actions: PropTypes.objectOf(PropTypes.func),
-    selectors: PropTypes.objectOf(PropTypes.func),
-    effects: PropTypes.objectOf(PropTypes.func),
-    context: PropTypes.string,
-    onMount: PropTypes.func,
-    onUpdate: PropTypes.func,
-    onUnmount: PropTypes.func
-  };
-
   static defaultProps = {
     initialState: {}
   };

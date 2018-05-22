@@ -1,15 +1,9 @@
 /* eslint-disable react/sort-comp, react/no-unused-state */
 import React from "react";
-import PropTypes from "prop-types";
 import Context from "./Context";
 import { parseUpdater } from "./utils";
 
 class Provider extends React.Component {
-  static propTypes = {
-    children: PropTypes.node,
-    initialState: PropTypes.object
-  };
-
   static defaultProps = {
     initialState: {}
   };
