@@ -118,13 +118,13 @@ const Counter = () => (
 );
 ```
 
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095434-ba7c42c2-4616-11e8-9836-f46ea572c170.gif" alt="Example"></p>
+
 You can also return the object directly if you don't need `state`:
 
 ```js
 const setCount = count => ({ count })
 ```
-
-<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095434-ba7c42c2-4616-11e8-9836-f46ea572c170.gif" alt="Example"></p>
 
 ### `selectors`
 
