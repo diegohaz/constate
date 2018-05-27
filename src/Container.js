@@ -17,7 +17,7 @@ class Container extends React.Component {
   componentDidMount() {
     const { context, onMount } = this.props;
     if (!context && onMount) {
-      onMount(this.getArgs());
+      onMount(this.getArgs({}, "onMount"));
     }
   }
 
@@ -28,13 +28,13 @@ class Container extends React.Component {
     }
   }
 
-  getArgs = additionalArgs => ({
+  getArgs = (additionalArgs, setStateType) => ({
     state: this.state,
-    setState: this.handleSetState,
+    setState: (u, c) => this.handleSetState(u, c, setStateType),
     ...additionalArgs
   });
 
-  handleSetState = (updater, callback) => {
+  handleSetState = (updater, callback, type) => {
     let prevState;
 
     this.setState(
@@ -44,7 +44,7 @@ class Container extends React.Component {
       },
       () => {
         if (this.props.onUpdate) {
-          this.props.onUpdate(this.getArgs({ prevState }));
+          this.props.onUpdate(this.getArgs({ prevState, type }, "onUpdate"));
         }
         if (callback) callback();
       }
@@ -66,7 +66,7 @@ class Container extends React.Component {
       ...this.state,
       ...(actions && mapSetStateToActions(this.handleSetState, actions)),
       ...(selectors && mapArgumentToFunctions(this.state, selectors)),
-      ...(effects && mapArgumentToFunctions(this.getArgs(), effects))
+      ...(effects && mapArgumentToFunctions(this.getArgs, effects))
     });
   }
 }

@@ -253,6 +253,64 @@ const createTests = (props, getState, wrap) => () => {
     expect(getState(wrapper).count).toBe(30);
   });
 
+  test("onUpdate action type", () => {
+    const initialState = { count: 0 };
+    const actions = { increment };
+    const onUpdate = jest.fn();
+    const wrapper = wrap(initialState, { onUpdate, actions, ...props });
+    getState(wrapper).increment(10);
+    expect(onUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "increment"
+      })
+    );
+  });
+
+  test("onUpdate effect type", () => {
+    const initialState = { count: 0 };
+    const effects = {
+      increment: amount => ({ setState }) =>
+        setState(state => ({ count: state.count + amount }))
+    };
+    const onUpdate = jest.fn();
+    const wrapper = wrap(initialState, { onUpdate, effects, ...props });
+    getState(wrapper).increment(10);
+    expect(onUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "increment"
+      })
+    );
+  });
+
+  test("onUpdate onMount type", () => {
+    const initialState = { count: 0 };
+    const onMount = ({ setState }) => {
+      setState(increment(10));
+    };
+    const onUpdate = jest.fn();
+    wrap(initialState, { onUpdate, onMount, ...props });
+    expect(onUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "onMount" })
+    );
+  });
+
+  test("onUpdate onUpdate type", () => {
+    const initialState = { count: 0 };
+    const actions = { increment };
+    const onUpdate = jest.fn(({ state, setState }) => {
+      if (state.count <= 20) {
+        setState(increment(10));
+      }
+    });
+    const wrapper = wrap(initialState, { onUpdate, actions, ...props });
+    getState(wrapper).increment(10);
+    expect(onUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "onUpdate"
+      })
+    );
+  });
+
   test("onUnmount", () => {
     const initialState = { count: 0 };
     const onUnmount = jest.fn(({ state, setState }) => {
@@ -424,6 +482,35 @@ describe("context", () => {
     expect(onUpdate).toHaveBeenCalledTimes(0);
     wrapper.setProps({ hide: true });
     expect(onUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  test("onUpdate onUnmount type", () => {
+    const initialState = { count: 0 };
+    const onUpdate = jest.fn();
+    const onUnmount = ({ setState }) => {
+      setState(increment(10));
+    };
+    const Component = ({ hide }) => (
+      <Provider>
+        {!hide && (
+          <Container
+            context="foo"
+            onUpdate={onUpdate}
+            onUnmount={onUnmount}
+            initialState={initialState}
+          >
+            {() => <div />}
+          </Container>
+        )}
+      </Provider>
+    );
+    const wrapper = enzymeMount(<Component />);
+    wrapper.setProps({ hide: true });
+    expect(onUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "onUnmount"
+      })
+    );
   });
 
   test("onUnmount should be called only for the last unmounted container", () => {
