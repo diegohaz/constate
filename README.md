@@ -265,10 +265,17 @@ const Counter = () => (
 ### `onUpdate`
 
 ```js
-type OnUpdate = ({ prevState: Object, state: Object, setState: Function }) => void;
+type OnUpdate = ({ 
+  prevState: Object, 
+  state: Object, 
+  setState: Function,
+  type: string
+}) => void;
 ```
 
 This is a function called every time `setState` is called, either internally with [`actions`](#actions) or directly with [`effects`](#effects) and lifecycle methods, including `onUpdate` itself.
+
+Besides `prevState`, `state` and `setState`, it receives a `type` property, which can be either the name of the `action`, `effect` or one of the lifecycle methods that triggered it, including `onUpdate` itself.
 
 > Note: when using [`context`](#context), `onUpdate` will be triggered only once per `setState` call no matter how many `Container`s of the same context you have mounted.
 
@@ -280,8 +287,8 @@ const onMount = ({ setState }) => {
   setInterval(fn, 1000);
 };
 
-const onUpdate = ({ state, setState }) => {
-  if (state.count === 5) {
+const onUpdate = ({ state, setState, type }) => {
+  if (type === "onMount" && state.count === 5) {
     // reset counter
     setState({ count: 0 });
   }
