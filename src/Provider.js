@@ -16,7 +16,7 @@ class Provider extends React.Component {
 
   componentWillUnmount() {
     if (this.props.onUnmount) {
-      const { setState, setContextState, ...args } = this.getArgs();
+      const { setContextState, ...args } = this.getArgs();
       this.props.onUnmount(args);
     }
   }
@@ -38,7 +38,7 @@ class Provider extends React.Component {
 
   getContextState = context => this.state.state[context];
 
-  setContextState = context => (updater, callback, type) => {
+  setContextState = (context, updater, callback, type) => {
     const updaterFn = state => ({
       [context]: {
         ...state[context],
@@ -80,12 +80,10 @@ class Provider extends React.Component {
   };
 
   getArgs = (additionalArgs, setStateType) => {
-    const { state, setState, setContextState } = this.state;
+    const { state, setContextState } = this.state;
     return {
       state,
-      setState: (u, c) => setState(u, c, setStateType),
-      setContextState: ctx => (u, c) =>
-        setContextState(ctx)(u, c, setStateType),
+      setContextState: (ctx, u, c) => setContextState(ctx, u, c, setStateType),
       ...additionalArgs
     };
   };
