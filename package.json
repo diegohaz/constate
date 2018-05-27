@@ -42,7 +42,7 @@
   },
   "jest": {
     "setupFiles": [
-      "<rootDir>/test/setup.js"
+      "<rootDir>/test/testSetup.js"
     ],
     "snapshotSerializers": [
       "enzyme-to-json/serializer",
