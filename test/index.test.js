@@ -413,6 +413,67 @@ describe("context", () => {
     });
   });
 
+  test("Provider onMount", () => {
+    const initialState = { counter1: { count: 0 } };
+    const onMount = jest.fn(({ state, setContextState }) => {
+      expect(state).toEqual(initialState);
+      setContextState("counter1", { count: 10 });
+    });
+    const wrapper = enzymeWrap(
+      undefined,
+      { context: "counter1" },
+      { initialState, onMount }
+    );
+    expect(onMount).toHaveBeenCalledTimes(1);
+    expect(enzymeGetState(wrapper)).toEqual({ count: 10 });
+  });
+
+  test("Provider onUpdate", () => {
+    expect.assertions(7);
+    const initialState = { count: 0 };
+    const actions = { increment };
+    const onUpdate = jest.fn(
+      ({ state, prevState, setContextState, context, type }) => {
+        if (context === "counter1" && type === "initialState") {
+          expect(prevState).toEqual({});
+          expect(state).toEqual({ counter1: { count: 0 } });
+        } else if (context === "counter1" && type === "increment") {
+          expect(state).toEqual({ counter1: { count: 1 } });
+          expect(state[context]).toEqual({ count: 1 });
+          setContextState("foo", { bar: 1 });
+        } else if (type === "onUpdate") {
+          expect(state).toEqual({ counter1: { count: 1 }, foo: { bar: 1 } });
+        }
+      }
+    );
+    const wrapper = enzymeWrap(
+      initialState,
+      { context: "counter1", actions },
+      { onUpdate }
+    );
+    enzymeGetState(wrapper).increment(1);
+    expect(onUpdate).toHaveBeenCalledTimes(3);
+    expect(enzymeGetState(wrapper).count).toBe(1);
+  });
+
+  test("Provider onUnmount", () => {
+    const initialState = { counter1: { count: 0 } };
+    const onUnmount = jest.fn();
+    const Component = ({ hide }) =>
+      hide ? null : (
+        <Provider initialState={initialState} onUnmount={onUnmount}>
+          <div />
+        </Provider>
+      );
+    const wrapper = enzymeMount(<Component />);
+    expect(onUnmount).toHaveBeenCalledTimes(0);
+    wrapper.setProps({ hide: true });
+    expect(onUnmount).toHaveBeenCalledTimes(1);
+    expect(onUnmount).toHaveBeenCalledWith({
+      state: { counter1: { count: 0 } }
+    });
+  });
+
   test("only the first onMount should be called", () => {
     const onMount = jest.fn();
     const MyContainer = props => (

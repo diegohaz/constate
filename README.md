@@ -57,6 +57,9 @@ const Counter = () => (
   - [`onUnmount`](#onunmount)
 - [`Provider`](#provider)
   - [`initialState`](#initialstate-1)
+  - [`onMount`](#onmount-1)
+  - [`onUpdate`](#onupdate-1)
+  - [`onUnmount`](#onunmount-1)
 - [`mount`](#mount)
 - [Composing](#composing)
 - [Testing](#testing)
@@ -337,7 +340,13 @@ const Counter = () => (
 
 ## `Provider`
 
+You should wrap your app with `Provider` if you want to use [`context`](#context).
+
 ### `initialState`
+
+```js
+type InitialState = Object;
+```
 
 It's possible to pass initialState to Provider:
 
@@ -358,6 +367,105 @@ const App = () => (
 This way, all `Container`s with `context="counter1"` will start with `{ count: 10 }`.
 
 > Note: when using [`context`](#context), only the `initialState` of the first `Container` in the tree will be considered. `Provider` will always take precedence over `Container`.
+
+### `onMount`
+
+```js
+type OnMount = ({ state: Object, setContextState: Function }) => void;
+```
+
+As well as with `Container`, you can pass an `onMount` prop to `Provider`. The function will be called when `Provider`'s `componentDidMount` gets called.
+
+```jsx
+const onMount = ({ setContextState }) => {
+  setContextState("counter1", { count: 0 });
+};
+
+const MyProvider = props => (
+  <Provider onMount={onMount} {...props} />
+);
+
+const App = () => (
+  <MyProvider>
+    ...
+  </MyProvider>
+);
+```
+
+### `onUpdate`
+
+```js
+type OnUpdate = ({ 
+  prevState: Object,
+  state: Object,
+  setContextState: Function,
+  context: string,
+  type: string
+}) => void;
+```
+
+`onUpdate` will be called every time `Provider`'s `setState` gets called. If `setContextState` was called instead, `onUpdate` will also receive a `context` prop.
+
+`Container`s, when the `context` prop is defined, use `setContextState` internally, which means that `Provider`'s `onUpdate` will be triggered for every change on the context.
+
+```jsx
+const initialState = { counter1: { incrementCalls: 0 } };
+
+const onUpdate = ({ context, type, setContextState }) => {
+  if (type === "increment") {
+    setContextState(context, state => ({
+      incrementCalls: state.incrementCalls + 1
+    }));
+  }
+};
+
+const MyProvider = props => (
+  <Provider initialState={initialState} onUpdate={onUpdate} {...props} />
+);
+
+const CounterContainer = props => (
+  <Container
+    initialState={{ count: 0 }}
+    actions={{ increment: () => state => ({ count: state.count + 2 }) }}
+    {...props}
+  />
+);
+
+const Counter = () => (
+  <MyProvider>
+    <CounterContainer context="counter1">
+      {({ count, incrementCalls, increment }) => (
+        <button onClick={increment}>
+          count: {count}<br />
+          incrementCalls: {incrementCalls}
+        </button>
+      )}
+    </CounterContainer>
+  </MyProvider>
+);
+```
+
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/40588505-8e10891e-61b4-11e8-81ae-c947220ae4d2.gif" alt="Example"></p>
+
+### `onUnmount`
+
+```js
+type OnUnmount => ({ state: Object }) => void;
+```
+
+`onUnmount` will be triggered in `Provider`'s `componentWillUnmount`.
+
+```jsx
+const onUnmount = ({ state }) => {
+  console.log(state);
+};
+
+const App = () => (
+  <Provider onUnmount={onUnmount}>
+    ...
+  </Provider>
+);
+```
 
 ## `mount`
 

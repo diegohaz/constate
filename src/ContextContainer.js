@@ -9,7 +9,12 @@ class ContextContainer extends React.Component {
   constructor(...args) {
     super(...args);
     const { setContextState, context, initialState } = this.props;
-    setContextState(context)(state => ({ ...initialState, ...state }));
+    setContextState(
+      context,
+      state => ({ ...initialState, ...state }),
+      undefined,
+      "initialState"
+    );
   }
 
   componentDidMount() {
@@ -36,7 +41,7 @@ class ContextContainer extends React.Component {
 
   handleSetState = (updater, callback, type) => {
     const { setContextState, context, onUpdate } = this.props;
-    const setState = setContextState(context);
+    const setState = (...args) => setContextState(context, ...args);
     let prevState;
 
     setState(
@@ -47,7 +52,8 @@ class ContextContainer extends React.Component {
       () => {
         if (onUpdate) onUpdate(this.getArgs({ prevState, type }, "onUpdate"));
         if (callback) callback();
-      }
+      },
+      type
     );
   };
 

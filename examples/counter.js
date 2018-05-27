@@ -1,4 +1,5 @@
 import React from "react";
+import { Block, Button } from "reas";
 import { Provider, Container } from "../src";
 
 const CounterContainer = props => (
@@ -13,13 +14,13 @@ const CounterContainer = props => (
 
 const CounterValue = () => (
   <CounterContainer context="counter1">
-    {({ count }) => <div>{count}</div>}
+    {({ count }) => <Block>{count}</Block>}
   </CounterContainer>
 );
 
 const CounterButton = () => (
   <CounterContainer context="counter1">
-    {({ increment }) => <button onClick={() => increment(1)}>Increment</button>}
+    {({ increment }) => <Button onClick={() => increment(1)}>Increment</Button>}
   </CounterContainer>
 );
 

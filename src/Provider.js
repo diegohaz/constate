@@ -8,6 +8,19 @@ class Provider extends React.Component {
     initialState: {}
   };
 
+  componentDidMount() {
+    if (this.props.onMount) {
+      this.props.onMount(this.getArgs({}, "onMount"));
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.props.onUnmount) {
+      const { setContextState, ...args } = this.getArgs();
+      this.props.onUnmount(args);
+    }
+  }
+
   containers = {};
 
   mount = (context, onMount) => {
@@ -23,26 +36,39 @@ class Provider extends React.Component {
     };
   };
 
-  getContextState = (context, state = this.state) => state.state[context];
+  getContextState = context => this.state.state[context];
 
-  setContextState = context => (updater, callback) => {
+  setContextState = (context, updater, callback, type) => {
     const updaterFn = state => ({
       [context]: {
         ...state[context],
         ...parseUpdater(updater, state[context])
       }
     });
-    this.handleSetState(updaterFn, callback);
+    this.handleSetState(updaterFn, callback, type, context);
   };
 
-  handleSetState = (updater, callback) => {
-    const updaterFn = state => ({
-      state: {
-        ...state.state,
-        ...parseUpdater(updater, state.state)
+  handleSetState = (updater, callback, type, context) => {
+    let prevState;
+
+    this.setState(
+      state => {
+        prevState = state.state;
+        return {
+          state: {
+            ...state.state,
+            ...parseUpdater(updater, state.state)
+          }
+        };
+      },
+      () => {
+        if (this.props.onUpdate) {
+          const args = this.getArgs({ prevState, context, type }, "onUpdate");
+          this.props.onUpdate(args);
+        }
+        if (callback) callback();
       }
-    });
-    this.setState(updaterFn, callback);
+    );
   };
 
   state = {
@@ -51,6 +77,15 @@ class Provider extends React.Component {
     mount: this.mount,
     getContextState: this.getContextState,
     setContextState: this.setContextState
+  };
+
+  getArgs = (additionalArgs, setStateType) => {
+    const { state, setContextState } = this.state;
+    return {
+      state,
+      setContextState: (ctx, u, c) => setContextState(ctx, u, c, setStateType),
+      ...additionalArgs
+    };
   };
 
   render() {

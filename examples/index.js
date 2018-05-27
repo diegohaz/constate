@@ -1,19 +1,26 @@
 import React from "react";
 import { render } from "react-dom";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Block, Link, List, Divider } from "reas";
+import {
+  BrowserRouter as Router,
+  Route,
+  Link as RouterLink
+} from "react-router-dom";
 import Counter from "./counter";
 
 const App = () => (
   <Router>
-    <div>
-      <ul>
-        <li>
-          <Link to="/counter">Counter</Link>
-        </li>
-      </ul>
-      <hr />
+    <Block fontFamily="sans-serif">
+      <List>
+        <List.Item>
+          <Link as={RouterLink} to="/counter">
+            Counter
+          </Link>
+        </List.Item>
+      </List>
+      <Divider />
       <Route path="/counter" component={Counter} />
-    </div>
+    </Block>
   </Router>
 );
 
