@@ -9,7 +9,11 @@ class ContextContainer extends React.Component {
   constructor(...args) {
     super(...args);
     const { setContextState, context, initialState } = this.props;
-    setContextState(context)(state => ({ ...initialState, ...state }));
+    setContextState(context)(
+      state => ({ ...initialState, ...state }),
+      undefined,
+      "initialState"
+    );
   }
 
   componentDidMount() {
@@ -47,7 +51,8 @@ class ContextContainer extends React.Component {
       () => {
         if (onUpdate) onUpdate(this.getArgs({ prevState, type }, "onUpdate"));
         if (callback) callback();
-      }
+      },
+      type
     );
   };
 

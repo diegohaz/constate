@@ -57,6 +57,9 @@ const Counter = () => (
   - [`onUnmount`](#onunmount)
 - [`Provider`](#provider)
   - [`initialState`](#initialstate-1)
+  - [`onMount`](#onmount-1)
+  - [`onUpdate`](#onupdate-1)
+  - [`onUnmount`](#onunmount-1)
 - [`mount`](#mount)
 - [Composing](#composing)
 - [Testing](#testing)
@@ -167,7 +170,10 @@ const Counter = () => (
 
 ```js
 type Effects = {
-  [string]: () => ({ state: Object, setState: Function }) => void
+  [string]: () => ({ 
+    state: Object, 
+    setState: (updater: ((state: Object) => Object) | Object, callback?: Function) => void 
+  }) => void
 };
 ```
 
@@ -238,7 +244,10 @@ const App = () => (
 ### `onMount`
 
 ```js
-type OnMount = ({ state: Object, setState: Function }) => void;
+type OnMount = ({ 
+  state: Object, 
+  setState: (updater: ((state: Object) => Object) | Object, callback?: Function) => void 
+}) => void;
 ```
 
 This is a function called inside `Container`'s `componentDidMount`.
@@ -268,7 +277,7 @@ const Counter = () => (
 type OnUpdate = ({ 
   prevState: Object, 
   state: Object, 
-  setState: Function,
+  setState: (updater: ((state: Object) => Object) | Object, callback?: Function) => void,
   type: string
 }) => void;
 ```
@@ -306,7 +315,10 @@ const Counter = () => (
 ### `onUnmount`
 
 ```js
-type OnUnmount = ({ state: Object, setState: Function }) => void;
+type OnUnmount = ({ 
+  state: Object, 
+  setState: (updater: ((state: Object) => Object) | Object, callback?: Function) => void 
+}) => void;
 ```
 
 This is a function called inside `Container`'s `componentWillUnmount`. It receives both current `state` and `setState`, but the latter will have effect only if you're using [`context`](#context). Otherwise, it will be noop. This is useful for making cleanups. 
@@ -337,6 +349,8 @@ const Counter = () => (
 
 ## `Provider`
 
+You should wrap your app with `Provider` if you want to use [`context`](#context).
+
 ### `initialState`
 
 It's possible to pass initialState to Provider:
@@ -358,6 +372,40 @@ const App = () => (
 This way, all `Container`s with `context="counter1"` will start with `{ count: 10 }`.
 
 > Note: when using [`context`](#context), only the `initialState` of the first `Container` in the tree will be considered. `Provider` will always take precedence over `Container`.
+
+### `onMount`
+
+```js
+type OnMount = ({ 
+  state: Object, 
+  setState: (updater: ((state: Object) => Object) | Object, callback?: Function) => void, 
+  getContextState: (context: string) => Object,
+  setContextState: (context: string) => (updater: ((state: Object) => Object) | Object, callback?: Function) => void
+}) => void;
+```
+
+### `onUpdate`
+
+```js
+type OnUpdate = ({ 
+  prevState: Object,
+  state: Object,
+  setState: (updater: ((state: Object) => Object) | Object, callback?: Function) => void, 
+  getContextState: (context: string) => Object,
+  setContextState: (context: string) => (updater: ((state: Object) => Object) | Object, callback?: Function) => void,
+  context: string,
+  type: string
+}) => void;
+```
+
+### `onUnmount`
+
+```js
+type OnUnmount => ({
+  state: Object,
+  getContextState: (context: string) => Object
+}) => void;
+```
 
 ## `mount`
 
