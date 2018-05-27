@@ -379,7 +379,6 @@ This way, all `Container`s with `context="counter1"` will start with `{ count: 1
 type OnMount = ({ 
   state: Object, 
   setState: (updater: ((state: Object) => Object) | Object, callback?: Function) => void, 
-  getContextState: (context: string) => Object,
   setContextState: (context: string) => (updater: ((state: Object) => Object) | Object, callback?: Function) => void
 }) => void;
 ```
@@ -391,7 +390,6 @@ type OnUpdate = ({
   prevState: Object,
   state: Object,
   setState: (updater: ((state: Object) => Object) | Object, callback?: Function) => void, 
-  getContextState: (context: string) => Object,
   setContextState: (context: string) => (updater: ((state: Object) => Object) | Object, callback?: Function) => void,
   context: string,
   type: string
@@ -401,10 +399,7 @@ type OnUpdate = ({
 ### `onUnmount`
 
 ```js
-type OnUnmount => ({
-  state: Object,
-  getContextState: (context: string) => Object
-}) => void;
+type OnUnmount => ({ state: Object }) => void;
 ```
 
 ## `mount`

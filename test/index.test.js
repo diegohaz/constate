@@ -414,24 +414,17 @@ describe("context", () => {
   });
 
   test("Provider onMount", () => {
-    expect.assertions(5);
     const initialState = { counter1: { count: 0 } };
-    const onMount = jest.fn(
-      ({ state, setState, getContextState, setContextState }) => {
-        expect(state).toEqual(initialState);
-        setState(
-          prevState => ({
-            foo: prevState.counter1.count + 1
-          }),
-          () => {
-            expect(getContextState("foo")).toBe(1);
-            expect(getContextState("counter1")).toEqual({ count: 0 });
-            setContextState("counter1")({ count: 10 });
-          }
-        );
-      }
-    );
-
+    const onMount = jest.fn(({ state, setState, setContextState }) => {
+      expect(state).toEqual(initialState);
+      setState(
+        prevState => ({
+          foo: prevState.counter1.count + 1
+        }),
+        () => setContextState("counter1")({ count: 10 })
+      );
+    });
+    // USE CONSUMER HERE TO TEST STATE.FOO
     const wrapper = enzymeWrap(
       undefined,
       { context: "counter1" },
@@ -446,17 +439,17 @@ describe("context", () => {
     const initialState = { count: 0 };
     const actions = { increment };
     const onUpdate = jest.fn(
-      ({ state, prevState, setState, getContextState, context, type }) => {
+      ({ state, prevState, setState, context, type }) => {
         if (context === "counter1" && type === "initialState") {
           expect(prevState).toEqual({});
           expect(state).toEqual({ counter1: { count: 0 } });
         } else if (context === "counter1" && type === "increment") {
           expect(state).toEqual({ counter1: { count: 1 } });
-          expect(getContextState(context)).toEqual({ count: 1 });
+          expect(state[context]).toEqual({ count: 1 });
           setState({ foo: 1 });
         } else if (!context && type === "onUpdate") {
           expect(state).toEqual({ counter1: { count: 1 }, foo: 1 });
-          expect(getContextState("foo")).toBe(1);
+          expect(state.foo).toBe(1);
         }
       }
     );
@@ -484,8 +477,7 @@ describe("context", () => {
     wrapper.setProps({ hide: true });
     expect(onUnmount).toHaveBeenCalledTimes(1);
     expect(onUnmount).toHaveBeenCalledWith({
-      state: { counter1: { count: 0 } },
-      getContextState: expect.any(Function)
+      state: { counter1: { count: 0 } }
     });
   });
 

@@ -36,7 +36,7 @@ class Provider extends React.Component {
     };
   };
 
-  getContextState = (context, state = this.state) => state.state[context];
+  getContextState = context => this.state.state[context];
 
   setContextState = context => (updater, callback, type) => {
     const updaterFn = state => ({
@@ -80,12 +80,12 @@ class Provider extends React.Component {
   };
 
   getArgs = (additionalArgs, setStateType) => {
-    const { mount, setState, setContextState, ...args } = this.state;
+    const { state, setState, setContextState } = this.state;
     return {
+      state,
       setState: (u, c) => setState(u, c, setStateType),
       setContextState: ctx => (u, c) =>
         setContextState(ctx)(u, c, setStateType),
-      ...args,
       ...additionalArgs
     };
   };
