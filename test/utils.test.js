@@ -11,6 +11,7 @@ test("mapSetStateToActions", () => {
   };
   const result = mapSetStateToActions(setState, actionsMap);
   expect(result.foo(2)).toEqual({ n: 4 });
+  expect(setState).toHaveBeenCalledWith(expect.any(Function), undefined, "foo");
 });
 
 test("mapArgumentToFunctions", () => {
@@ -20,6 +21,15 @@ test("mapArgumentToFunctions", () => {
   };
   const result = mapArgumentToFunctions(state, selectorsMap);
   expect(result.foo(1)).toBe(2);
+});
+
+test("mapArgumentToFunctions with argument as function", () => {
+  const argument = jest.fn();
+  const fn = () => () => {};
+  const fnMap = { fn };
+  const result = mapArgumentToFunctions(argument, fnMap);
+  result.fn();
+  expect(argument).toHaveBeenCalledWith(fn, "fn");
 });
 
 test("parseUpdater", () => {

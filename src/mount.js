@@ -43,26 +43,26 @@ const mount = Container => {
 
   const state = { ...initialState };
 
-  const setState = (updater, callback) => {
+  const setState = (updater, callback, type) => {
     const prevState = { ...state };
     mapToDraft(parseUpdater(updater, state), state);
     if (onUpdate) {
-      onUpdate(getArgs({ prevState }));
+      onUpdate(getArgs({ prevState, type }, "onUpdate"));
     }
     if (callback) callback();
   };
 
-  const getArgs = additionalArgs => ({
+  const getArgs = (additionalArgs, setStateType) => ({
     state,
-    setState,
+    setState: (u, c) => setState(u, c, setStateType),
     ...additionalArgs
   });
 
-  typeof onMount === "function" && onMount(getArgs());
+  typeof onMount === "function" && onMount(getArgs({}, "onMount"));
 
   actions && mapToDraft(mapSetStateToActions(setState, actions), state);
   selectors && mapToDraft(mapArgumentToFunctions(state, selectors), state);
-  effects && mapToDraft(mapArgumentToFunctions(getArgs(), effects), state);
+  effects && mapToDraft(mapArgumentToFunctions(getArgs, effects), state);
 
   return state;
 };

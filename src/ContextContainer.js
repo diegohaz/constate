@@ -14,24 +14,27 @@ class ContextContainer extends React.Component {
 
   componentDidMount() {
     const { mount, context, onMount } = this.props;
-    this.unmount = mount(context, onMount && (() => onMount(this.getArgs())));
+    this.unmount = mount(
+      context,
+      onMount && (() => onMount(this.getArgs({}, "onMount")))
+    );
   }
 
   componentWillUnmount() {
     const { onUnmount } = this.props;
-    this.unmount(onUnmount && (() => onUnmount(this.getArgs())));
+    this.unmount(onUnmount && (() => onUnmount(this.getArgs({}, "onUnmount"))));
   }
 
-  getArgs = additionalArgs => {
+  getArgs = (additionalArgs, setStateType) => {
     const { getContextState, context } = this.props;
     return {
       state: getContextState(context),
-      setState: this.handleSetState,
+      setState: (u, c) => this.handleSetState(u, c, setStateType),
       ...additionalArgs
     };
   };
 
-  handleSetState = (updater, callback) => {
+  handleSetState = (updater, callback, type) => {
     const { setContextState, context, onUpdate } = this.props;
     const setState = setContextState(context);
     let prevState;
@@ -42,7 +45,7 @@ class ContextContainer extends React.Component {
         return parseUpdater(updater, state);
       },
       () => {
-        if (onUpdate) onUpdate(this.getArgs({ prevState }));
+        if (onUpdate) onUpdate(this.getArgs({ prevState, type }, "onUpdate"));
         if (callback) callback();
       }
     );
@@ -50,12 +53,12 @@ class ContextContainer extends React.Component {
 
   render() {
     const { children, actions, selectors, effects } = this.props;
-    const args = this.getArgs();
+    const { state } = this.getArgs();
     return children({
-      ...args.state,
-      ...(actions && mapSetStateToActions(args.setState, actions)),
-      ...(selectors && mapArgumentToFunctions(args.state, selectors)),
-      ...(effects && mapArgumentToFunctions(args, effects))
+      ...state,
+      ...(actions && mapSetStateToActions(this.handleSetState, actions)),
+      ...(selectors && mapArgumentToFunctions(state, selectors)),
+      ...(effects && mapArgumentToFunctions(this.getArgs, effects))
     });
   }
 }
