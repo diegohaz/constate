@@ -107,7 +107,7 @@ type Actions = {
 
 An action is a method that returns an `updater` function, which will be, internally, passed as an argument to React `setState`. Actions will be exposed, then, together with state within the child function.
 
-You can also return the object directly if you don't need `state`:
+You can also return the object directly if you don't need `state`.
 
 ```jsx
 const initialState = { count: 0 };
@@ -126,10 +126,6 @@ const Counter = () => (
 ```
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095434-ba7c42c2-4616-11e8-9836-f46ea572c170.gif" alt="Example"></p>
-
-```js
-const setCount = count => ({ count })
-```
 
 ### `selectors`
 
