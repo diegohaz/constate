@@ -1,16 +1,37 @@
-/* eslint-disable react/sort-comp, react/no-unused-state */
+/* eslint-disable react/sort-comp, react/no-unused-state, no-underscore-dangle */
 import React from "react";
 import Context from "./Context";
 import { parseUpdater } from "./utils";
+
+const reduxDevtoolsExtension =
+  typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION__;
 
 class Provider extends React.Component {
   static defaultProps = {
     initialState: {}
   };
 
+  constructor(props) {
+    super(props);
+    this.containers = {};
+    const { devtools, initialState } = props;
+    // istanbul ignore next
+    if (devtools && reduxDevtoolsExtension) {
+      this.devtools = reduxDevtoolsExtension.connect({ name: "Context" });
+      this.devtools.init(initialState);
+      this.devtools.subscribe(message => {
+        if (message.type === "DISPATCH" && message.state) {
+          this.setState(state => ({
+            state: { ...state.state, ...JSON.parse(message.state) }
+          }));
+        }
+      });
+    }
+  }
+
   componentDidMount() {
     if (this.props.onMount) {
-      this.props.onMount(this.getArgs({}, "onMount"));
+      this.props.onMount(this.getArgs({}, "Provider/onMount"));
     }
   }
 
@@ -19,11 +40,14 @@ class Provider extends React.Component {
       const { setContextState, ...args } = this.getArgs();
       this.props.onUnmount(args);
     }
+    // istanbul ignore next
+    if (this.devtools) {
+      this.devtools.unsubscribe();
+      reduxDevtoolsExtension.disconnect();
+    }
   }
 
-  containers = {};
-
-  mount = (context, onMount) => {
+  mountContainer = (context, onMount) => {
     if (!this.containers[context]) {
       this.containers[context] = 0;
       if (onMount) this.setState(null, onMount);
@@ -36,54 +60,50 @@ class Provider extends React.Component {
     };
   };
 
-  getContextState = context => this.state.state[context];
-
   setContextState = (context, updater, callback, type) => {
-    const updaterFn = state => ({
-      [context]: {
-        ...state[context],
-        ...parseUpdater(updater, state[context])
-      }
-    });
-    this.handleSetState(updaterFn, callback, type, context);
-  };
-
-  handleSetState = (updater, callback, type, context) => {
     let prevState;
 
-    this.setState(
-      state => {
-        prevState = state.state;
-        return {
-          state: {
-            ...state.state,
-            ...parseUpdater(updater, state.state)
+    const updaterFn = state => {
+      prevState = state.state;
+      return {
+        state: {
+          ...state.state,
+          [context]: {
+            ...state.state[context],
+            ...parseUpdater(updater, state.state[context] || {})
           }
-        };
-      },
-      () => {
-        if (this.props.onUpdate) {
-          const args = this.getArgs({ prevState, context, type }, "onUpdate");
-          this.props.onUpdate(args);
         }
-        if (callback) callback();
+      };
+    };
+
+    const callbackFn = () => {
+      if (this.props.onUpdate) {
+        const additionalArgs = { prevState, context, type };
+        const args = this.getArgs(additionalArgs, "Provider/onUpdate");
+        this.props.onUpdate(args);
       }
-    );
+      if (callback) callback();
+      // istanbul ignore next
+      if (this.devtools && type) {
+        const devtoolsType = context ? `${context}/${type}` : type;
+        this.devtools.send(devtoolsType, this.state.state);
+      }
+    };
+
+    this.setState(updaterFn, callbackFn);
   };
 
   state = {
     state: this.props.initialState,
-    setState: this.handleSetState,
-    mount: this.mount,
-    getContextState: this.getContextState,
+    mountContainer: this.mountContainer,
     setContextState: this.setContextState
   };
 
-  getArgs = (additionalArgs, setStateType) => {
+  getArgs = (additionalArgs, type) => {
     const { state, setContextState } = this.state;
     return {
       state,
-      setContextState: (ctx, u, c) => setContextState(ctx, u, c, setStateType),
+      setContextState: (ctx, u, c) => setContextState(ctx, u, c, type),
       ...additionalArgs
     };
   };

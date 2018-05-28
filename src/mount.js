@@ -52,9 +52,9 @@ const mount = Container => {
     if (callback) callback();
   };
 
-  const getArgs = (additionalArgs, setStateType) => ({
+  const getArgs = (additionalArgs, type) => ({
     state,
-    setState: (u, c) => setState(u, c, setStateType),
+    setState: (u, c) => setState(u, c, type),
     ...additionalArgs
   });
 
