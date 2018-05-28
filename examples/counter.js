@@ -25,7 +25,7 @@ const CounterButton = () => (
 );
 
 const Counter = () => (
-  <Provider>
+  <Provider devtools>
     <CounterValue />
     <CounterButton />
   </Provider>

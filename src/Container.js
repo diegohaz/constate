@@ -28,9 +28,9 @@ class Container extends React.Component {
     }
   }
 
-  getArgs = (additionalArgs, setStateType) => ({
+  getArgs = (additionalArgs, type) => ({
     state: this.state,
-    setState: (u, c) => this.handleSetState(u, c, setStateType),
+    setState: (u, c) => this.handleSetState(u, c, type),
     ...additionalArgs
   });
 

@@ -78,7 +78,7 @@ test("Provider onUpdate", () => {
         expect(state).toEqual({ counter1: { count: 1 } });
         expect(state[context]).toEqual({ count: 1 });
         setContextState("foo", { bar: 1 });
-      } else if (type === "onUpdate") {
+      } else if (type === "Provider/onUpdate") {
         expect(state).toEqual({ counter1: { count: 1 }, foo: { bar: 1 } });
       }
     }

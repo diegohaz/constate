@@ -15,7 +15,7 @@
 
 > context + state = constate
 
-Tiny React state management library that lets you work with [local state](#actions) and scale up to [global state](#context) with ease when needed.
+React state management library built with scalability in mind. You can start simple with [local state](#actions) and scale up to [global state](#context) with ease when needed.
 
 👓 [**Read the introductory article**](https://medium.freecodecamp.org/reacts-new-context-api-how-to-toggle-between-local-and-global-state-c6ace81443d0)<br>
 🎮 [**Play with the demo**](https://codesandbox.io/s/7p2qv6mmq)
@@ -60,6 +60,7 @@ const Counter = () => (
   - [`onMount`](#onmount-1)
   - [`onUpdate`](#onupdate-1)
   - [`onUnmount`](#onunmount-1)
+  - [`devtools`](#devtools)
 - [`mount`](#mount)
 - [Composing](#composing)
 - [Testing](#testing)
@@ -106,6 +107,8 @@ type Actions = {
 
 An action is a method that returns an `updater` function, which will be, internally, passed as an argument to React `setState`. Actions will be exposed, then, together with state within the child function.
 
+You can also return the object directly if you don't need `state`.
+
 ```jsx
 const initialState = { count: 0 };
 
@@ -123,12 +126,6 @@ const Counter = () => (
 ```
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095434-ba7c42c2-4616-11e8-9836-f46ea572c170.gif" alt="Example"></p>
-
-You can also return the object directly if you don't need `state`:
-
-```js
-const setCount = count => ({ count })
-```
 
 ### `selectors`
 
@@ -348,7 +345,9 @@ You should wrap your app with `Provider` if you want to use [`context`](#context
 type InitialState = Object;
 ```
 
-It's possible to pass initialState to Provider:
+It's possible to pass initialState to Provider. In the example below, all `Container`s with `context="counter1"` will start with `{ count: 10 }`.
+
+> Note: when using [`context`](#context), only the `initialState` of the first `Container` in the tree will be considered. `Provider` will always take precedence over `Container`.
 
 ```jsx
 const initialState = {
@@ -363,10 +362,6 @@ const App = () => (
   </Provider>
 );
 ```
-
-This way, all `Container`s with `context="counter1"` will start with `{ count: 10 }`.
-
-> Note: when using [`context`](#context), only the `initialState` of the first `Container` in the tree will be considered. `Provider` will always take precedence over `Container`.
 
 ### `onMount`
 
@@ -466,6 +461,26 @@ const App = () => (
   </Provider>
 );
 ```
+
+### `devtools`
+
+```js
+type Devtools = boolean;
+```
+
+Passing `devtools` prop to `Provider` will enable [redux-devtools-extension](https://github.com/zalmoxisus/redux-devtools-extension) integration, if that's installed on your browser. With that, you can easily debug the state of your application.
+
+> Note: It only works for context state. If you want to debug local state, add a `context` prop to `Container` temporarily.
+
+```jsx
+const App = () => (
+  <Provider devtools>
+    ...
+  </Provider>
+);
+```
+
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/40630279-c31d4f36-62a7-11e8-96f2-052c97985747.gif" alt="Example"></p>
 
 ## `mount`
 

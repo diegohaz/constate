@@ -6,9 +6,9 @@ import {
 } from "./utils";
 
 class ContextContainer extends React.Component {
-  constructor(...args) {
-    super(...args);
-    const { setContextState, context, initialState } = this.props;
+  constructor(props) {
+    super(props);
+    const { setContextState, context, initialState } = props;
     setContextState(
       context,
       state => ({ ...initialState, ...state }),
@@ -18,8 +18,8 @@ class ContextContainer extends React.Component {
   }
 
   componentDidMount() {
-    const { mount, context, onMount } = this.props;
-    this.unmount = mount(
+    const { mountContainer, context, onMount } = this.props;
+    this.unmount = mountContainer(
       context,
       onMount && (() => onMount(this.getArgs({}, "onMount")))
     );
@@ -30,11 +30,11 @@ class ContextContainer extends React.Component {
     this.unmount(onUnmount && (() => onUnmount(this.getArgs({}, "onUnmount"))));
   }
 
-  getArgs = (additionalArgs, setStateType) => {
-    const { getContextState, context } = this.props;
+  getArgs = (additionalArgs, type) => {
+    const { state, context } = this.props;
     return {
-      state: getContextState(context),
-      setState: (u, c) => this.handleSetState(u, c, setStateType),
+      state: state[context],
+      setState: (u, c) => this.handleSetState(u, c, type),
       ...additionalArgs
     };
   };
