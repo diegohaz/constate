@@ -50,8 +50,7 @@
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "<rootDir>/test/",
-      "<rootDir>/src/State.js"
+      "<rootDir>/test/"
     ]
   },
   "keywords": [
