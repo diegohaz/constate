@@ -612,10 +612,7 @@ If you find a bug, please [create an issue](https://github.com/diegohaz/constate
 
 If you're a beginner, it'll be a pleasure to help you contribute. You can start by reading [the beginner's guide to contributing to a GitHub project](https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/).
 
-Run this command to run examples:
-```sh
-npm start
-```
+Run `npm start` to run examples.
 
 ## License
 
