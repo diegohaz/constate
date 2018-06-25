@@ -314,23 +314,30 @@ This is a function called inside `Container`'s `componentWillUnmount`. It receiv
 > Note: when using [`context`](#context), all `Container`s of the same context behave as a single unit, which means that `onUnmount` will be called only when the last remaining `Container` of each context gets unmounted.
 
 ```jsx
-const initialState = { count: 0 };
-
-const onMount = ({ setState }) => {
-  const fn = () => setState(state => ({ count: state.count + 1 }));
-  const interval = setInterval(fn, 1000);
-  setState({ interval });
-};
-
-const onUnmount = ({ state }) => {
-  clearInterval(state.interval);
-};
-
-const Counter = () => (
-  <Container initialState={initialState} onMount={onMount} onUnmount={onUnmount}>
-    {({ count }) => <button>{count}</button>}
-  </Container>
-);
+class Counter extends React.Component {
+  initialState = { count: 0 };
+  
+  onMount = ({ setState }) => {
+    const fn = () => setState(state => ({ count: state.count + 1 }));
+    this.interval = setInterval(fn, 1000);
+  };
+  
+  onUnmount = () => {
+    clearInterval(this.interval);
+  };
+  
+  render() {
+    return (
+      <Container
+        initialState={this.initialState}
+        onMount={this.onMount}
+        onUnmount={this.onUnmount}
+      >
+        {({ count }) => <button>{count}</button>}
+      </Container>
+    );
+  }
+}
 ```
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/40272496-083be31c-5b7c-11e8-9e0e-5fa623495ed4.gif" alt="Example"></p>
