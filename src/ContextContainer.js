@@ -8,13 +8,15 @@ import {
 class ContextContainer extends React.Component {
   constructor(props) {
     super(props);
-    const { setContextState, context, initialState } = props;
-    setContextState(
-      context,
-      state => ({ ...initialState, ...state }),
-      undefined,
-      "initialState"
-    );
+    const { state, setContextState, context, initialState } = props;
+    if (!state[context]) {
+      setContextState(
+        context,
+        currentState => ({ ...initialState, ...currentState }),
+        undefined,
+        "initialState"
+      );
+    }
   }
 
   componentDidMount() {
