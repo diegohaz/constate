@@ -12,7 +12,11 @@ class Container extends React.Component {
     initialState: {}
   };
 
-  state = this.props.initialState;
+  state = {};
+
+  static getDerivedStateFromProps(props) {
+    return props.initialState;
+  }
 
   componentDidMount() {
     const { context, onMount } = this.props;
