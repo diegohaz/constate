@@ -27,6 +27,19 @@ class ContextContainer extends React.Component {
     );
   }
 
+  shouldComponentUpdate(nextProps) {
+    const { state } = this.props;
+    const { context, shouldUpdate, state: nextState } = nextProps;
+    if (shouldUpdate) {
+      this.ignoreState = nextState[context];
+      return shouldUpdate({
+        state: state[context] || {},
+        nextState: nextState[context]
+      });
+    }
+    return true;
+  }
+
   componentWillUnmount() {
     const { onUnmount } = this.props;
     this.unmount(onUnmount && (() => onUnmount(this.getArgs({}, "onUnmount"))));
@@ -41,6 +54,8 @@ class ContextContainer extends React.Component {
     };
   };
 
+  ignoreState = null;
+
   handleSetState = (updater, callback, type) => {
     const { setContextState, context, onUpdate } = this.props;
     const setState = (...args) => setContextState(context, ...args);
@@ -52,7 +67,9 @@ class ContextContainer extends React.Component {
         return parseUpdater(updater, state);
       },
       () => {
-        if (onUpdate) onUpdate(this.getArgs({ prevState, type }, "onUpdate"));
+        if (onUpdate && this.ignoreState !== this.props.state[context]) {
+          onUpdate(this.getArgs({ prevState, type }, "onUpdate"));
+        }
         if (callback) callback();
       },
       type

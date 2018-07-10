@@ -275,6 +275,35 @@ const createCommonTests = (props, getState, wrap) => () => {
       })
     );
   });
+
+  test("shouldUpdate", () => {
+    const initialState = { count: 0 };
+    const actions = { increment };
+    const shouldUpdate = jest.fn(({ state, nextState }) => {
+      if (state.count === 0 && nextState.count === 1) {
+        return false;
+      }
+      return true;
+    });
+    const onUpdate = jest.fn();
+    const wrapper = wrap({
+      ...props,
+      initialState,
+      actions,
+      shouldUpdate,
+      onUpdate
+    });
+    expect(getState(wrapper).count).toBe(0);
+    getState(wrapper).increment();
+    expect(shouldUpdate).toHaveBeenCalledWith({
+      state: expect.objectContaining({ count: 0 }),
+      nextState: { count: 1 }
+    });
+    expect(onUpdate).not.toHaveBeenCalled();
+    expect(getState(wrapper).count).toBe(0);
+    getState(wrapper).increment();
+    expect(getState(wrapper).count).toBe(2);
+  });
 };
 
 export default createCommonTests;

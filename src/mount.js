@@ -38,17 +38,30 @@ const mount = Container => {
     selectors,
     effects,
     onMount,
-    onUpdate
+    onUpdate,
+    shouldUpdate
   } = getProps(Container);
 
+  const draft = { ...initialState };
   const state = { ...initialState };
 
   const setState = (updater, callback, type) => {
     const prevState = { ...state };
-    mapToDraft(parseUpdater(updater, state), state);
-    if (onUpdate) {
+
+    mapToDraft(parseUpdater(updater, draft), draft);
+
+    const couldUpdate = shouldUpdate
+      ? shouldUpdate({ state, nextState: draft })
+      : true;
+
+    if (couldUpdate) {
+      mapToDraft(draft, state);
+    }
+
+    if (onUpdate && couldUpdate) {
       onUpdate(getArgs({ prevState, type }, "onUpdate"));
     }
+
     if (callback) callback();
   };
 
