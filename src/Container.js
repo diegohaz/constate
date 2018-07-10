@@ -21,6 +21,15 @@ class Container extends React.Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const { context, shouldUpdate } = this.props;
+    if (!context && shouldUpdate) {
+      this.ignoreState = nextState;
+      return shouldUpdate({ state: this.state, nextState });
+    }
+    return true;
+  }
+
   componentWillUnmount() {
     const { context, onUnmount } = this.props;
     if (!context && onUnmount) {
@@ -34,6 +43,8 @@ class Container extends React.Component {
     ...additionalArgs
   });
 
+  ignoreState = null;
+
   handleSetState = (updater, callback, type) => {
     let prevState;
 
@@ -43,7 +54,7 @@ class Container extends React.Component {
         return parseUpdater(updater, state);
       },
       () => {
-        if (this.props.onUpdate) {
+        if (this.props.onUpdate && this.ignoreState !== this.state) {
           this.props.onUpdate(this.getArgs({ prevState, type }, "onUpdate"));
         }
         if (callback) callback();
