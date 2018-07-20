@@ -344,11 +344,52 @@ type ShouldUpdate = ({ state: Object, nextState: Object }) => boolean;
 
 This is a function called inside `Container`s `shouldComponentUpdate`. It receives the current `state` and `nextState` and should return `true` or `false`. If it returns `false`, `onUpdate` won't be called for that change, and it won't trigger another render.
 
-In the previous example using [`onUnmount`](#onunmount), we stored the result of `setInterval` in the state. That's ok to do, but the downside is that it would trigger another render, even though our UI didn't depend on `state.interval`. We can use `shouldUpdate` to ignore `state.interval`, for example:
+In the previous example using [`onUnmount`](#onunmount), we stored the result of `setInterval` in the state. That's ok to do, but the downside is that it would trigger an additional render, even though our UI didn't depend on `state.interval`. We can use `shouldUpdate` to ignore `state.interval`, for example:
 
 ```jsx
-const shouldUpdate = ({ state, nextState }) => state.interval === nextState.interval;
+const initialState = { count: 0, updates: 0 };
+
+const onMount = ({ setState }) => {
+  const fn = () => setState(state => ({ count: state.count + 1 }));
+  const interval = setInterval(fn, 1000);
+  setState({ interval });
+};
+
+const onUnmount = ({ state }) => {
+  clearInterval(state.interval);
+};
+
+const onUpdate = ({ state, prevState, setState }) => {
+  // prevent infinite loop
+  if (state.updates === prevState.updates) {
+    setState(({ updates }) => ({ updates: updates + 1 }));
+  }
+};
+
+// Don't call onUpdate and render if `interval` has changed
+const shouldUpdate = ({ state, nextState }) =>
+  state.interval === nextState.interval;
+
+const Counter = () => (
+  <Container
+    initialState={initialState}
+    onMount={onMount}
+    onUnmount={onUnmount}
+    onUpdate={onUpdate}
+    shouldUpdate={shouldUpdate}
+  >
+    {({ count, updates }) => (
+      <Button>
+        Count: {count}
+        <br />
+        Updates: {updates}
+      </Button>
+    )}
+  </Container>
+);
 ```
+
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/42988517-3d1f069a-8bd3-11e8-9742-e3294a863bb0.gif" alt="Example"></p>
 
 ## `Provider`
 
