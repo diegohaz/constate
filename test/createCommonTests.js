@@ -302,6 +302,7 @@ const createCommonTests = (props, getState, wrap) => () => {
     expect(onUpdate).not.toHaveBeenCalled();
     expect(getState(wrapper).count).toBe(0);
     getState(wrapper).increment();
+    expect(onUpdate).toHaveBeenCalled();
     expect(getState(wrapper).count).toBe(2);
   });
 };

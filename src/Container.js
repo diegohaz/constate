@@ -24,8 +24,9 @@ class Container extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     const { context, shouldUpdate } = this.props;
     if (!context && shouldUpdate) {
-      this.ignoreState = nextState;
-      return shouldUpdate({ state: this.state, nextState });
+      const couldUpdate = shouldUpdate({ state: this.state, nextState });
+      this.ignoreState = !couldUpdate && nextState;
+      return couldUpdate;
     }
     return true;
   }

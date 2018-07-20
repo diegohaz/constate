@@ -55,6 +55,7 @@ const Counter = () => (
   - [`onMount`](#onmount)
   - [`onUpdate`](#onupdate)
   - [`onUnmount`](#onunmount)
+  - [`shouldUpdate`](#shouldupdate)
 - [`Provider`](#provider)
   - [`initialState`](#initialstate-1)
   - [`onMount`](#onmount-1)
@@ -334,6 +335,20 @@ const Counter = () => (
 ```
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/40272496-083be31c-5b7c-11e8-9e0e-5fa623495ed4.gif" alt="Example"></p>
+
+### `shouldUpdate`
+
+```js
+type ShouldUpdate = ({ state: Object, nextState: Object }) => boolean;
+```
+
+This is a function called inside `Container`s `shouldComponentUpdate`. It receives the current `state` and `nextState` and should return `true` or `false`. If it returns `false`, `onUpdate` won't be called for that change, and it won't trigger another render.
+
+In the previous example using [`onUnmount`](#onunmount), we stored the result of `setInterval` in the state. That's ok to do, but the downside is that it would trigger another render, even though our UI didn't depend on `state.interval`. We can use `shouldUpdate` to ignore `state.interval`, for example:
+
+```jsx
+const shouldUpdate = ({ state, nextState }) => state.interval === nextState.interval;
+```
 
 ## `Provider`
 

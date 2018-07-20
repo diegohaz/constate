@@ -31,11 +31,12 @@ class ContextContainer extends React.Component {
     const { state } = this.props;
     const { context, shouldUpdate, state: nextState } = nextProps;
     if (shouldUpdate) {
-      this.ignoreState = nextState[context];
-      return shouldUpdate({
+      const couldUpdate = shouldUpdate({
         state: state[context] || {},
         nextState: nextState[context]
       });
+      this.ignoreState = !couldUpdate && nextState[context];
+      return couldUpdate;
     }
     return true;
   }
