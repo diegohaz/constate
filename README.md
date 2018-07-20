@@ -359,10 +359,10 @@ const onUnmount = ({ state }) => {
   clearInterval(state.interval);
 };
 
-const onUpdate = ({ state, prevState, setState }) => {
+const onUpdate = ({ type, setState }) => {
   // prevent infinite loop
-  if (state.updates === prevState.updates) {
-    setState(({ updates }) => ({ updates: updates + 1 }));
+  if (type !== "onUpdate") {
+    setState(state => ({ updates: state.updates + 1 }));
   }
 };
 
