@@ -1,3 +1,4 @@
+// @flow
 import React from "react";
 import {
   mapSetStateToActions,
@@ -5,8 +6,17 @@ import {
   parseUpdater
 } from "./utils";
 
-class ContextContainer extends React.Component {
-  constructor(props) {
+/*::
+import type {
+  Action, Selector, Effect, RenderProp, HandleSetState,
+  ContextContainerProps, GetArgs
+} from "./types";
+*/
+
+class ContextContainer extends React.Component /*:: <ContextContainerProps>*/ {
+  unmount /*: void | (mixed)=>void*/ = undefined;
+
+  constructor(props /*: ContextContainerProps*/) {
     super(props);
     const { state, setContextState, context, initialState } = props;
     if (!state[context]) {
@@ -27,7 +37,7 @@ class ContextContainer extends React.Component {
     );
   }
 
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps /*: ContextContainerProps*/) {
     const { state } = this.props;
     const { context, shouldUpdate, state: nextState } = nextProps;
     if (shouldUpdate) {
@@ -43,10 +53,12 @@ class ContextContainer extends React.Component {
 
   componentWillUnmount() {
     const { onUnmount } = this.props;
-    this.unmount(onUnmount && (() => onUnmount(this.getArgs({}, "onUnmount"))));
+    const { unmount } = this;
+    if (unmount !== undefined)
+      unmount(onUnmount && (() => onUnmount(this.getArgs({}, "onUnmount"))));
   }
 
-  getArgs = (additionalArgs, type) => {
+  getArgs /*: GetArgs*/ = (additionalArgs, type) => {
     const { state, context } = this.props;
     return {
       state: state[context],
@@ -57,7 +69,7 @@ class ContextContainer extends React.Component {
 
   ignoreState = null;
 
-  handleSetState = (updater, callback, type) => {
+  handleSetState /*: HandleSetState*/ = (updater, callback, type) => {
     const { setContextState, context, onUpdate } = this.props;
     const setState = (...args) => setContextState(context, ...args);
     let prevState;

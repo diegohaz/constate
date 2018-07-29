@@ -1,44 +1,68 @@
+// @flow
 /* eslint-disable react/sort-comp, react/no-unused-state, no-underscore-dangle */
 import React from "react";
 import Context from "./Context";
 import { parseUpdater } from "./utils";
 
-const reduxDevtoolsExtension =
+/*::
+import type { SetContextState, GetArgs,
+  ProviderState, ProviderProps, MountContainer } from "./types";
+
+type REDUX_DEVTOOLS = {
+  disconnect: () => void,
+  unsubscribe: () => void,
+  init: (mixed) => void,
+  subscribe: (mixed) => void,
+  send: (devtoolsType: string, val: mixed) => void
+}
+
+type REDUX_DEVTOOLS_EXTENSION = {
+  connect: (mixed) => REDUX_DEVTOOLS
+}
+*/
+
+// $FlowFixMe
+const reduxDevtoolsExtension /*: REDUX_DEVTOOLS_EXTENSION*/ =
   typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION__;
 
-class Provider extends React.Component {
+class Provider extends React.Component /*:: <ProviderProps, ProviderState>*/ {
+  devtools /*: ?REDUX_DEVTOOLS*/ = undefined;
+  containers /*: {[string]: number}*/ = {};
+
   static defaultProps = {
     initialState: {}
   };
 
-  constructor(props) {
+  constructor(props /*: ProviderProps*/) {
     super(props);
-    this.containers = {};
-    const { devtools, initialState } = props;
+    const { initialState } = props;
     // istanbul ignore next
-    if (devtools && reduxDevtoolsExtension) {
-      this.devtools = reduxDevtoolsExtension.connect({ name: "Context" });
-      this.devtools.init(initialState);
-      this.devtools.subscribe(message => {
+    if (props.devtools && reduxDevtoolsExtension) {
+      const devtools = reduxDevtoolsExtension.connect({ name: "Context" });
+      devtools.init(initialState);
+      devtools.subscribe(message => {
         if (message.type === "DISPATCH" && message.state) {
           this.setState(state => ({
             state: { ...state.state, ...JSON.parse(message.state) }
           }));
         }
       });
+      this.devtools = devtools;
     }
   }
 
   componentDidMount() {
-    if (this.props.onMount) {
-      this.props.onMount(this.getArgs({}, "Provider/onMount"));
+    const { onMount } = this.props;
+    if (onMount) {
+      onMount(this.getArgs({}, "Provider/onMount"));
     }
   }
 
   componentWillUnmount() {
-    if (this.props.onUnmount) {
+    const { onUnmount } = this.props;
+    if (onUnmount) {
       const { setContextState, ...args } = this.getArgs();
-      this.props.onUnmount(args);
+      onUnmount(args);
     }
     // istanbul ignore next
     if (this.devtools) {
@@ -47,20 +71,25 @@ class Provider extends React.Component {
     }
   }
 
-  mountContainer = (context, onMount) => {
+  mountContainer /*: MountContainer*/ = (context, onMount) => {
     if (!this.containers[context]) {
       this.containers[context] = 0;
       if (onMount) this.setState(null, onMount);
     }
     this.containers[context] += 1;
 
-    return onUnmount => {
+    return (onUnmount /*: (mixed) => void*/) => {
       if (this.containers[context] === 1 && onUnmount) onUnmount();
       this.containers[context] -= 1;
     };
   };
 
-  setContextState = (context, updater, callback, type) => {
+  setContextState /*: SetContextState*/ = (
+    context,
+    updater,
+    callback,
+    type
+  ) => {
     let prevState;
 
     const updaterFn = state => {
@@ -77,10 +106,11 @@ class Provider extends React.Component {
     };
 
     const callbackFn = () => {
-      if (this.props.onUpdate) {
+      const { onUpdate } = this.props;
+      if (onUpdate) {
         const additionalArgs = { prevState, context, type };
         const args = this.getArgs(additionalArgs, "Provider/onUpdate");
-        this.props.onUpdate(args);
+        onUpdate(args);
       }
       if (callback) callback();
       // istanbul ignore next
@@ -99,7 +129,7 @@ class Provider extends React.Component {
     setContextState: this.setContextState
   };
 
-  getArgs = (additionalArgs, type) => {
+  getArgs /*: GetArgs*/ = (additionalArgs, type) => {
     const { state, setContextState } = this.state;
     return {
       state,
