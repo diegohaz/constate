@@ -1,0 +1,17 @@
+[ignore]
+.*/node_modules/config-chain
+.*/node_modules/flow-coverage-report
+
+[include]
+
+[libs]
+
+[lints]
+all=error
+sketchy-null-mixed=off
+sketchy-null-bool=off
+sketchy-null-string=off
+
+[options]
+
+[strict]

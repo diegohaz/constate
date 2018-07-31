@@ -1,3 +1,4 @@
+// @flow
 /* eslint-disable no-param-reassign, no-use-before-define, no-unused-expressions */
 import React from "react";
 import {
@@ -6,9 +7,17 @@ import {
   parseUpdater
 } from "./utils";
 
-const getProps = (Container, props) => {
+/*::
+import type { ContainerProps, ContainerType, ContainerFunction } from "./types";
+*/
+
+const getProps = (
+  Container /*: ContainerFunction*/,
+  props /*?: ContainerProps*/
+) /*: ContainerProps*/ => {
   const getNextProps = rendered => {
     const nextProps = { ...rendered.props, ...props };
+    // $FlowFixMe
     return getProps(rendered.type, nextProps);
   };
 
@@ -17,21 +26,29 @@ const getProps = (Container, props) => {
   }
 
   const container = new Container({ children: () => null });
+  // $FlowFixMe
   const rendered = container.render ? container.render() : container;
 
   if (!React.isValidElement(rendered)) {
+    // $FlowFixMe
     return props;
   }
 
   return getNextProps(rendered);
 };
 
-const mapToDraft = (object, draft) =>
+// $FlowFixMe
+const mapToDraft = /*:: <K: string, O: {[K]: any}>*/ (
+  object /*: O*/,
+  draft /*: O*/
+) => {
+  // $FlowFixMe
   Object.keys(object).forEach(key => {
     draft[key] = object[key];
   });
+};
 
-const mount = Container => {
+const mount = (Container /*: ContainerFunction*/) => {
   const {
     initialState,
     actions,

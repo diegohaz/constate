@@ -2,8 +2,10 @@ language: node_js
 node_js:
   - v7
 script:
+  - yarn flow
+  - yarn flow-coverage-report -i "src/**/*.js"
   - npm run lint && npm test -- --coverage && npm run build
-cache: 
+cache:
   - yarn
 after_success:
   - bash <(curl -s https://codecov.io/bash)

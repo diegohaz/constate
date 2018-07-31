@@ -1,3 +1,5 @@
+// @flow
+/* eslint-disable arrow-body-style */
 import React from "react";
 import Consumer from "./Consumer";
 import ContextContainer from "./ContextContainer";
@@ -7,7 +9,14 @@ import {
   parseUpdater
 } from "./utils";
 
-class Container extends React.Component {
+/*::
+import type {
+  Action, Selector, Effect, RenderProp, HandleSetState,
+  ContainerProps, ContainerState, GetArgs
+} from "./types";
+*/
+
+class Container extends React.Component /*:: <ContainerProps, ContainerState>*/ {
   static defaultProps = {
     initialState: {}
   };
@@ -21,7 +30,10 @@ class Container extends React.Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(
+    nextProps /*: ContainerProps*/,
+    nextState /*: ContainerState*/
+  ) {
     const { context, shouldUpdate } = this.props;
     if (!context && shouldUpdate) {
       const couldUpdate = shouldUpdate({ state: this.state, nextState });
@@ -38,7 +50,7 @@ class Container extends React.Component {
     }
   }
 
-  getArgs = (additionalArgs, type) => ({
+  getArgs /*: GetArgs*/ = (additionalArgs, type) => ({
     state: this.state,
     setState: (u, c) => this.handleSetState(u, c, type),
     ...additionalArgs
@@ -46,7 +58,7 @@ class Container extends React.Component {
 
   ignoreState = null;
 
-  handleSetState = (updater, callback, type) => {
+  handleSetState /*: HandleSetState*/ = (updater, callback, type) => {
     let prevState;
 
     this.setState(
@@ -55,8 +67,9 @@ class Container extends React.Component {
         return parseUpdater(updater, state);
       },
       () => {
-        if (this.props.onUpdate && this.ignoreState !== this.state) {
-          this.props.onUpdate(this.getArgs({ prevState, type }, "onUpdate"));
+        const { onUpdate } = this.props;
+        if (onUpdate && this.ignoreState !== this.state) {
+          onUpdate(this.getArgs({ prevState, type }, "onUpdate"));
         }
         if (callback) callback();
       }
@@ -67,7 +80,10 @@ class Container extends React.Component {
     if (this.props.context) {
       return (
         <Consumer>
-          {props => <ContextContainer {...props} {...this.props} />}
+          {props => {
+            // $FlowFixMe
+            return <ContextContainer {...props} {...this.props} />;
+          }}
         </Consumer>
       );
     }
