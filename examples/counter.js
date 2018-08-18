@@ -1,5 +1,5 @@
 import React from "react";
-import { Block, Button } from "reas";
+import { Block, Button } from "reakit";
 import { Provider, Container } from "../src";
 
 const CounterContainer = props => (

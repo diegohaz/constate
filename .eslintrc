@@ -15,6 +15,7 @@
     "react/forbid-prop-types": "off",
     "react/jsx-filename-extension": "off",
     "react/require-default-props": "off",
+    "react/destructuring-assignment": "off",
     "jsx-a11y/anchor-is-valid": "off"
   }
 }

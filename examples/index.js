@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
-import { Block, Link, List, Divider } from "reas";
+import { Block, Link, List, Divider } from "reakit";
 import {
   BrowserRouter as Router,
   Route,
@@ -12,11 +12,11 @@ const App = () => (
   <Router>
     <Block fontFamily="sans-serif">
       <List>
-        <List.Item>
+        <li>
           <Link as={RouterLink} to="/counter">
             Counter
           </Link>
-        </List.Item>
+        </li>
       </List>
       <Divider />
       <Route path="/counter" component={Counter} />

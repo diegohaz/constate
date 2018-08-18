@@ -14,6 +14,8 @@ class Container extends React.Component {
 
   state = this.props.initialState;
 
+  ignoreState = null;
+
   componentDidMount() {
     const { context, onMount } = this.props;
     if (!context && onMount) {
@@ -43,8 +45,6 @@ class Container extends React.Component {
     setState: (u, c) => this.handleSetState(u, c, type),
     ...additionalArgs
   });
-
-  ignoreState = null;
 
   handleSetState = (updater, callback, type) => {
     let prevState;

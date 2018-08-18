@@ -6,6 +6,8 @@ import {
 } from "./utils";
 
 class ContextContainer extends React.Component {
+  ignoreState = null;
+
   constructor(props) {
     super(props);
     const { state, setContextState, context, initialState } = props;
@@ -54,8 +56,6 @@ class ContextContainer extends React.Component {
       ...additionalArgs
     };
   };
-
-  ignoreState = null;
 
   handleSetState = (updater, callback, type) => {
     const { setContextState, context, onUpdate } = this.props;
