@@ -607,7 +607,7 @@ If you're using VSCode or other code editor that supports TypeScript, you'll pro
 
 Then, you just need to pass those maps to [`Container`](#container):
 
-```tsx
+```jsx
 const Counter = () => (
   <Container
     initialState={initialState}
@@ -626,7 +626,7 @@ It'll also provide autocomplete and hints on the public API:
 
 If you're building a composable container - that is, a component without `children` that receives props -, you can define your component as a `ComposableContainer`:
 
-```tsx
+```jsx
 import { Container, ComposableContainer } from "constate";
 
 const CounterContainer: ComposableContainer<State, Actions, Selectors, Effects> = props => (
@@ -642,7 +642,7 @@ const CounterContainer: ComposableContainer<State, Actions, Selectors, Effects> 
 
 Then, you can use it in other parts of your application and still take advantage from typings. `ComposableContainer` will handle them for you: 
 
-```tsx
+```jsx
 const Counter = () => (
   <CounterContainer initialState={{ count: 10 }} context="counter1">
     {({ count, increment, getParity, tick }) => ...}
