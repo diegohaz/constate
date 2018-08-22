@@ -12,7 +12,7 @@ export const getParity = () => state =>
 export const wrap = (props, providerProps) =>
   mount(
     <Provider {...providerProps}>
-      <Container {...props}>{state => <div state={state} />}</Container>
+      <Container {...props}>{state => <div data-state={state} />}</Container>
     </Provider>
   );
 
@@ -20,4 +20,4 @@ export const getState = (wrapper, selector = "div") =>
   wrapper
     .update()
     .find(selector)
-    .prop("state");
+    .prop("data-state");

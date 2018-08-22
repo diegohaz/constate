@@ -24,10 +24,10 @@ test("multiple contexts", () => {
   const wrapper = mount(
     <Provider initialState={initialState}>
       <Container context="foo" actions={actions}>
-        {state => <div state={state} />}
+        {state => <div data-state={state} />}
       </Container>
       <Container context="bar" actions={actions}>
-        {state => <span state={state} />}
+        {state => <span data-state={state} />}
       </Container>
     </Provider>
   );
@@ -95,7 +95,7 @@ test("Provider onUpdate", () => {
 test("Provider onUnmount", () => {
   const initialState = { counter1: { count: 0 } };
   const onUnmount = jest.fn();
-  const Component = ({ hide }) =>
+  const Component = ({ hide }: { hide?: boolean }) =>
     hide ? null : (
       <Provider initialState={initialState} onUnmount={onUnmount}>
         <div />
@@ -117,10 +117,10 @@ test("only the first onMount should be called", () => {
   mount(
     <Provider>
       <MyContainer onMount={onMount1}>
-        {state => <div state={state} />}
+        {state => <div data-state={state} />}
       </MyContainer>
       <MyContainer onMount={onMount2}>
-        {state => <span state={state} />}
+        {state => <span data-state={state} />}
       </MyContainer>
     </Provider>
   );
@@ -144,10 +144,10 @@ test("onUpdate should be called only for the caller container", () => {
   const wrapper = mount(
     <Provider>
       <MyContainer onUpdate={onUpdate1}>
-        {state => <div state={state} />}
+        {state => <div data-state={state} />}
       </MyContainer>
       <MyContainer onUpdate={onUpdate2}>
-        {state => <span state={state} />}
+        {state => <span data-state={state} />}
       </MyContainer>
     </Provider>
   );
@@ -163,7 +163,7 @@ test("onUpdate should be trigerred on onUnmount", () => {
   const initialState = { count: 0 };
   const onUpdate = jest.fn();
   const onUnmount = ({ setState }) => setState(increment(10));
-  const Component = ({ hide }) => (
+  const Component = ({ hide }: { hide?: boolean }) => (
     <Provider>
       {!hide && (
         <Container
@@ -187,7 +187,7 @@ test("onUpdate onUnmount type", () => {
   const initialState = { count: 0 };
   const onUpdate = jest.fn();
   const onUnmount = ({ setState }) => setState(increment(10));
-  const Component = ({ hide }) => (
+  const Component = ({ hide }: { hide?: boolean }) => (
     <Provider>
       {!hide && (
         <Container
@@ -214,7 +214,13 @@ test("onUnmount should be called only for the last unmounted container", () => {
   const onUnmount1 = jest.fn();
   const onUnmount2 = jest.fn();
   const MyContainer = props => <Container context="foo" {...props} />;
-  const Component = ({ hide1, hide2 }) => (
+  const Component = ({
+    hide1,
+    hide2
+  }: {
+    hide1?: boolean;
+    hide2?: boolean;
+  }) => (
     <Provider>
       {!hide1 && <MyContainer onUnmount={onUnmount1}>{() => null}</MyContainer>}
       {!hide2 && <MyContainer onUnmount={onUnmount2}>{() => null}</MyContainer>}
@@ -232,7 +238,7 @@ test("onUnmount should be called only for the last unmounted container", () => {
 test("onUnmount setState", () => {
   const initialState = { count: 0 };
   const onUnmount = ({ setState }) => setState(increment(10));
-  const Component = ({ hide }) => (
+  const Component = ({ hide }: { hide?: boolean }) => (
     <Provider>
       {!hide && (
         <Container
@@ -243,7 +249,7 @@ test("onUnmount setState", () => {
           {() => <div />}
         </Container>
       )}
-      <Consumer>{ctx => <span state={ctx.state.foo} />}</Consumer>
+      <Consumer>{ctx => <span data-state={ctx.state.foo} />}</Consumer>
     </Provider>
   );
   const wrapper = mount(<Component />);
@@ -261,7 +267,7 @@ test("onUnmount setState callback", () => {
       });
     });
   };
-  const Component = ({ hide }) => (
+  const Component = ({ hide }: { hide?: boolean }) => (
     <Provider>
       {!hide && (
         <Container
@@ -272,7 +278,7 @@ test("onUnmount setState callback", () => {
           {() => <div />}
         </Container>
       )}
-      <Consumer>{ctx => <span state={ctx.state.foo} />}</Consumer>
+      <Consumer>{ctx => <span data-state={ctx.state.foo} />}</Consumer>
     </Provider>
   );
   const wrapper = mount(<Component />);
@@ -287,7 +293,7 @@ test("onUnmount delayed", () => {
   const onUnmount = ({ setState }) => {
     setTimeout(() => setState(increment(10)), 1000);
   };
-  const Component = ({ hide }) => (
+  const Component = ({ hide }: { hide?: boolean }) => (
     <Provider>
       {!hide && (
         <Container
@@ -298,7 +304,7 @@ test("onUnmount delayed", () => {
           {() => <div />}
         </Container>
       )}
-      <Consumer>{ctx => <span state={ctx.state.foo} />}</Consumer>
+      <Consumer>{ctx => <span data-state={ctx.state.foo} />}</Consumer>
     </Provider>
   );
   const wrapper = mount(<Component />);
@@ -313,10 +319,10 @@ test("first initialState should take precedence over others", () => {
   const wrapper = mount(
     <Provider>
       <Container initialState={{ count: 0 }} context="foo">
-        {state => <div state={state} />}
+        {state => <div data-state={state} />}
       </Container>
       <Container initialState={{ count: 10, foo: "bar" }} context="foo">
-        {state => <span state={state} />}
+        {state => <span data-state={state} />}
       </Container>
     </Provider>
   );

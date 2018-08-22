@@ -12,10 +12,10 @@ test("onUnmount", () => {
     expect(state).toEqual(initialState);
     expect(setState).toEqual(expect.any(Function));
   });
-  const Component = ({ hide }) =>
+  const Component = ({ hide }: { hide?: boolean }) =>
     hide ? null : (
       <Container initialState={initialState} onUnmount={onUnmount}>
-        {state => <div state={state} />}
+        {state => <div data-state={state} />}
       </Container>
     );
 
@@ -30,10 +30,10 @@ test("onUnmount setState is noop", () => {
   const onUnmount = jest.fn(({ setState }) => {
     setState(increment(10));
   });
-  const Component = ({ hide }) =>
+  const Component = ({ hide }: { hide?: boolean }) =>
     hide ? null : (
       <Container initialState={initialState} onUnmount={onUnmount}>
-        {state => <div state={state} />}
+        {state => <div data-state={state} />}
       </Container>
     );
 
