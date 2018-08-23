@@ -7,6 +7,11 @@
 * Rewrite the library in TypeScript ([#36](https://github.com/diegohaz/constate/issues/36)) ([de1cd09](https://github.com/diegohaz/constate/commit/de1cd09))
 
 
+### BREAKING CHANGES
+
+* Experimental `mount` module has been removed.
+
+
 
 <a name="0.7.2"></a>
 ## [0.7.2](https://github.com/diegohaz/constate/compare/v0.7.1...v0.7.2) (2018-07-20)
