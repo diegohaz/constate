@@ -1,6 +1,7 @@
 import {
   mapSetStateToActions,
-  mapArgumentToFunctions,
+  mapStateToSelectors,
+  mapPropsToEffects,
   parseUpdater
 } from "../src/utils";
 
@@ -14,26 +15,26 @@ test("mapSetStateToActions", () => {
   expect(setState).toHaveBeenCalledWith(expect.any(Function), undefined, "foo");
 });
 
-test("mapArgumentToFunctions", () => {
+test("mapStateToSelectors", () => {
   const state = { foo: 1 };
   const selectorsMap = {
     foo: n => s => s.foo + n
   };
-  const result = mapArgumentToFunctions(state, selectorsMap);
+  const result = mapStateToSelectors(state, selectorsMap);
   expect(result.foo(1)).toBe(2);
 });
 
-test("mapArgumentToFunctions with argument as function", () => {
+test("mapPropsToEffects", () => {
   const argument = jest.fn();
   const fn = () => () => {};
   const fnMap = { fn };
-  const result = mapArgumentToFunctions(argument, fnMap);
+  const result = mapPropsToEffects(argument, fnMap);
   result.fn();
-  expect(argument).toHaveBeenCalledWith(fn, "fn");
+  expect(argument).toHaveBeenCalledWith("fn");
 });
 
 test("parseUpdater", () => {
-  expect(parseUpdater({ foo: "bar" })).toEqual({ foo: "bar" });
+  expect(parseUpdater({ foo: "bar" }, {})).toEqual({ foo: "bar" });
   expect(
     parseUpdater(state => ({ count: state.count + 1 }), { count: 10 })
   ).toEqual({ count: 11 });

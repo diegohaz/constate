@@ -62,8 +62,7 @@ const Counter = () => (
   - [`onUpdate`](#onupdate-1)
   - [`onUnmount`](#onunmount-1)
   - [`devtools`](#devtools)
-- [`mount`](#mount)
-- [Composing](#composing)
+- [TypeScript](#typescript)
 - [Testing](#testing)
 
 ## Installation
@@ -80,8 +79,8 @@ npm i constate
 
 ### `initialState`
 
-```js
-type initialState = Object;
+```ts
+type initialState = object;
 ```
 
 Use this prop to define the initial state of the container.
@@ -100,9 +99,10 @@ const Counter = () => (
 
 ### `actions`
 
-```js
+```ts
 type Actions = {
-  [string]: () => ((state: Object) => Object) | Object
+  [key: string]: (...args: any[]) => 
+    ((state: object) => object) | object
 };
 ```
 
@@ -130,9 +130,10 @@ const Counter = () => (
 
 ### `selectors`
 
-```js
+```ts
 type Selectors = {
-  [string]: () => (state: Object) => any
+  [key: string]: (...args: any[]) => 
+    (state: object) => any
 };
 ```
 
@@ -166,9 +167,10 @@ const Counter = () => (
 
 ### `effects`
 
-```js
+```ts
 type Effects = {
-  [string]: () => ({ state: Object, setState: Function }) => void
+  [key: string]: (...args: any[]) => 
+    (props: { state: object, setState: Function }) => void
 };
 ```
 
@@ -197,7 +199,7 @@ const Counter = () => (
 
 ### `context`
 
-```js
+```ts
 type Context = string;
 ```
 
@@ -238,8 +240,11 @@ const App = () => (
 
 ### `onMount`
 
-```js
-type OnMount = ({ state: Object, setState: Function }) => void;
+```ts
+type OnMount = (props: {
+  state: object,
+  setState: Function
+}) => void;
 ```
 
 This is a function called inside `Container`'s `componentDidMount`.
@@ -265,10 +270,10 @@ const Counter = () => (
 
 ### `onUpdate`
 
-```js
-type OnUpdate = ({ 
-  prevState: Object, 
-  state: Object, 
+```ts
+type OnUpdate = (props: { 
+  prevState: object, 
+  state: object, 
   setState: Function,
   type: string
 }) => void;
@@ -306,8 +311,11 @@ const Counter = () => (
 
 ### `onUnmount`
 
-```js
-type OnUnmount = ({ state: Object, setState: Function }) => void;
+```ts
+type OnUnmount = (props: {
+  state: object,
+  setState: Function
+}) => void;
 ```
 
 This is a function called inside `Container`'s `componentWillUnmount`. It receives both current `state` and `setState`, but the latter will have effect only if you're using [`context`](#context). Otherwise, it will be noop. This is useful for making cleanups. 
@@ -338,8 +346,11 @@ const Counter = () => (
 
 ### `shouldUpdate`
 
-```js
-type ShouldUpdate = ({ state: Object, nextState: Object }) => boolean;
+```ts
+type ShouldUpdate = (props: {
+  state: object,
+  nextState: object
+}) => boolean;
 ```
 
 This is a function called inside `Container`s `shouldComponentUpdate`. It receives the current `state` and `nextState` and should return `true` or `false`. If it returns `false`, `onUpdate` won't be called for that change, and it won't trigger another render.
@@ -397,8 +408,8 @@ You should wrap your app with `Provider` if you want to use [`context`](#context
 
 ### `initialState`
 
-```js
-type InitialState = Object;
+```ts
+type InitialState = object;
 ```
 
 It's possible to pass initialState to Provider. In the example below, all `Container`s with `context="counter1"` will start with `{ count: 10 }`.
@@ -421,8 +432,11 @@ const App = () => (
 
 ### `onMount`
 
-```js
-type OnMount = ({ state: Object, setContextState: Function }) => void;
+```ts
+type OnMount = (props: {
+  state: object,
+  setContextState: Function
+}) => void;
 ```
 
 As well as with `Container`, you can pass an `onMount` prop to `Provider`. The function will be called when `Provider`'s `componentDidMount` gets called.
@@ -445,10 +459,10 @@ const App = () => (
 
 ### `onUpdate`
 
-```js
-type OnUpdate = ({ 
-  prevState: Object,
-  state: Object,
+```ts
+type OnUpdate = (props: { 
+  prevState: object,
+  state: object,
   setContextState: Function,
   context: string,
   type: string
@@ -500,8 +514,8 @@ const Counter = () => (
 
 ### `onUnmount`
 
-```js
-type OnUnmount => ({ state: Object }) => void;
+```ts
+type OnUnmount = (props: { state: object }) => void;
 ```
 
 `onUnmount` will be triggered in `Provider`'s `componentWillUnmount`.
@@ -520,7 +534,7 @@ const App = () => (
 
 ### `devtools`
 
-```js
+```ts
 type Devtools = boolean;
 ```
 
@@ -538,73 +552,107 @@ const App = () => (
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/40630279-c31d4f36-62a7-11e8-96f2-052c97985747.gif" alt="Example"></p>
 
-## `mount`
+## TypeScript
 
-```js
-type Mount = (Container: Function | ReactElement) => Object;
+Constate is written in TypeScript and exports many useful types to help you. When creating a new container, you can start by defining its public API. That is, the props that are passed to the children function:
+
+```ts
+interface State {
+  count: number;
+}
+
+interface Actions {
+  increment: (amount?: number) => void;
+}
+
+interface Selectors {
+  getParity: () => "even" | "odd";
+}
+
+interface Effects {
+  tick: () => void;
+}
 ```
 
-> Note: this is an experimental feature
+In computer programming, it's a good practice to define the API before actually implementing it. This way, you're explicitly saying how the container should be consumed. Then, you can use handful interfaces exported by Constate to create your container:
 
-With `mount`, you can have a stateful object representing the `Container`:
+```ts
+import { ActionMap, SelectorMap, EffectMap } from "constate";
+
+const initialState: State = {
+  count: 0
+};
+
+const actions: ActionMap<State, Actions> = {
+  increment: (amount = 1) => state => ({ count: state.count + amount })
+};
+
+const selectors: SelectorMap<State, Selectors> = {
+  getParity: () => state => (state.count % 2 === 0 ? "even" : "odd")
+};
+
+const effects: EffectsMap<State, Effects> = {
+  tick: () => ({ setState }) => {
+    const fn = () => setState(state => ({ count: state.count + 1 }));
+    setInterval(fn, 1000);
+  }
+}
+```
+
+Those interfaces (e.g. `ActionMap`) will create a map using your `State` and your public API (e.g. `Actions`).
+
+If you're using VSCode or other code editor that supports TypeScript, you'll probably have a great developer experience. Tooling will infer types and give you autocomplete for most things:
+
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/44436323-eb817580-a58a-11e8-8077-9f27ff283c5e.gif" alt="Example"></p>
+
+Then, you just need to pass those maps to [`Container`](#container):
 
 ```jsx
-import { Container, mount } from "constate";
-
-const CounterContainer = props => (
+const Counter = () => (
   <Container
-    initialState={{ count: 0 }}
-    actions={{ increment: () => state => ({ count: state.count + 1 }) }}
+    initialState={initialState}
+    actions={actions}
+    selectors={selectors}
+    effects={effects}
+  >
+    {({ count, increment, getParity, tick }) => ...}
+  </Container>
+);
+```
+
+It'll also provide autocomplete and hints on the public API:
+
+<p align="center"><img src="https://user-images.githubusercontent.com/3068563/44436560-3fd92500-a58c-11e8-84b2-cd9c8c3fddc6.gif" alt="Example"></p>
+
+If you're building a composable container - that is, a component without `children` that receives props -, you can define your component as a `ComposableContainer`:
+
+```jsx
+import { Container, ComposableContainer } from "constate";
+
+const CounterContainer: ComposableContainer<State, Actions, Selectors, Effects> = props => (
+  <Container
     {...props}
+    initialState={{ ...initialState, ...props.initialState }}
+    actions={actions}
+    selectors={selectors}
+    effects={effects}
   />
 );
-
-const state = mount(CounterContainer);
-
-console.log(state.count); // 0
-state.increment();
-console.log(state.count); // 1
 ```
 
-## Composing
-
-Since `Container` is just a React component, you can create `Container`s that accepts new properties, making them really composable. 
-
-For example, let's create a composable `CounterContainer`:
+Then, you can use it in other parts of your application and still take advantage from typings. `ComposableContainer` will handle them for you: 
 
 ```jsx
-const increment = () => state => ({ count: state.count + 1 });
-
-const CounterContainer = ({ initialState, actions, ...props }) => (
-  <Container
-    initialState={{ count: 0, ...initialState }}
-    actions={{ increment, ...actions }}
-    {...props}
-  />
+const Counter = () => (
+  <CounterContainer initialState={{ count: 10 }} context="counter1">
+    {({ count, increment, getParity, tick }) => ...}
+  </CounterContainer>
 );
 ```
 
-Then, we can use it to create a `DecrementableCounterContainer`:
+> `ComposableContainer` doesn't accept other `actions`, `selectors` and `effects` as props. That's because, as of today, there's no way for TypeScript to dynamically merge props and infer their types correctly.
 
-```jsx
-const decrement = () => state => ({ count: state.count - 1 });
-
-const DecrementableCounterContainer = ({ actions, ...props }) => (
-  <CounterContainer actions={{ decrement, ...actions }} {...props} />
-);
-```
-
-Finally, we can use it on our other components:
-
-```jsx
-const CounterButton = () => (
-  <DecrementableCounterContainer initialState={{ count: 10 }}>
-    {({ count, decrement }) => <button onClick={decrement}>{count}</button>}
-  </DecrementableCounterContainer>
-);
-```
-
-<p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095340-51373818-4615-11e8-9b76-dd883e9065fb.gif" alt="Example"></p>
+There're also useful interfaces for lifecycle methods. You can find them all in [`src/types.ts`](src/types.ts).
 
 ## Testing
 
@@ -622,45 +670,6 @@ test("getParity", () => {
 ```
 
 On the other hand, [`effects`](#effects) and lifecycle methods can be a little tricky to test depending on how you implement them.
-
-You can also use [`mount`](#mount) to create integration tests. This is how we can test our `CounterContainer` with its [`tick effect`](#effects):
-
-```jsx
-import { mount } from "constate";
-import CounterContainer from "./CounterContainer";
-
-test("initialState", () => {
-  const state = mount(CounterContainer);
-  expect(state.count).toBe(0);
-});
-
-test("increment", () => {
-  const state = mount(CounterContainer);
-  expect(state.count).toBe(0);
-  state.increment(1);
-  expect(state.count).toBe(1);
-  state.increment(-1);
-  expect(state.count).toBe(0);
-});
-
-test("getParity", () => {
-  const state = mount(<CounterContainer initialState={{ count: 1 }} />);
-  expect(state.getParity()).toBe("odd");
-});
-
-test("tick", () => {
-  jest.useFakeTimers();
-  const state = mount(CounterContainer);
-  
-  state.tick();
-
-  jest.advanceTimersByTime(1000);
-  expect(state.count).toBe(1);
-
-  jest.advanceTimersByTime(1000);
-  expect(state.count).toBe(2);
-});
-```
 
 ## Contributing
 

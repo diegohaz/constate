@@ -7,76 +7,61 @@ import { uglify } from "rollup-plugin-uglify";
 import ignore from "rollup-plugin-ignore";
 import pkg from "./package.json";
 
-const { name } = pkg;
 const external = Object.keys(pkg.peerDependencies || {});
-const allExternal = external.concat(Object.keys(pkg.dependencies || {}));
-
-const makeExternalPredicate = externalArr => {
-  if (externalArr.length === 0) {
-    return () => false;
-  }
-  const pattern = new RegExp(`^(${externalArr.join("|")})($|/)`);
-  return id => pattern.test(id);
-};
-
-const common = {
-  input: "src/index.js"
-};
+const allExternal = [...external, Object.keys(pkg.dependencies || {})];
+const extensions = [".ts", ".tsx", ".js", ".jsx", ".json"];
 
 const createCommonPlugins = () => [
   babel({
-    exclude: "node_modules/**",
-    plugins: ["external-helpers"]
-  }),
-  commonjs({
-    include: /node_modules/,
-    ignoreGlobal: true
+    exclude: "node_modules/**"
   }),
   filesize()
 ];
 
-const main = Object.assign({}, common, {
-  output: {
-    name,
-    file: pkg.main,
-    format: "cjs",
-    exports: "named"
-  },
-  external: makeExternalPredicate(allExternal),
-  plugins: createCommonPlugins().concat([resolve()])
-});
+const main = {
+  input: "src/index.ts",
+  output: [
+    {
+      file: pkg.main,
+      format: "cjs",
+      exports: "named"
+    },
+    {
+      file: pkg.module,
+      format: "es"
+    }
+  ],
+  external: allExternal,
+  plugins: [...createCommonPlugins(), resolve({ extensions })]
+};
 
-const module = Object.assign({}, common, {
+const unpkg = {
+  input: "src/index.ts",
   output: {
-    file: pkg.module,
-    format: "es"
-  },
-  external: makeExternalPredicate(allExternal),
-  plugins: createCommonPlugins().concat([resolve()])
-});
-
-const unpkg = Object.assign({}, common, {
-  output: {
-    name,
+    name: pkg.name,
     file: pkg.unpkg,
     format: "umd",
     exports: "named",
     globals: {
-      react: "React",
-      "react-dom": "ReactDOM"
+      react: "React"
     }
   },
-  external: makeExternalPredicate(external),
-  plugins: createCommonPlugins().concat([
+  external,
+  plugins: [
+    ...createCommonPlugins(),
     ignore(["stream"]),
     uglify(),
+    commonjs({
+      include: /node_modules/
+    }),
     replace({
       "process.env.NODE_ENV": JSON.stringify("production")
     }),
     resolve({
+      extensions,
       preferBuiltins: false
     })
-  ])
-});
+  ]
+};
 
-export default [main, module, unpkg];
+export default [main, unpkg];
