@@ -21,10 +21,10 @@ const routeMap: [string, React.ReactNode][] = [
 
 const App = () => (
   <Router>
-    <Flex wrap fontFamily="sans-serif">
+    <Flex wrap="true" fontFamily="sans-serif">
       <List>
         {routeMap.map(value => (
-          <li>
+          <li key={value[0]}>
             <Link as={RouterLink} to={`/${value[0]}`}>
               {value[0]}
             </Link>
@@ -33,8 +33,8 @@ const App = () => (
         ))}
       </List>
       {routeMap.map(value => (
-        <Block margin="25px">
-          <Route key={value} path={`/${value[0]}`} component={value[1]} />
+        <Block margin="25px" key={value[0]}>
+          <Route path={`/${value[0]}`} component={value[1]} />
         </Block>
       ))}
     </Flex>

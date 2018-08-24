@@ -8,13 +8,13 @@ const Example = () => (
     <Heading as="h2">Single Counter Container</Heading>
     <CounterContainer>
       {({ count, increment, decrement }) => (
-        <>
+        <React.Fragment>
           <div>{count}</div>
           <Group>
             <Button onClick={increment}>+</Button>
             <Button onClick={decrement}>-</Button>
           </Group>
-        </>
+        </React.Fragment>
       )}
     </CounterContainer>
 
@@ -22,25 +22,25 @@ const Example = () => (
 
     <CounterContainer context="shared">
       {({ count, increment, decrement }) => (
-        <>
+        <React.Fragment>
           <div>{count}</div>
           <Group>
             <Button onClick={increment}>+</Button>
             <Button onClick={decrement}>-</Button>
           </Group>
-        </>
+        </React.Fragment>
       )}
     </CounterContainer>
 
     <CounterContainer context="shared">
       {({ count, increment, decrement }) => (
-        <>
+        <React.Fragment>
           <div>{count}</div>
           <Group>
             <Button onClick={increment}>+</Button>
             <Button onClick={decrement}>-</Button>
           </Group>
-        </>
+        </React.Fragment>
       )}
     </CounterContainer>
   </Provider>
