@@ -24,7 +24,11 @@ const initialState: State = {
 };
 
 const CounterContainer: ComposableContainer<State, Actions> = props => (
-  <Container {...props} initialState={{ ...initialState, ...props.initialState }} actions={actions} />
+  <Container
+    {...props}
+    initialState={{ ...initialState, ...props.initialState }}
+    actions={actions}
+  />
 );
 
 export default CounterContainer;
