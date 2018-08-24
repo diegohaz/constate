@@ -15,26 +15,26 @@ import ContextCounter from "./ContextCounter";
 // [0] Name and Route
 // [1] Component
 const routeMap: [string, React.ReactNode][] = [
-  ['Counter', Counter],
-  ['ContextCounter', ContextCounter]
+  ["Counter", Counter],
+  ["ContextCounter", ContextCounter]
 ];
 
 const App = () => (
   <Router>
-    <Flex wrap={true} fontFamily="sans-serif">
+    <Flex wrap fontFamily="sans-serif">
       <List>
-        {routeMap.map((value, index) => (
-          <li key={index}>
+        {routeMap.map(value => (
+          <li>
             <Link as={RouterLink} to={`/${value[0]}`}>
               {value[0]}
             </Link>
-            <Divider vertical={true} />
+            <Divider vertical />
           </li>
         ))}
       </List>
-      {routeMap.map((value, index) => (
+      {routeMap.map(value => (
         <Block margin="25px">
-          <Route key={index} path={`/${value[0]}`} component={value[1]} />
+          <Route key={value} path={`/${value[0]}`} component={value[1]} />
         </Block>
       ))}
     </Flex>

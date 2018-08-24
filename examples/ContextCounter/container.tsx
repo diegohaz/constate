@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import { Container, ActionMap, ComposableContainer } from "constate";
 
 interface State {
@@ -24,11 +24,7 @@ const initialState: State = {
 };
 
 const CounterContainer: ComposableContainer<State, Actions> = props => (
-  <Container
-    initialState={initialState}
-    actions={actions}
-    {...props}
-  />
+  <Container initialState={initialState} actions={actions} {...props} />
 );
 
 export default CounterContainer;
