@@ -5,15 +5,15 @@ export interface ContextState {
   state: {
     [key: string]: any;
   };
-  setContextState: <S, K>(
+  setContextState?: <S, K>(
     context: string,
     updaterOrState: StateUpdater<S> | Partial<S>,
     callback?: StateCallback,
     type?: K
   ) => void;
-  mountContainer: MountContainer;
+  mountContainer?: MountContainer;
 }
 
-const Context = React.createContext({} as ContextState);
+const Context = React.createContext<ContextState>({ state: {} });
 
 export default Context;
