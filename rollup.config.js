@@ -13,6 +13,7 @@ const extensions = [".ts", ".tsx", ".js", ".jsx", ".json"];
 
 const createCommonPlugins = () => [
   babel({
+    extensions,
     exclude: "node_modules/**"
   }),
   filesize()
