@@ -14,9 +14,6 @@
     "email": "hazdiego@gmail.com",
     "url": "https://github.com/diegohaz"
   },
-  "engines": {
-    "node": ">=6"
-  },
   "files": [
     "dist",
     "src"
@@ -34,6 +31,17 @@
     "preversion": "npm run lint && npm test && npm run build",
     "version": "standard-changelog && git add CHANGELOG.md",
     "postpublish": "git push origin master --follow-tags"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --ext js,ts,tsx --fix",
+      "git add"
+    ]
   },
   "keywords": [
     "constate"
@@ -68,8 +76,10 @@
     "eslint-plugin-prettier": "^2.6.2",
     "eslint-plugin-react": "^7.11.1",
     "eslint-plugin-typescript": "^0.12.0",
+    "husky": "^1.0.0-rc.13",
     "jest-cli": "^23.5.0",
     "jest-serializer-html": "^5.0.0",
+    "lint-staged": "^7.2.2",
     "opn-cli": "^3.1.0",
     "parcel-bundler": "https://github.com/parcel-bundler/parcel#ffef2c1b2892bfb31d0e97485d4fd324692da962",
     "prettier": "^1.14.2",
