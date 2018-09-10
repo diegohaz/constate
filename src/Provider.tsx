@@ -29,7 +29,7 @@ interface OnUnmountProps<S> {
   state: S;
 }
 
-interface ProviderProps<S> {
+export interface ProviderProps<S> {
   initialState: Partial<S>;
   devtools?: boolean;
   onMount?: (props: OnMountProps<S>) => void;
