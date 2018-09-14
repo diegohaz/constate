@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo/logo.svg" alt="constate logo" width="300" />
+  <img src="https://raw.githubusercontent.com/diegohaz/constate/master/logo/logo.svg" alt="constate logo" width="300" />
 </p>
 <br /><br />
 
