@@ -555,9 +555,7 @@ Note that it only works for context state. If you want to debug local state, you
 Alternatively, you can use `onUpdate` to log changes on the console:
 
 ```jsx
-<CounterContainer onUpdate={console.log}>
-  ...
-</ContainerContainer>
+<CounterContainer onUpdate={console.log} />
 ```
 
 ## TypeScript
