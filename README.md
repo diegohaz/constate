@@ -540,8 +540,6 @@ type Devtools = boolean;
 
 Passing `devtools` prop to `Provider` will enable [redux-devtools-extension](https://github.com/zalmoxisus/redux-devtools-extension) integration, if that's installed on your browser. With that, you can easily debug the state of your application.
 
-> Note: It only works for context state. If you want to debug local state, add a `context` prop to `Container` temporarily.
-
 ```jsx
 const App = () => (
   <Provider devtools>
@@ -551,6 +549,16 @@ const App = () => (
 ```
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/40630279-c31d4f36-62a7-11e8-96f2-052c97985747.gif" alt="Example"></p>
+
+Note that it only works for context state. If you want to debug local state, you can add a `context` prop to `Container` temporarily.
+
+Alternatively, you can use `onUpdate` to log changes on the console:
+
+```jsx
+<CounterContainer onUpdate={console.log}>
+  ...
+</ContainerContainer>
+```
 
 ## TypeScript
 
