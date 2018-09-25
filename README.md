@@ -560,7 +560,7 @@ Alternatively, you can use `onUpdate` to log changes on the console:
 
 ## TypeScript
 
-Constate is written in TypeScript and exports many useful types to help you. When creating a new container, you can start by defining its public API. That is, the props that are passed to the children function:
+Constate is written in TypeScript and exports many useful types to help you. When creating a new container, you can start by defining its **public API**. That is, the props that are passed to the children function:
 
 ```ts
 interface State {
@@ -568,7 +568,7 @@ interface State {
 }
 
 interface Actions {
-  increment: (amount?: number) => void;
+  increment: (amount?: number) => void; // actions always return void
 }
 
 interface Selectors {
