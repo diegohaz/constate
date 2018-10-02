@@ -4,33 +4,69 @@ import {
   mapPropsToEffects,
   parseUpdater
 } from "../src/utils";
+import { ActionMap, SelectorMap, EffectMap } from "../src";
 
 test("mapSetStateToActions", () => {
-  const setState = jest.fn(fn => fn(2));
-  const actionsMap = {
-    foo: n => state => ({ n: state + n })
+  type State = { count: number };
+  type Actions = { increment: (amount: number) => void };
+
+  const initialState: State = {
+    count: 1
   };
-  const result = mapSetStateToActions(setState, actionsMap);
-  expect(result.foo(2)).toEqual({ n: 4 });
-  expect(setState).toHaveBeenCalledWith(expect.any(Function), undefined, "foo");
+
+  const setState = jest.fn(fn => {
+    fn(initialState);
+  });
+
+  const actions: ActionMap<State, Actions> = {
+    increment: amount => state => ({ count: state.count + amount })
+  };
+
+  const result = mapSetStateToActions(setState, actions);
+
+  result.increment(2);
+
+  expect(setState).toHaveBeenCalledWith(
+    expect.any(Function),
+    undefined,
+    "increment"
+  );
 });
 
 test("mapStateToSelectors", () => {
-  const state = { foo: 1 };
-  const selectorsMap = {
-    foo: n => s => s.foo + n
+  type State = { count: number };
+  type Selectors = { getParity: () => "even" | "odd" };
+
+  const initialState: State = { count: 1 };
+
+  const selectors: SelectorMap<State, Selectors> = {
+    getParity: () => state => (state.count % 2 === 0 ? "even" : "odd")
   };
-  const result = mapStateToSelectors(state, selectorsMap);
-  expect(result.foo(1)).toBe(2);
+
+  const result = mapStateToSelectors(initialState, selectors);
+  expect(result.getParity()).toBe("odd");
 });
 
 test("mapPropsToEffects", () => {
-  const argument = jest.fn();
-  const fn = () => () => {};
-  const fnMap = { fn };
-  const result = mapPropsToEffects(argument, fnMap);
-  result.fn();
-  expect(argument).toHaveBeenCalledWith("fn");
+  type State = { count: number };
+  type Effects = { increment: (amount: number) => void };
+
+  const state: State = {
+    count: 1
+  };
+
+  const setState = jest.fn(fn => {
+    fn(state);
+  });
+
+  const effects: EffectMap<State, Effects> = {
+    increment: () => props => {
+      expect(props.state).toBe(state);
+      expect(props.setState).toBe(setState);
+    }
+  };
+  const result = mapPropsToEffects(() => ({ state, setState }), effects);
+  result.increment(1);
 });
 
 test("parseUpdater", () => {

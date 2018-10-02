@@ -3,54 +3,58 @@ import {
   SelectorMap,
   EffectMap,
   StateUpdater,
-  ValueOf,
   EffectProps,
-  Dictionary,
   SetStateWithType
 } from "./types";
 
-type APIMap<S, P> = ActionMap<S, P> | SelectorMap<S, P> | EffectMap<S, P>;
+const keys = Object.keys as <T>(o: T) => (keyof T)[];
 
-const mapWith = <
-  C extends (...args: any[]) => any,
-  M extends APIMap<any, any>,
-  F extends ValueOf<M>
->(
-  map: M,
-  transform: (fn: F, key: keyof M) => C
-): Dictionary<C> =>
-  Object.keys(map).reduce(
-    (final, key) => ({
-      ...final,
-      [key]: transform(map[key] as F, key)
-    }),
-    {}
-  );
-
-export const mapSetStateToActions = <S, P>(
+export function mapSetStateToActions<S, P>(
   setState: SetStateWithType<S, keyof P>,
   actionMap: ActionMap<S, P>
-) =>
-  mapWith(actionMap, (action, type) => (...args) =>
-    setState(action(...args), undefined, type)
+) {
+  return keys(actionMap).reduce(
+    (map, type) =>
+      Object.assign(map, {
+        [type]: (...args: any[]) =>
+          setState(actionMap[type](...args), undefined, type)
+      }),
+    {} as P
   );
+}
 
-export const mapStateToSelectors = <S, P>(
+export function mapStateToSelectors<S, P>(
   state: S,
   selectorMap: SelectorMap<S, P>
-) => mapWith(selectorMap, selector => (...args) => selector(...args)(state));
+) {
+  return keys(selectorMap).reduce(
+    (map, type) =>
+      Object.assign(map, {
+        [type]: (...args: any[]) => selectorMap[type](...args)(state)
+      }),
+    {} as P
+  );
+}
 
-export const mapPropsToEffects = <S, P>(
+export function mapPropsToEffects<S, P>(
   getEffectProps: (type: keyof P) => EffectProps<S>,
   effectMap: EffectMap<S, P>
-) =>
-  mapWith(effectMap, (effect, type) => (...args) =>
-    effect(...args)(getEffectProps(type))
+) {
+  return keys(effectMap).reduce(
+    (final, type) =>
+      Object.assign(final, {
+        [type]: (...args: any[]) =>
+          effectMap[type](...args)(getEffectProps(type))
+      }),
+    {} as P
   );
+}
 
-// _ is a temporary fix for eslint parser
-export const parseUpdater = <S, _ = never>(
+export function parseUpdater<S>(
   updaterOrState: StateUpdater<S> | Partial<S>,
   state: S
-) =>
-  typeof updaterOrState === "function" ? updaterOrState(state) : updaterOrState;
+) {
+  return typeof updaterOrState === "function"
+    ? updaterOrState(state)
+    : updaterOrState;
+}

@@ -2,12 +2,6 @@ import * as React from "react";
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
-export type Dictionary<T> = { [key: string]: T };
-
-export type ValueOf<T> = T[keyof T];
-
-export type MapOf<K extends string, T> = { [key in K]: T };
-
 export type EventKeys = "onMount" | "onUpdate" | "onUnmount" | "initialState";
 
 export type StateUpdater<S> = (state: Readonly<S>) => Partial<S>;
@@ -50,8 +44,8 @@ export type SetContextState<S, K> = (
  * @template T Action to be passed to the children function
  */
 export type Action<S, T> = T extends (...args: infer U) => any
-  ? (...args: U) => StateUpdater<S> | Partial<S>
-  : (...args: unknown[]) => StateUpdater<S> | Partial<S>;
+  ? (...args: U) => StateUpdater<S>
+  : (...args: unknown[]) => StateUpdater<S>;
 
 /**
  * Selector implementation based on public selector T
@@ -102,7 +96,7 @@ export type SelectorMap<S, P> = { [K in keyof P]: Selector<S, P[K]> };
 export type EffectMap<S, P> = { [K in keyof P]: Effect<S, P[K]> };
 
 /**
- * Props received by the `onMount` function prop
+ * Props received by the Container `onMount` function prop
  * @template S State
  */
 export interface OnMountProps<S> extends EffectProps<S> {}
@@ -116,26 +110,28 @@ export interface OnMount<S> {
 }
 
 /**
- * Props received by the `onUpdate` function prop
+ * Props received by the Container `onUpdate` function prop
  * @template S State
- * @template K Possible values of the `type` argument
+ * @template AP Actions
+ * @template EP Effects
  */
-export interface OnUpdateProps<S, K> extends EffectProps<S> {
+export interface OnUpdateProps<S, AP = {}, EP = {}> extends EffectProps<S> {
   prevState: Readonly<S>;
-  type: K;
+  type: keyof AP | keyof EP | EventKeys;
 }
 
 /**
  * Container `onUpdate` prop
  * @template S State
- * @template K Possible values of the `type` argument
+ * @template AP Actions
+ * @template EP Effects
  */
 export interface OnUpdate<S, AP = {}, EP = {}> {
-  (props: OnUpdateProps<S, keyof AP | keyof EP | EventKeys>): any;
+  (props: OnUpdateProps<S, AP, EP>): any;
 }
 
 /**
- * Props received by the `onUnmount` function prop
+ * Props received by the Container `onUnmount` function prop
  * @template S State
  */
 export interface OnUnmountProps<S> extends EffectProps<S> {}
@@ -149,7 +145,7 @@ export interface OnUnmount<S> {
 }
 
 /**
- * Props received by the `shouldUpdate` function prop
+ * Props received by the Container `shouldUpdate` function prop
  * @template S State
  */
 export interface ShouldUpdateProps<S> {
@@ -163,6 +159,59 @@ export interface ShouldUpdateProps<S> {
  */
 export interface ShouldUpdate<S> {
   (props: ShouldUpdateProps<S>): boolean;
+}
+
+/**
+ * Props received by the Provider `onMount` function prop
+ * @template S State
+ */
+export interface ProviderOnMountProps<S> {
+  state: S;
+  setContextState: SetContextState<S[keyof S], string>;
+}
+
+/**
+ * Provider `onMount` prop
+ * @template S State
+ */
+export interface ProviderOnMount<S> {
+  (props: ProviderOnMountProps<S>): any;
+}
+
+/**
+ * Props received by the Provider `onUpdate` function prop
+ * @template S State
+ */
+export interface ProviderOnUpdateProps<S> {
+  prevState: S;
+  state: S;
+  setContextState: SetContextState<S[keyof S], string>;
+  context: string;
+  type?: string;
+}
+
+/**
+ * Provider `onUpdate` prop
+ * @template S State
+ */
+export interface ProviderOnUpdate<S> {
+  (props: ProviderOnUpdateProps<S>): any;
+}
+
+/**
+ * Props received by the Provider `onUnmount` function prop
+ * @template S State
+ */
+export interface ProviderOnUnmountProps<S> {
+  state: S;
+}
+
+/**
+ * Provider `onUnmount` prop
+ * @template S State
+ */
+export interface ProviderOnUnmount<S> {
+  (props: ProviderOnUnmountProps<S>): any;
 }
 
 /**
@@ -229,4 +278,16 @@ export type ComposableContainerProps<S, AP = {}, SP = {}, EP = {}> = Omit<
  */
 export interface ComposableContainer<S, AP = {}, SP = {}, EP = {}> {
   (props: ComposableContainerProps<S, AP, SP, EP>): JSX.Element;
+}
+
+/**
+ * `Provider` props
+ * @template S State
+ */
+export interface ProviderProps<S> {
+  initialState?: Partial<S>;
+  devtools?: boolean;
+  onMount?: ProviderOnMount<S>;
+  onUpdate?: ProviderOnUpdate<S>;
+  onUnmount?: ProviderOnUnmount<S>;
 }

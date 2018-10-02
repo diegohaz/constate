@@ -18,9 +18,5 @@
     "sourceMap": true,
     "removeComments": true,
     "stripInternal": true
-  },
-  "include": [
-    "src",
-    "types"
-  ]
+  }
 }

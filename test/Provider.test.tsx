@@ -1,8 +1,17 @@
-import React from "react";
+import * as React from "react";
 import { mount } from "enzyme";
-import { increment, wrap, getState } from "./testUtils";
+import { wrap, getState } from "./testUtils";
 import createCommonTests from "./createCommonTests";
-import { Provider, Container, Consumer } from "../src";
+import {
+  Provider,
+  Container,
+  Consumer,
+  ActionMap,
+  ProviderOnMountProps,
+  ProviderOnUpdateProps,
+  ComposableContainer,
+  OnUnmount
+} from "../src";
 
 createCommonTests({ context: "foo" }, getState, wrap)();
 
@@ -19,8 +28,15 @@ test("Provider multiple initialState", () => {
 });
 
 test("multiple contexts", () => {
+  type State = { count: number };
+  type Actions = { increment: (amount?: number) => void };
+
   const initialState = { foo: { count: 0 }, bar: { count: 1 } };
-  const actions = { increment };
+
+  const actions: ActionMap<State, Actions> = {
+    increment: (amount = 1) => state => ({ count: state.count + amount })
+  };
+
   const wrapper = mount(
     <Provider initialState={initialState}>
       <Container context="foo" actions={actions}>
@@ -31,6 +47,7 @@ test("multiple contexts", () => {
       </Container>
     </Provider>
   );
+
   expect(getState(wrapper, "div")).toEqual({
     count: 0,
     increment: expect.any(Function)
@@ -55,11 +72,21 @@ test("context initialState overrides local initialState", () => {
 });
 
 test("Provider onMount", () => {
-  const initialState = { counter1: { count: 0 } };
-  const onMount = jest.fn(({ state, setContextState }) => {
-    expect(state).toEqual(initialState);
-    setContextState("counter1", { count: 10 });
-  });
+  type State = {
+    counter1: {
+      count: number;
+    };
+  };
+
+  const initialState: State = { counter1: { count: 0 } };
+
+  const onMount = jest.fn(
+    ({ state, setContextState }: ProviderOnMountProps<State>) => {
+      expect(state).toEqual(initialState);
+      setContextState("counter1", { count: 10 });
+    }
+  );
+
   const wrapper = wrap({ context: "counter1" }, { initialState, onMount });
   expect(onMount).toHaveBeenCalledTimes(1);
   expect(getState(wrapper)).toEqual({ count: 10 });
@@ -67,10 +94,23 @@ test("Provider onMount", () => {
 
 test("Provider onUpdate", () => {
   expect.assertions(7);
-  const initialState = { count: 0 };
-  const actions = { increment };
+  type State = { count: number };
+  type Actions = { increment: (amount?: number) => void };
+
+  const initialState: State = { count: 0 };
+
+  const actions: ActionMap<State, Actions> = {
+    increment: (amount = 1) => state => ({ count: state.count + amount })
+  };
+
   const onUpdate = jest.fn(
-    ({ state, prevState, setContextState, context, type }) => {
+    ({
+      state,
+      prevState,
+      setContextState,
+      context,
+      type
+    }: ProviderOnUpdateProps<{ [key: string]: any }>) => {
       if (context === "counter1" && type === "initialState") {
         expect(prevState).toEqual({});
         expect(state).toEqual({ counter1: { count: 0 } });
@@ -83,10 +123,12 @@ test("Provider onUpdate", () => {
       }
     }
   );
+
   const wrapper = wrap(
     { context: "counter1", actions, initialState },
     { onUpdate }
   );
+
   getState(wrapper).increment(1);
   expect(onUpdate).toHaveBeenCalledTimes(3);
   expect(getState(wrapper).count).toBe(1);
@@ -113,7 +155,11 @@ test("Provider onUnmount", () => {
 test("only the first onMount should be called", () => {
   const onMount1 = jest.fn();
   const onMount2 = jest.fn();
-  const MyContainer = props => <Container context="foo" {...props} />;
+
+  const MyContainer: ComposableContainer<{}> = props => (
+    <Container context="foo" {...props} />
+  );
+
   mount(
     <Provider>
       <MyContainer onMount={onMount1}>
@@ -124,23 +170,33 @@ test("only the first onMount should be called", () => {
       </MyContainer>
     </Provider>
   );
+
   expect(onMount1).toHaveBeenCalledTimes(1);
   expect(onMount2).toHaveBeenCalledTimes(0);
 });
 
 test("onUpdate should be called only for the caller container", () => {
+  type State = { count: number };
+  type Actions = { increment: (amount?: number) => void };
+
+  const initialState: State = { count: 0 };
+
+  const actions: ActionMap<State, Actions> = {
+    increment: (amount = 1) => state => ({ count: state.count + amount })
+  };
+
   const onUpdate1 = jest.fn();
   const onUpdate2 = jest.fn();
-  const initialState = { count: 0 };
-  const actions = { increment };
-  const MyContainer = props => (
+
+  const MyContainer: ComposableContainer<State, Actions> = props => (
     <Container
       context="foo"
-      initialState={initialState}
-      actions={actions}
       {...props}
+      initialState={{ ...initialState, ...props.initialState }}
+      actions={actions}
     />
   );
+
   const wrapper = mount(
     <Provider>
       <MyContainer onUpdate={onUpdate1}>
@@ -151,6 +207,7 @@ test("onUpdate should be called only for the caller container", () => {
       </MyContainer>
     </Provider>
   );
+
   getState(wrapper, "div").increment();
   expect(onUpdate1).toHaveBeenCalledTimes(1);
   expect(onUpdate2).toHaveBeenCalledTimes(0);
@@ -160,9 +217,18 @@ test("onUpdate should be called only for the caller container", () => {
 });
 
 test("onUpdate should be trigerred on onUnmount", () => {
-  const initialState = { count: 0 };
+  type State = { count: number };
+
+  const increment = (amount = 1) => (state: State) => ({
+    count: state.count + amount
+  });
+
+  const initialState: State = { count: 0 };
+
   const onUpdate = jest.fn();
-  const onUnmount = ({ setState }) => setState(increment(10));
+
+  const onUnmount: OnUnmount<State> = ({ setState }) => setState(increment(10));
+
   const Component = ({ hide }: { hide?: boolean }) => (
     <Provider>
       {!hide && (
@@ -177,16 +243,27 @@ test("onUpdate should be trigerred on onUnmount", () => {
       )}
     </Provider>
   );
+
   const wrapper = mount(<Component />);
+
   expect(onUpdate).toHaveBeenCalledTimes(0);
   wrapper.setProps({ hide: true });
   expect(onUpdate).toHaveBeenCalledTimes(1);
 });
 
 test("onUpdate onUnmount type", () => {
-  const initialState = { count: 0 };
+  type State = { count: number };
+
+  const increment = (amount = 1) => (state: State) => ({
+    count: state.count + amount
+  });
+
+  const initialState: State = { count: 0 };
+
   const onUpdate = jest.fn();
-  const onUnmount = ({ setState }) => setState(increment(10));
+
+  const onUnmount: OnUnmount<State> = ({ setState }) => setState(increment(10));
+
   const Component = ({ hide }: { hide?: boolean }) => (
     <Provider>
       {!hide && (
@@ -201,7 +278,9 @@ test("onUpdate onUnmount type", () => {
       )}
     </Provider>
   );
+
   const wrapper = mount(<Component />);
+
   wrapper.setProps({ hide: true });
   expect(onUpdate).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -213,7 +292,11 @@ test("onUpdate onUnmount type", () => {
 test("onUnmount should be called only for the last unmounted container", () => {
   const onUnmount1 = jest.fn();
   const onUnmount2 = jest.fn();
-  const MyContainer = props => <Container context="foo" {...props} />;
+
+  const MyContainer: ComposableContainer<{}> = props => (
+    <Container context="foo" {...props} />
+  );
+
   const Component = ({
     hide1,
     hide2
@@ -226,7 +309,9 @@ test("onUnmount should be called only for the last unmounted container", () => {
       {!hide2 && <MyContainer onUnmount={onUnmount2}>{() => null}</MyContainer>}
     </Provider>
   );
+
   const wrapper = mount(<Component />);
+
   wrapper.setProps({ hide1: true });
   expect(onUnmount1).toHaveBeenCalledTimes(0);
   expect(onUnmount2).toHaveBeenCalledTimes(0);
@@ -236,8 +321,16 @@ test("onUnmount should be called only for the last unmounted container", () => {
 });
 
 test("onUnmount setState", () => {
-  const initialState = { count: 0 };
-  const onUnmount = ({ setState }) => setState(increment(10));
+  type State = { count: number };
+
+  const increment = (amount = 1) => (state: State) => ({
+    count: state.count + amount
+  });
+
+  const initialState: State = { count: 0 };
+
+  const onUnmount: OnUnmount<State> = ({ setState }) => setState(increment(10));
+
   const Component = ({ hide }: { hide?: boolean }) => (
     <Provider>
       {!hide && (
@@ -252,21 +345,31 @@ test("onUnmount setState", () => {
       <Consumer>{ctx => <span data-state={ctx.state.foo} />}</Consumer>
     </Provider>
   );
+
   const wrapper = mount(<Component />);
+
   expect(getState(wrapper, "span")).toEqual({ count: 0 });
   wrapper.setProps({ hide: true });
   expect(getState(wrapper, "span")).toEqual({ count: 10 });
 });
 
 test("onUnmount setState callback", () => {
-  const initialState = { count: 0 };
-  const onUnmount = ({ setState }) => {
+  type State = { count: number };
+
+  const increment = (amount = 1) => (state: State) => ({
+    count: state.count + amount
+  });
+
+  const initialState: State = { count: 0 };
+
+  const onUnmount: OnUnmount<State> = ({ setState }) => {
     setState(increment(1), () => {
       setState(increment(10), () => {
         setState(increment(100));
       });
     });
   };
+
   const Component = ({ hide }: { hide?: boolean }) => (
     <Provider>
       {!hide && (
@@ -281,18 +384,27 @@ test("onUnmount setState callback", () => {
       <Consumer>{ctx => <span data-state={ctx.state.foo} />}</Consumer>
     </Provider>
   );
+
   const wrapper = mount(<Component />);
+
   expect(getState(wrapper, "span")).toEqual({ count: 0 });
   wrapper.setProps({ hide: true });
   expect(getState(wrapper, "span")).toEqual({ count: 111 });
 });
 
 test("onUnmount delayed", () => {
-  jest.useFakeTimers();
-  const initialState = { count: 0 };
-  const onUnmount = ({ setState }) => {
+  type State = { count: number };
+
+  const increment = (amount = 1) => (state: State) => ({
+    count: state.count + amount
+  });
+
+  const initialState: State = { count: 0 };
+
+  const onUnmount: OnUnmount<State> = ({ setState }) => {
     setTimeout(() => setState(increment(10)), 1000);
   };
+
   const Component = ({ hide }: { hide?: boolean }) => (
     <Provider>
       {!hide && (
@@ -307,7 +419,11 @@ test("onUnmount delayed", () => {
       <Consumer>{ctx => <span data-state={ctx.state.foo} />}</Consumer>
     </Provider>
   );
+
+  jest.useFakeTimers();
+
   const wrapper = mount(<Component />);
+
   expect(getState(wrapper, "span")).toEqual({ count: 0 });
   wrapper.setProps({ hide: true });
   expect(getState(wrapper, "span")).toEqual({ count: 0 });
