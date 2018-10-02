@@ -6,36 +6,12 @@ import {
   StateUpdater,
   StateCallback,
   MountContainer,
-  SetContextState
+  SetContextState,
+  ProviderProps
 } from "./types";
 
 const reduxDevtoolsExtension =
   typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION__;
-
-interface OnMountProps<S> {
-  state: S;
-  setContextState: SetContextState<S, string>;
-}
-
-interface OnUpdateProps<S> {
-  prevState: S;
-  state: S;
-  setContextState: SetContextState<S, string>;
-  context: string;
-  type?: string;
-}
-
-interface OnUnmountProps<S> {
-  state: S;
-}
-
-export interface ProviderProps<S> {
-  initialState: Partial<S>;
-  devtools?: boolean;
-  onMount?: (props: OnMountProps<S>) => void;
-  onUpdate?: (props: OnUpdateProps<S>) => void;
-  onUnmount?: (props: OnUnmountProps<S>) => void;
-}
 
 interface ProviderState<S> {
   state: S;
