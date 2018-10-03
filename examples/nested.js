@@ -18,7 +18,10 @@ const Counter = () => (
         <button onClick={counter1.increment}>{counter1.count}</button>
         <CounterContainer context="counter2">
           {counter2 => (
-            <button onClick={counter2.increment}>{counter2.count}</button>
+            <button onClick={counter2.increment}>
+              {counter1.count}
+              {counter2.count}
+            </button>
           )}
         </CounterContainer>
       </div>
