@@ -6,11 +6,10 @@ import {
   Route,
   Link as RouterLink
 } from "react-router-dom";
-
-// eslint-disable-next-line
 import Counter from "./counter";
+import Nested from "./nested";
 
-const routeMap = { Counter };
+const routeMap = { Counter, Nested };
 
 const App = () => (
   <Router>

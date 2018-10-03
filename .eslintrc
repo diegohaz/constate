@@ -18,11 +18,12 @@
   "rules": {
     "no-underscore-dangle": "off",
     "react/prop-types": "off",
-    "import/no-extraneous-dependencies": "off",
+    "react/button-has-type": "off",
     "react/forbid-prop-types": "off",
     "react/jsx-filename-extension": "off",
     "react/require-default-props": "off",
     "react/destructuring-assignment": "off",
+    "import/no-extraneous-dependencies": "off",
     "jsx-a11y/anchor-is-valid": "off"
   },
   "overrides": [

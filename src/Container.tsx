@@ -66,15 +66,23 @@ class InnerContainer<
     const { state: nextStateFromProps, shouldUpdate } = nextProps;
     let couldUpdate = true;
 
-    if (context && stateFromProps && nextStateFromProps && shouldUpdate) {
-      couldUpdate = shouldUpdate({
-        state: stateFromProps,
-        nextState: nextStateFromProps
-      });
-      this.ignoreState = !couldUpdate && nextStateFromProps;
-    } else if (!context && shouldUpdate) {
-      couldUpdate = shouldUpdate({ state: this.state, nextState });
-      this.ignoreState = !couldUpdate && nextState;
+    if (context && stateFromProps && nextStateFromProps) {
+      couldUpdate = stateFromProps !== nextStateFromProps;
+
+      if (couldUpdate && shouldUpdate) {
+        couldUpdate = shouldUpdate({
+          state: stateFromProps,
+          nextState: nextStateFromProps
+        });
+        this.ignoreState = !couldUpdate && nextStateFromProps;
+      }
+    } else if (!context) {
+      couldUpdate = this.state !== nextState;
+
+      if (couldUpdate && shouldUpdate) {
+        couldUpdate = shouldUpdate({ state: this.state, nextState });
+        this.ignoreState = !couldUpdate && nextState;
+      }
     }
 
     return couldUpdate;
