@@ -12,14 +12,14 @@ const CounterContainer = props => (
 );
 
 const Counter = () => (
-  <CounterContainer context="counter1">
+  <CounterContainer context="counter1" pure>
     {counter1 => (
       <div>
         <button onClick={counter1.increment}>{counter1.count}</button>
         <CounterContainer context="counter2">
           {counter2 => (
             <button onClick={counter2.increment}>
-              {counter1.count}
+              {counter1.count /* uses external prop */}
               {counter2.count}
             </button>
           )}
