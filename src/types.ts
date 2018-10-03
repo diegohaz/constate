@@ -239,6 +239,7 @@ export interface ContainerProps<S, AP = {}, SP = {}, EP = {}> {
   onUpdate?: OnUpdate<S, AP, EP>;
   onUnmount?: OnUnmount<S>;
   shouldUpdate?: ShouldUpdate<S>;
+  pure?: boolean;
   children: (props: S & AP & SP & EP) => React.ReactNode;
 }
 

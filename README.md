@@ -56,6 +56,7 @@ const Counter = () => (
   - [`onUpdate`](#onupdate)
   - [`onUnmount`](#onunmount)
   - [`shouldUpdate`](#shouldupdate)
+  - [`pure`](#pure)
 - [`Provider`](#provider)
   - [`initialState`](#initialstate-1)
   - [`onMount`](#onmount-1)
@@ -205,6 +206,8 @@ type Context = string;
 
 Whenever you need to share state between components and/or feel the need to have a global state, you can pass a `context` prop to `Container` and wrap your app with `Provider`.
 
+> Due to how React Context works, `Container`s with `context` prop will re-render on every context state change. It's recommended to use [`pure`](#pure) or [`shouldUpdate`](#shouldupdate) so as to avoid unnecessary re-renders.
+
 ```jsx
 import { Provider, Container } from "constate";
 
@@ -217,13 +220,13 @@ const CounterContainer = props => (
 );
 
 const CounterButton = () => (
-  <CounterContainer context="counter1">
+  <CounterContainer context="counter1" pure>
     {({ increment }) => <button onClick={increment}>Increment</button>}
   </CounterContainer>
 );
 
 const CounterValue = () => (
-  <CounterContainer context="counter1">
+  <CounterContainer context="counter1" pure>
     {({ count }) => <div>{count}</div>}
   </CounterContainer>
 );
@@ -401,6 +404,26 @@ const Counter = () => (
 ```
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/42988517-3d1f069a-8bd3-11e8-9742-e3294a863bb0.gif" alt="Example"></p>
+
+### `pure`
+
+```ts
+type Pure = boolean;
+```
+
+You can pass `pure` prop to your `Container` so it will re-render only if its `state` has changed, ignoring other props. It'll help you if you're having performance issues within your app.
+
+Due to how React Context works, all `Container`s with a [`context`](#context) prop will re-render when context state changes. Using `pure` will ensure that it will trigger an update only for its own context.
+
+`pure` is equivalent to this implementation of [`shouldUpdate`](#shouldupdate):
+
+```js
+const shouldUpdate = ({ state, nextState }) => state !== nextState;
+```
+
+But you can use both props. `shouldUpdate` will be applied after `pure`, which means that, if state is the same, it'll never re-render even if you do `shouldUpdate={() => true}`.
+
+> It's safe to pass `pure` to all your containers, and remove it only if you see unintended results on your UI, such as some part of the UI not updating correctly.
 
 ## `Provider`
 
