@@ -7,6 +7,11 @@
 * Add `pure` prop to `Container` ([#44](https://github.com/diegohaz/constate/issues/44)) ([262d931](https://github.com/diegohaz/constate/commit/262d931))
 
 
+### BREAKING CHANGES
+
+* If you're using TypeScript, `ActionMap` no longer accepts the short version of action (i.e. returning an object directly).
+
+
 
 <a name="0.8.2"></a>
 ## [0.8.2](https://github.com/diegohaz/constate/compare/v0.8.1...v0.8.2) (2018-09-10)
