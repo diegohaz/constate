@@ -450,7 +450,7 @@ const shouldUpdate = ({ state, nextState }) => state !== nextState;
 
 But you can use both props. `shouldUpdate` will be applied after `pure`, which means that, if state is the same, it'll never re-render even if you do `shouldUpdate={() => true}`.
 
-> It's safe to pass `pure` to all your containers, and remove it only if you see unintended results on your UI, such as some part of the UI not updating correctly.
+It's safe to pass `pure` to all your containers, and remove it only if you see unintended results on your UI, such as some part of the UI not updating correctly.
 
 <br>
 
