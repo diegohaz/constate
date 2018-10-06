@@ -424,6 +424,8 @@ But you can use both props. `shouldUpdate` will be applied after `pure`, which m
 
 > It's safe to pass `pure` to all your containers, and remove it only if you see unintended results on your UI, such as some part of the UI not updating correctly.
 
+<br><br>
+
 ## `Provider`
 
 You should wrap your app with `Provider` if you want to use [`context`](#context).
