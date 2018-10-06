@@ -221,7 +221,7 @@ const Counter = () => (
 type Context = string;
 ```
 
-Whenever you need to share state between components and/or feel the need to have a global state, you can pass a `context` prop to `Container` and wrap your app with `Provider`.
+Whenever you need to share state between components and/or feel the need to have a global state, you can pass a `context` prop to `Container` and wrap your app with [`Provider`](#provider).
 
 > Due to how React Context works, `Container`s with `context` prop will re-render on every context state change. It's recommended to use [`pure`](#pure) or [`shouldUpdate`](#shouldupdate) so as to avoid unnecessary re-renders.
 
