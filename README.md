@@ -1,7 +1,19 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/diegohaz/constate/master/logo/logo.png" alt="constate logo" width="300" />
 </p>
-<br><br>
+<br>
+
+<p align="center">
+  React state management library built with <strong>scalability</strong> in mind. <br>
+  You can start simple with <a href="#actions">local state</a> and scale up to <a href="#context">global state</a> with ease when needed.
+</p>
+
+<p align="center">
+  <a href="https://medium.freecodecamp.org/reacts-new-context-api-how-to-toggle-between-local-and-global-state-c6ace81443d0"><strong>👓 Read the introductory article</strong></a>&nbsp; · &nbsp;
+  <a href="https://codesandbox.io/s/7p2qv6mmq"><strong>🎮 Play with the demo</strong></a>
+</p>
+
+<br>
 
 <p align="center">
   <a href="https://npmjs.org/package/constate"><img alt="NPM version" src="https://img.shields.io/npm/v/constate.svg?style=flat-square"></a>
@@ -10,16 +22,8 @@
   <a href="https://travis-ci.org/diegohaz/constate"><img alt="Build Status" src="https://img.shields.io/travis/diegohaz/constate/master.svg?style=flat-square"></a>
   <a href="https://codecov.io/gh/diegohaz/constate/branch/master"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/diegohaz/constate/master.svg?style=flat-square"></a>
 </p>
-<br><br>
 
-> context + state = constate
-
-React state management library built with scalability in mind. You can start simple with [local state](#actions) and scale up to [global state](#context) with ease when needed.
-
-👓 [**Read the introductory article**](https://medium.freecodecamp.org/reacts-new-context-api-how-to-toggle-between-local-and-global-state-c6ace81443d0)<br>
-🎮 [**Play with the demo**](https://codesandbox.io/s/7p2qv6mmq)
-
-<br><br>
+<br>
 
 ```jsx
 import React from "react";
