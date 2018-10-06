@@ -46,7 +46,7 @@ const Counter = () => (
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095434-ba7c42c2-4616-11e8-9836-f46ea572c170.gif" alt="Example"></p>
 
-**Table of Contents**
+#### Table of Contents
 
 - [Installation](#installation)
 - [`Container`](#container)
@@ -79,11 +79,15 @@ npm i constate
 
 ## `Container`
 
+[↑ Back to top](#table-of-contents)
+
 > In computer science, a **container** is a class, a data structure, or an abstract data type (ADT) whose instances are collections of other objects. In other words, they store objects in an organized way that follows specific access rules.
 >
 > — <https://en.wikipedia.org/wiki/Container_(abstract_data_type)>
 
 ### `initialState`
+
+[↑ Back to top](#table-of-contents)
 
 ```ts
 type initialState = object;
@@ -104,6 +108,8 @@ const Counter = () => (
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/40029572-206945be-579a-11e8-95ad-4613adf73da4.png" width="55" alt="Example"></p>
 
 ### `actions`
+
+[↑ Back to top](#table-of-contents)
 
 ```ts
 type Actions = {
@@ -135,6 +141,8 @@ const Counter = () => (
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095434-ba7c42c2-4616-11e8-9836-f46ea572c170.gif" alt="Example"></p>
 
 ### `selectors`
+
+[↑ Back to top](#table-of-contents)
 
 ```ts
 type Selectors = {
@@ -173,6 +181,8 @@ const Counter = () => (
 
 ### `effects`
 
+[↑ Back to top](#table-of-contents)
+
 ```ts
 type Effects = {
   [key: string]: (...args: any[]) => 
@@ -204,6 +214,8 @@ const Counter = () => (
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/39095395-46d82eb2-4616-11e8-9e15-e5bb5041b4a8.gif" alt="Example"></p>
 
 ### `context`
+
+[↑ Back to top](#table-of-contents)
 
 ```ts
 type Context = string;
@@ -248,6 +260,8 @@ const App = () => (
 
 ### `onMount`
 
+[↑ Back to top](#table-of-contents)
+
 ```ts
 type OnMount = (props: {
   state: object,
@@ -277,6 +291,8 @@ const Counter = () => (
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/40272346-be92ffb8-5b79-11e8-906f-a653e284002e.gif" alt="Example"></p>
 
 ### `onUpdate`
+
+[↑ Back to top](#table-of-contents)
 
 ```ts
 type OnUpdate = (props: { 
@@ -319,6 +335,8 @@ const Counter = () => (
 
 ### `onUnmount`
 
+[↑ Back to top](#table-of-contents)
+
 ```ts
 type OnUnmount = (props: {
   state: object,
@@ -353,6 +371,8 @@ const Counter = () => (
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/40272496-083be31c-5b7c-11e8-9e0e-5fa623495ed4.gif" alt="Example"></p>
 
 ### `shouldUpdate`
+
+[↑ Back to top](#table-of-contents)
 
 ```ts
 type ShouldUpdate = (props: {
@@ -412,6 +432,8 @@ const Counter = () => (
 
 ### `pure`
 
+[↑ Back to top](#table-of-contents)
+
 ```ts
 type Pure = boolean;
 ```
@@ -434,9 +456,13 @@ But you can use both props. `shouldUpdate` will be applied after `pure`, which m
 
 ## `Provider`
 
+[↑ Back to top](#table-of-contents)
+
 You should wrap your app with `Provider` if you want to use [`context`](#context).
 
 ### `initialState`
+
+[↑ Back to top](#table-of-contents)
 
 ```ts
 type InitialState = object;
@@ -461,6 +487,8 @@ const App = () => (
 ```
 
 ### `onMount`
+
+[↑ Back to top](#table-of-contents)
 
 ```ts
 type OnMount = (props: {
@@ -488,6 +516,8 @@ const App = () => (
 ```
 
 ### `onUpdate`
+
+[↑ Back to top](#table-of-contents)
 
 ```ts
 type OnUpdate = (props: { 
@@ -544,6 +574,8 @@ const Counter = () => (
 
 ### `onUnmount`
 
+[↑ Back to top](#table-of-contents)
+
 ```ts
 type OnUnmount = (props: { state: object }) => void;
 ```
@@ -563,6 +595,8 @@ const App = () => (
 ```
 
 ### `devtools`
+
+[↑ Back to top](#table-of-contents)
 
 ```ts
 type Devtools = boolean;
@@ -591,6 +625,8 @@ Alternatively, you can use `onUpdate` to log changes on the console:
 <br>
 
 ## TypeScript
+
+[↑ Back to top](#table-of-contents)
 
 Constate is written in TypeScript and exports many useful types to help you. When creating a new container, you can start by defining its **public API**. That is, the props that are passed to the children function:
 
@@ -695,6 +731,8 @@ There're also useful interfaces for lifecycle methods. You can find them all in 
 <br>
 
 ## Testing
+
+[↑ Back to top](#table-of-contents)
 
 [`actions`](#actions) and [`selectors`](#selectors) are pure functions and you can test them directly:
 ```js
