@@ -23,7 +23,7 @@
   <a href="https://codecov.io/gh/diegohaz/constate/branch/master"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/diegohaz/constate/master.svg?style=flat-square"></a>
 </p>
 
-<br>
+<br><br>
 
 ```jsx
 import React from "react";
