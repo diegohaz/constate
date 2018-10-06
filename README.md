@@ -79,7 +79,7 @@ npm i constate
 
 ## `Container`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 > In computer science, a **container** is a class, a data structure, or an abstract data type (ADT) whose instances are collections of other objects. In other words, they store objects in an organized way that follows specific access rules.
 >
@@ -87,7 +87,7 @@ npm i constate
 
 ### `initialState`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type initialState = object;
@@ -109,7 +109,7 @@ const Counter = () => (
 
 ### `actions`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type Actions = {
@@ -142,7 +142,7 @@ const Counter = () => (
 
 ### `selectors`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type Selectors = {
@@ -181,7 +181,7 @@ const Counter = () => (
 
 ### `effects`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type Effects = {
@@ -215,7 +215,7 @@ const Counter = () => (
 
 ### `context`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type Context = string;
@@ -260,7 +260,7 @@ const App = () => (
 
 ### `onMount`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type OnMount = (props: {
@@ -292,7 +292,7 @@ const Counter = () => (
 
 ### `onUpdate`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type OnUpdate = (props: { 
@@ -335,7 +335,7 @@ const Counter = () => (
 
 ### `onUnmount`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type OnUnmount = (props: {
@@ -372,7 +372,7 @@ const Counter = () => (
 
 ### `shouldUpdate`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type ShouldUpdate = (props: {
@@ -432,7 +432,7 @@ const Counter = () => (
 
 ### `pure`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type Pure = boolean;
@@ -456,13 +456,13 @@ But you can use both props. `shouldUpdate` will be applied after `pure`, which m
 
 ## `Provider`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 You should wrap your app with `Provider` if you want to use [`context`](#context).
 
 ### `initialState`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type InitialState = object;
@@ -488,7 +488,7 @@ const App = () => (
 
 ### `onMount`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type OnMount = (props: {
@@ -517,7 +517,7 @@ const App = () => (
 
 ### `onUpdate`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type OnUpdate = (props: { 
@@ -574,7 +574,7 @@ const Counter = () => (
 
 ### `onUnmount`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type OnUnmount = (props: { state: object }) => void;
@@ -596,7 +596,7 @@ const App = () => (
 
 ### `devtools`
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
 type Devtools = boolean;
@@ -626,7 +626,7 @@ Alternatively, you can use `onUpdate` to log changes on the console:
 
 ## TypeScript
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 Constate is written in TypeScript and exports many useful types to help you. When creating a new container, you can start by defining its **public API**. That is, the props that are passed to the children function:
 
@@ -732,7 +732,7 @@ There're also useful interfaces for lifecycle methods. You can find them all in 
 
 ## Testing
 
-[↑ Back to top](#table-of-contents)
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 [`actions`](#actions) and [`selectors`](#selectors) are pure functions and you can test them directly:
 ```js
