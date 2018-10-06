@@ -1,16 +1,16 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/diegohaz/constate/master/logo/logo.png" alt="constate logo" width="300" />
 </p>
-<br /><br />
+<br><br>
 
 <p align="center">
-  <a href="https://npmjs.org/package/constate"><img alt="NPM version" src="https://img.shields.io/npm/v/constate.svg?style=flat-square" /></a>
-  <a href="https://unpkg.com/constate"><img alt="Gzip size" src="https://img.badgesize.io/https://unpkg.com/constate?style=flat-square&compression=gzip" /></a>
-  <a href="https://david-dm.org/diegohaz/constate"><img alt="Dependencies" src="https://img.shields.io/david/diegohaz/constate/master.svg?style=flat-square" /></a>
-  <a href="https://travis-ci.org/diegohaz/constate"><img alt="Build Status" src="https://img.shields.io/travis/diegohaz/constate/master.svg?style=flat-square" /></a>
-  <a href="https://codecov.io/gh/diegohaz/constate/branch/master"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/diegohaz/constate/master.svg?style=flat-square" /></a>
+  <a href="https://npmjs.org/package/constate"><img alt="NPM version" src="https://img.shields.io/npm/v/constate.svg?style=flat-square"></a>
+  <a href="https://unpkg.com/constate"><img alt="Gzip size" src="https://img.badgesize.io/https://unpkg.com/constate?style=flat-square&compression=gzip"></a>
+  <a href="https://david-dm.org/diegohaz/constate"><img alt="Dependencies" src="https://img.shields.io/david/diegohaz/constate/master.svg?style=flat-square"></a>
+  <a href="https://travis-ci.org/diegohaz/constate"><img alt="Build Status" src="https://img.shields.io/travis/diegohaz/constate/master.svg?style=flat-square"></a>
+  <a href="https://codecov.io/gh/diegohaz/constate/branch/master"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/diegohaz/constate/master.svg?style=flat-square"></a>
 </p>
-<br /><br />
+<br><br>
 
 > context + state = constate
 
@@ -70,6 +70,8 @@ const Counter = () => (
 ```sh
 npm i constate
 ```
+
+<br>
 
 ## `Container`
 
@@ -424,7 +426,7 @@ But you can use both props. `shouldUpdate` will be applied after `pure`, which m
 
 > It's safe to pass `pure` to all your containers, and remove it only if you see unintended results on your UI, such as some part of the UI not updating correctly.
 
-<br><br>
+<br>
 
 ## `Provider`
 
@@ -582,6 +584,8 @@ Alternatively, you can use `onUpdate` to log changes on the console:
 <CounterContainer onUpdate={console.log} />
 ```
 
+<br>
+
 ## TypeScript
 
 Constate is written in TypeScript and exports many useful types to help you. When creating a new container, you can start by defining its **public API**. That is, the props that are passed to the children function:
@@ -684,6 +688,8 @@ const Counter = () => (
 
 There're also useful interfaces for lifecycle methods. You can find them all in [`src/types.ts`](src/types.ts).
 
+<br>
+
 ## Testing
 
 [`actions`](#actions) and [`selectors`](#selectors) are pure functions and you can test them directly:
@@ -701,6 +707,8 @@ test("getParity", () => {
 
 On the other hand, [`effects`](#effects) and lifecycle methods can be a little tricky to test depending on how you implement them.
 
+<br>
+
 ## Contributing
 
 If you find a bug, please [create an issue](https://github.com/diegohaz/constate/issues/new) providing instructions to reproduce it. It's always very appreciable if you find the time to fix it. In this case, please [submit a PR](https://github.com/diegohaz/constate/pulls).
@@ -708,6 +716,8 @@ If you find a bug, please [create an issue](https://github.com/diegohaz/constate
 If you're a beginner, it'll be a pleasure to help you contribute. You can start by reading [the beginner's guide to contributing to a GitHub project](https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/).
 
 Run `npm start` to run examples.
+
+<br>
 
 ## License
 
