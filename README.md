@@ -37,9 +37,7 @@ const actions = {
 
 const Counter = () => (
   <Container initialState={initialState} actions={actions}>
-    {({ count, increment }) => (
-      <button onClick={increment}>{count}</button>
-    )}
+    {({ count, increment }) => <button onClick={increment}>{count}</button>}
   </Container>
 );
 ```
@@ -113,8 +111,7 @@ const Counter = () => (
 
 ```ts
 type Actions = {
-  [key: string]: (...args: any[]) => 
-    ((state: object) => object) | object
+  [key: string]: (...args: any[]) => ((state: object) => object) | object;
 };
 ```
 
@@ -146,8 +143,7 @@ const Counter = () => (
 
 ```ts
 type Selectors = {
-  [key: string]: (...args: any[]) => 
-    (state: object) => any
+  [key: string]: (...args: any[]) => (state: object) => any;
 };
 ```
 
@@ -171,7 +167,9 @@ const Counter = () => (
     selectors={selectors}
   >
     {({ count, increment, getParity }) => (
-      <button onClick={() => increment(1)}>{count} {getParity()}</button>
+      <button onClick={() => increment(1)}>
+        {count} {getParity()}
+      </button>
     )}
   </Container>
 );
@@ -185,8 +183,9 @@ const Counter = () => (
 
 ```ts
 type Effects = {
-  [key: string]: (...args: any[]) => 
-    (props: { state: object, setState: Function }) => void
+  [key: string]: (
+    ...args: any[]
+  ) => (props: { state: object; setState: Function }) => void;
 };
 ```
 
@@ -204,9 +203,7 @@ const effects = {
 
 const Counter = () => (
   <Container initialState={initialState} effects={effects}>
-    {({ count, tick }) => (
-      <button onClick={tick}>{count}</button>
-    )}
+    {({ count, tick }) => <button onClick={tick}>{count}</button>}
   </Container>
 );
 ```
@@ -221,7 +218,7 @@ const Counter = () => (
 type Context = string;
 ```
 
-Whenever you need to share state between components and/or feel the need to have a global state, you can pass a `context` prop to `Container` and wrap your app with `Provider`.
+Whenever you need to share state between components and/or feel the need to have a global state, you can pass a `context` prop to `Container` and wrap your app with [`Provider`](#provider).
 
 > Due to how React Context works, `Container`s with `context` prop will re-render on every context state change. It's recommended to use [`pure`](#pure) or [`shouldUpdate`](#shouldupdate) so as to avoid unnecessary re-renders.
 
@@ -263,10 +260,12 @@ const App = () => (
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
-type OnMount = (props: {
-  state: object,
-  setState: Function
-}) => void;
+type OnMount = (
+  props: {
+    state: object;
+    setState: Function;
+  }
+) => void;
 ```
 
 This is a function called inside `Container`'s `componentDidMount`.
@@ -295,12 +294,14 @@ const Counter = () => (
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
-type OnUpdate = (props: { 
-  prevState: object, 
-  state: object, 
-  setState: Function,
-  type: string
-}) => void;
+type OnUpdate = (
+  props: {
+    prevState: object;
+    state: object;
+    setState: Function;
+    type: string;
+  }
+) => void;
 ```
 
 This is a function called every time `setState` is called, either internally with [`actions`](#actions) or directly with [`effects`](#effects) and lifecycle methods, including `onUpdate` itself.
@@ -338,13 +339,15 @@ const Counter = () => (
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
-type OnUnmount = (props: {
-  state: object,
-  setState: Function
-}) => void;
+type OnUnmount = (
+  props: {
+    state: object;
+    setState: Function;
+  }
+) => void;
 ```
 
-This is a function called inside `Container`'s `componentWillUnmount`. It receives both current `state` and `setState`, but the latter will have effect only if you're using [`context`](#context). Otherwise, it will be noop. This is useful for making cleanups. 
+This is a function called inside `Container`'s `componentWillUnmount`. It receives both current `state` and `setState`, but the latter will have effect only if you're using [`context`](#context). Otherwise, it will be noop. This is useful for making cleanups.
 
 > Note: when using [`context`](#context), all `Container`s of the same context behave as a single unit, which means that `onUnmount` will be called only when the last remaining `Container` of each context gets unmounted.
 
@@ -362,7 +365,11 @@ const onUnmount = ({ state }) => {
 };
 
 const Counter = () => (
-  <Container initialState={initialState} onMount={onMount} onUnmount={onUnmount}>
+  <Container
+    initialState={initialState}
+    onMount={onMount}
+    onUnmount={onUnmount}
+  >
     {({ count }) => <button>{count}</button>}
   </Container>
 );
@@ -375,10 +382,12 @@ const Counter = () => (
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
-type ShouldUpdate = (props: {
-  state: object,
-  nextState: object
-}) => boolean;
+type ShouldUpdate = (
+  props: {
+    state: object;
+    nextState: object;
+  }
+) => boolean;
 ```
 
 This is a function called inside `Container`s `shouldComponentUpdate`. It receives the current `state` and `nextState` and should return `true` or `false`. If it returns `false`, `onUpdate` won't be called for that change, and it won't trigger another render.
@@ -479,11 +488,7 @@ const initialState = {
   }
 };
 
-const App = () => (
-  <Provider initialState={initialState}>
-    ...
-  </Provider>
-);
+const App = () => <Provider initialState={initialState}>...</Provider>;
 ```
 
 ### `onMount`
@@ -491,10 +496,12 @@ const App = () => (
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
-type OnMount = (props: {
-  state: object,
-  setContextState: Function
-}) => void;
+type OnMount = (
+  props: {
+    state: object;
+    setContextState: Function;
+  }
+) => void;
 ```
 
 As well as with `Container`, you can pass an `onMount` prop to `Provider`. The function will be called when `Provider`'s `componentDidMount` gets called.
@@ -504,15 +511,9 @@ const onMount = ({ setContextState }) => {
   setContextState("counter1", { count: 0 });
 };
 
-const MyProvider = props => (
-  <Provider onMount={onMount} {...props} />
-);
+const MyProvider = props => <Provider onMount={onMount} {...props} />;
 
-const App = () => (
-  <MyProvider>
-    ...
-  </MyProvider>
-);
+const App = () => <MyProvider>...</MyProvider>;
 ```
 
 ### `onUpdate`
@@ -520,13 +521,15 @@ const App = () => (
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 ```ts
-type OnUpdate = (props: { 
-  prevState: object,
-  state: object,
-  setContextState: Function,
-  context: string,
-  type: string
-}) => void;
+type OnUpdate = (
+  props: {
+    prevState: object;
+    state: object;
+    setContextState: Function;
+    context: string;
+    type: string;
+  }
+) => void;
 ```
 
 `onUpdate` will be called every time `Provider`'s `setState` gets called. If `setContextState` was called instead, `onUpdate` will also receive a `context` prop.
@@ -561,7 +564,8 @@ const Counter = () => (
     <CounterContainer context="counter1">
       {({ count, incrementCalls, increment }) => (
         <button onClick={increment}>
-          count: {count}<br />
+          count: {count}
+          <br />
           incrementCalls: {incrementCalls}
         </button>
       )}
@@ -587,11 +591,7 @@ const onUnmount = ({ state }) => {
   console.log(state);
 };
 
-const App = () => (
-  <Provider onUnmount={onUnmount}>
-    ...
-  </Provider>
-);
+const App = () => <Provider onUnmount={onUnmount}>...</Provider>;
 ```
 
 ### `devtools`
@@ -605,11 +605,7 @@ type Devtools = boolean;
 Passing `devtools` prop to `Provider` will enable [redux-devtools-extension](https://github.com/zalmoxisus/redux-devtools-extension) integration, if that's installed on your browser. With that, you can easily debug the state of your application.
 
 ```jsx
-const App = () => (
-  <Provider devtools>
-    ...
-  </Provider>
-);
+const App = () => <Provider devtools>...</Provider>;
 ```
 
 <p align="center"><img src="https://user-images.githubusercontent.com/3068563/40630279-c31d4f36-62a7-11e8-96f2-052c97985747.gif" alt="Example"></p>
@@ -620,6 +616,41 @@ Alternatively, you can use `onUpdate` to log changes on the console:
 
 ```jsx
 <CounterContainer onUpdate={console.log} />
+```
+
+<br>
+
+## `withContainer`
+
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
+
+A HOC that takes a `Container` and a `Component` and returns the wrapped component. Functionally similar to `connect()` in Redux.
+
+```ts
+type WithContainerHOC<ContainerProps, Props> = (
+  container: React.ComponentType<ContainerProps> | ContainerProps
+) => (
+  wrappedComponment: React.ComponentType<Props>
+) => React.ComponentType<Props>;
+```
+
+The HOC takes a props object as input. The props object is automatically applied to a `Container` element to wrap the inner component for you.
+
+An example of using `withContainer`.
+
+```jsx
+import { withContainer } from "constate";
+
+const containerProps = {
+  initialState: { count: 0 },
+  actions: { increment: () => state => ({ count: state.count + 1 }) }
+};
+
+const Counter = ({ count, increment }) => (
+  <button onClick={increment}>{count}</button>
+);
+
+export default withContainer(containerProps)(Counter);
 ```
 
 <br>
@@ -670,7 +701,7 @@ const effects: EffectsMap<State, Effects> = {
     const fn = () => setState(state => ({ count: state.count + 1 }));
     setInterval(fn, 1000);
   }
-}
+};
 ```
 
 Those interfaces (e.g. `ActionMap`) will create a map using your `State` and your public API (e.g. `Actions`).
@@ -703,7 +734,12 @@ If you're building a composable container - that is, a component without `childr
 ```jsx
 import { Container, ComposableContainer } from "constate";
 
-const CounterContainer: ComposableContainer<State, Actions, Selectors, Effects> = props => (
+const CounterContainer: ComposableContainer<
+  State,
+  Actions,
+  Selectors,
+  Effects
+> = props => (
   <Container
     {...props}
     initialState={{ ...initialState, ...props.initialState }}
@@ -714,7 +750,7 @@ const CounterContainer: ComposableContainer<State, Actions, Selectors, Effects> 
 );
 ```
 
-Then, you can use it in other parts of your application and still take advantage from typings. `ComposableContainer` will handle them for you: 
+Then, you can use it in other parts of your application and still take advantage from typings. `ComposableContainer` will handle them for you:
 
 ```jsx
 const Counter = () => (
@@ -735,6 +771,7 @@ There're also useful interfaces for lifecycle methods. You can find them all in 
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
 [`actions`](#actions) and [`selectors`](#selectors) are pure functions and you can test them directly:
+
 ```js
 test("increment", () => {
   expect(increment(1)({ count: 0 })).toEqual({ count: 1 });

@@ -223,13 +223,13 @@ export type MountContainer = (
 ) => (onUnmount?: () => void) => void;
 
 /**
- * `Container` props
+ * `withContainer` props
  * @template S State
  * @template AP Map of actions to be passed to the children function
  * @template SP Map of selectors to be passed to the children function
  * @template EP Map of effects to be passed to the children function
  */
-export interface ContainerProps<S, AP = {}, SP = {}, EP = {}> {
+export interface WithContainerProps<S, AP = {}, SP = {}, EP = {}> {
   initialState?: Partial<S>;
   context?: string;
   actions?: ActionMap<S, AP>;
@@ -240,6 +240,17 @@ export interface ContainerProps<S, AP = {}, SP = {}, EP = {}> {
   onUnmount?: OnUnmount<S>;
   shouldUpdate?: ShouldUpdate<S>;
   pure?: boolean;
+}
+
+/**
+ * `Container` props
+ * @template S State
+ * @template AP Map of actions to be passed to the children function
+ * @template SP Map of selectors to be passed to the children function
+ * @template EP Map of effects to be passed to the children function
+ */
+export interface ContainerProps<S, AP = {}, SP = {}, EP = {}>
+  extends WithContainerProps<S, AP, SP, EP> {
   children: (props: S & AP & SP & EP) => React.ReactNode;
 }
 
