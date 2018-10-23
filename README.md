@@ -627,11 +627,8 @@ Alternatively, you can use `onUpdate` to log changes on the console:
 A HOC that takes a `Container` and a `Component` and returns the wrapped component. Functionally similar to `connect()` in Redux.
 
 ```ts
-type WithContainerHOC<ContainerProps, Props> = (
-  container: React.ComponentType<ContainerProps> | ContainerProps
-) => (
-  wrappedComponment: React.ComponentType<Props>
-) => React.ComponentType<Props>;
+type WithContainer = (props: ContainerProps) =>
+  (wrappedComponment: React.ComponentType) => React.ComponentType;
 ```
 
 The HOC takes a props object as input. The props object is automatically applied to a `Container` element to wrap the inner component for you.
