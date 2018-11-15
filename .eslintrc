@@ -25,6 +25,7 @@
     "react/require-default-props": "off",
     "react/destructuring-assignment": "off",
     "import/no-extraneous-dependencies": "off",
+    "import/prefer-default-export": "off",
     "jsx-a11y/anchor-is-valid": "off"
   },
   "overrides": [
