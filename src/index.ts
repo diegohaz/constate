@@ -1,81 +1,13 @@
-import * as React from "react";
-import { stringToBinary, parseUpdater, parseInitialState } from "./utils";
-import { ContextState } from "./types";
+import createContext from "./createContext";
 
-const EmptyContext = React.createContext<ContextState<any>>([{}, () => {}]);
+const lol1 = createContext({ counter1: 0 });
 
-export function createUseContextState<S>(
-  Context: React.Context<ContextState<S>>
-) {
-  return function useContextState<K extends keyof S, SS extends S[K]>(
-    contextKey?: K,
-    initialState?: SS | (() => SS)
-  ): ContextState<SS> {
-    const createObservedBits = () =>
-      contextKey ? stringToBinary(contextKey) : undefined;
+const [count1, setCount1] = lol1.useContextState("counter1");
 
-    const observedBits = React.useMemo(createObservedBits, [contextKey]);
+const lol2 = createContext<{ [key: string]: any }>({});
 
-    const [contextState, setContextState] = React.useContext(
-      contextKey ? Context : EmptyContext,
-      observedBits
-    );
+const [count2, setCount2] = lol2.useContextState("counter1", 0);
 
-    let [state, setState] = React.useState(initialState!);
+const lol3 = createContext({ counter1: 0 });
 
-    if (contextKey) {
-      state =
-        typeof contextState[contextKey] !== "undefined"
-          ? contextState[contextKey]
-          : parseInitialState(initialState);
-
-      setState = (newState: any) =>
-        setContextState((prevState: S) =>
-          Object.assign({}, prevState, {
-            [contextKey]: parseUpdater(newState, prevState[contextKey])
-          })
-        );
-    }
-
-    React.useMutationEffect(
-      () => {
-        if (
-          contextKey &&
-          typeof contextState[contextKey] === "undefined" &&
-          typeof initialState !== "undefined"
-        ) {
-          setState(initialState);
-        }
-      },
-      [contextKey]
-    );
-
-    return [state, setState];
-  };
-}
-
-const useContextState = createUseContextState(EmptyContext);
-const [state, setState] = useContextState("lol", { loler: "dadsa" });
-const [state1, setState1] = useContextState("lol", () => ({ loler: "dadsa" }));
-
-// export interface ContextState {
-//   state: {
-//     [key: string]: any;
-//   };
-//   setState:
-//   setContextState?: <S, K>(
-//     context: string,
-//     updaterOrState: StateUpdater<S> | Partial<S>,
-//     callback?: StateCallback,
-//     type?: K
-//   ) => void;
-//   mountContainer?: MountContainer;
-// }
-
-// export function createUseContextState<T>(context: Context<T>) {
-//   return (contextKey?: string, initialState?: any) => {
-
-//   }
-// }
-
-// export function createUseContextEffect(context: Context) {}
+const [count3, setCount3] = lol3.useContextState("counter1", 0);

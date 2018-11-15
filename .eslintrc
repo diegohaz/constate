@@ -18,6 +18,7 @@
   },
   "rules": {
     "no-underscore-dangle": "off",
+    "no-bitwise": "off",
     "react/prop-types": "off",
     "react/button-has-type": "off",
     "react/forbid-prop-types": "off",

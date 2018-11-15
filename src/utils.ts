@@ -6,7 +6,7 @@ export function stringToBinary(string: string) {
   for (let i = 0; i < length; i += 1) {
     output += string[i].charCodeAt(0).toString(2);
   }
-  return parseInt(output, 10);
+  return +output;
 }
 
 export function parseUpdater<S>(state: StateUpdater<S> | S, prevState: S) {
