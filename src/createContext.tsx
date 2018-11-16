@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ContextState, ProviderProps } from "./types";
-import { stringToBinary } from "./utils";
+import { getCharCodes } from "./utils";
 import createUseContextState from "./createUseContextState";
 import createUseContextReducer from "./createUseContextReducer";
 
@@ -11,7 +11,7 @@ function createContext<State>(initialState: State) {
       let changedBits = 0;
       for (const contextKey in next) {
         if (prev[contextKey] !== next[contextKey]) {
-          changedBits |= stringToBinary(contextKey);
+          changedBits |= getCharCodes(contextKey);
         }
       }
       return changedBits;

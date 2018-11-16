@@ -1,7 +1,7 @@
 import * as React from "react";
-import { stringToBinary, parseInitialState } from "./utils";
+import { getCharCodes, parseInitialState } from "./utils";
 import { ContextReducer, ContextState, Reducer } from "./types";
-import { EmptyContext } from "./Context";
+import EmptyContext from "./EmptyContext";
 
 export interface UseContextReducer<State> {
   <K extends keyof State, Action>(
@@ -29,7 +29,7 @@ function createUseContextReducer<State>(
     initialAction?: any
   ) => {
     const createObservedBits = () =>
-      contextKey ? stringToBinary(contextKey as string) : undefined;
+      contextKey ? getCharCodes(contextKey as string) : undefined;
 
     const observedBits = React.useMemo(createObservedBits, [contextKey]);
 
@@ -51,9 +51,9 @@ function createUseContextReducer<State>(
           : parseInitialState(initialState)!;
 
       dispatch = (action: any) =>
-        setContextState((oldState: State) =>
-          Object.assign({}, oldState, {
-            [contextKey]: reducer(oldState[contextKey], action)
+        setContextState((prevState: State) =>
+          Object.assign({}, prevState, {
+            [contextKey]: reducer(prevState[contextKey], action)
           })
         );
     }
@@ -62,11 +62,14 @@ function createUseContextReducer<State>(
       () => {
         if (contextKey) {
           if (contextState[contextKey] == null && initialState != null) {
-            setContextState((oldState: State) =>
-              Object.assign({}, oldState, {
-                [contextKey]: initialState
-              })
-            );
+            setContextState((prevState: State) => {
+              if (prevState[contextKey] == null) {
+                return Object.assign({}, prevState, {
+                  [contextKey]: initialState
+                });
+              }
+              return prevState;
+            });
           }
           if (initialAction) {
             dispatch(initialAction);

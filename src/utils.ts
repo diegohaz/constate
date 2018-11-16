@@ -1,12 +1,12 @@
 import { StateUpdater } from "./types";
 
-export function stringToBinary(string: string) {
+export function getCharCodes(string: string) {
   const { length } = string;
-  let output = "";
+  let output = 0;
   for (let i = 0; i < length; i += 1) {
-    output += string[i].charCodeAt(0).toString(2);
+    output += string[i].charCodeAt(0);
   }
-  return +output;
+  return output;
 }
 
 export function parseUpdater<S>(state: StateUpdater<S> | S, prevState: S) {
