@@ -2,11 +2,15 @@ export type ObjectOf<T> = { [key: string]: T };
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
-export type StateUpdater<S> = (state: S) => S;
+export type StateUpdater<State> = (state: State) => State;
 
-export type SetState<S> = (state: S | StateUpdater<S>) => void;
+export type SetState<State> = (state: State | StateUpdater<State>) => void;
 
-export type ContextState<S> = [S, SetState<S>];
+export type Reducer<State, Action> = (state: State, action: Action) => State;
+
+export type ContextState<State> = [State, SetState<State>];
+
+export type ContextReducer<State, Action> = [State, (action: Action) => void];
 
 export type ProviderProps = {
   children: React.ReactNode;

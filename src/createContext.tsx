@@ -2,13 +2,13 @@ import * as React from "react";
 import { ContextState, ProviderProps } from "./types";
 import { stringToBinary } from "./utils";
 import createUseContextState from "./createUseContextState";
+import createUseContextReducer from "./createUseContextReducer";
 
 function createContext<State>(initialState: State) {
   const Context = React.createContext<ContextState<State>>(
     [initialState, () => {}],
     ([prev], [next]) => {
       let changedBits = 0;
-      // eslint-disable-next-line no-restricted-syntax
       for (const contextKey in next) {
         if (prev[contextKey] !== next[contextKey]) {
           changedBits |= stringToBinary(contextKey);
@@ -27,7 +27,8 @@ function createContext<State>(initialState: State) {
   return {
     Context,
     Provider,
-    useContextState: createUseContextState(Context)
+    useContextState: createUseContextState(Context),
+    useContextReducer: createUseContextReducer(Context)
   };
 }
 

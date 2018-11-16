@@ -1,64 +1,31 @@
 import * as React from "react";
-import { stringToBinary, parseUpdater, parseInitialState } from "./utils";
 import { ContextState } from "./types";
+import createUseContextReducer from "./createUseContextReducer";
 
-const EmptyContext = React.createContext<ContextState<any>>([{}, () => {}]);
-
-export interface Pqp<State> {
+export interface UseContextState<State> {
   <K extends keyof State>(contextKey?: K | null): ContextState<State[K]>;
+
   <K extends keyof State, S extends State[K]>(
     contextKey?: K | null,
-    initialState?: S | (() => S)
+    initialState?: S | (() => S) | null
   ): ContextState<S>;
+}
+
+function basicStateReducer(state: any, action: any) {
+  return typeof action === "function" ? action(state) : action;
 }
 
 function createUseContextState<State>(
   Context: React.Context<ContextState<State>>
 ) {
-  const useContextState = ((contextKey?: keyof State, initialState?: any) => {
-    const createObservedBits = () =>
-      contextKey ? stringToBinary(contextKey as string) : undefined;
+  const useContextReducer = createUseContextReducer(Context);
 
-    const observedBits = React.useMemo(createObservedBits, [contextKey]);
-
-    const [contextState, setContextState] = React.useContext(
-      contextKey ? Context : EmptyContext,
-      observedBits
-    );
-
-    let [state, setState] = React.useState(initialState!);
-
-    if (contextKey) {
-      state =
-        typeof contextState[contextKey] !== "undefined"
-          ? contextState[contextKey]
-          : parseInitialState(initialState);
-
-      setState = (newState: any) =>
-        setContextState((oldState: State) =>
-          Object.assign({}, oldState, {
-            [contextKey]: parseUpdater(newState, oldState[contextKey])
-          })
-        );
-    }
-
-    React.useMutationEffect(
-      () => {
-        if (
-          contextKey &&
-          typeof contextState[contextKey] === "undefined" &&
-          typeof initialState !== "undefined"
-        ) {
-          setState(initialState);
-        }
-      },
-      [contextKey]
-    );
-
-    return [state, setState];
-  }) as Pqp<State>;
-
-  return useContextState;
+  return ((contextKey?: any, initialState?: any) =>
+    useContextReducer(
+      contextKey,
+      basicStateReducer,
+      initialState
+    )) as UseContextState<State>;
 }
 
 export default createUseContextState;

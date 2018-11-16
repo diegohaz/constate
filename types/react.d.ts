@@ -44,7 +44,7 @@ declare module "react" {
   type Reducer<State, Action> = (state: State, action: Action) => State;
   function useReducer<State, Action>(
     reducer: Reducer<State, Action>,
-    initialState: State,
+    initialState: State | (() => State),
     initialAction?: Action
   ): [State, (action: Action) => void];
 
