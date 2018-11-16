@@ -20,7 +20,7 @@ function createContext<State>(initialState: State) {
 
   const Provider = ({ children }: ProviderProps) => {
     const state = React.useState(initialState);
-    const value = React.useMemo(() => state, [state[0]]) as ContextState<State>;
+    const value = React.useMemo(() => state, [state[0]]);
     return <Context.Provider value={value}>{children}</Context.Provider>;
   };
 
