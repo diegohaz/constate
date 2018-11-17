@@ -1,7 +1,4 @@
 import createContext from "./createContext";
-import createUseContextEffect from "./createUseContextEffect";
-import createUseContextReducer from "./createUseContextReducer";
-import createUseContextState from "./createUseContextState";
 
 const {
   Context,
@@ -15,9 +12,6 @@ const {
 
 export {
   createContext,
-  createUseContextEffect,
-  createUseContextReducer,
-  createUseContextState,
   Context,
   Provider,
   useContextReducer,
