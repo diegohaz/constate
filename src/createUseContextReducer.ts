@@ -25,7 +25,7 @@ function createUseContextReducer<State>(
   return ((
     contextKey: keyof State | undefined | null,
     reducer: Reducer<State[keyof State], any>,
-    initialState?: State[keyof State] | (() => State[keyof State]),
+    initialState?: State[keyof State],
     initialAction?: any
   ) => {
     const createObservedBits = () =>
@@ -33,6 +33,7 @@ function createUseContextReducer<State>(
 
     const observedBits = React.useMemo(createObservedBits, [contextKey]);
 
+    // @ts-ignore
     const [contextState, setContextState] = React.useContext(
       contextKey ? Context : EmptyContext,
       observedBits

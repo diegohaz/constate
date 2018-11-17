@@ -1,8 +1,9 @@
 import * as React from "react";
-import { ContextState, ProviderProps } from "./types";
+import { ContextState } from "./types";
 import { getCharCodes } from "./utils";
 import createUseContextState from "./createUseContextState";
 import createUseContextReducer from "./createUseContextReducer";
+import createUseContextEffect from "./createUseContextEffect";
 
 function createContext<State>(initialState: State) {
   const Context = React.createContext<ContextState<State>>(
@@ -18,7 +19,7 @@ function createContext<State>(initialState: State) {
     }
   );
 
-  const Provider = ({ children }: ProviderProps) => {
+  const Provider = ({ children }: { children: React.ReactNode }) => {
     const state = React.useState(initialState);
     const value = React.useMemo(() => state, [state[0]]);
     return <Context.Provider value={value}>{children}</Context.Provider>;
@@ -28,7 +29,13 @@ function createContext<State>(initialState: State) {
     Context,
     Provider,
     useContextState: createUseContextState(Context),
-    useContextReducer: createUseContextReducer(Context)
+    useContextReducer: createUseContextReducer(Context),
+    useContextEffect: createUseContextEffect(Context),
+    useContextLayoutEffect: createUseContextEffect(Context, "useLayoutEffect"),
+    useContextMutationEffect: createUseContextEffect(
+      Context,
+      "useMutationEffect"
+    )
   };
 }
 
