@@ -1,9 +1,10 @@
 import * as React from "react";
 import { ContextState } from "./types";
-import { getCharCodes } from "./utils";
-import createUseContextState from "./createUseContextState";
-import createUseContextReducer from "./createUseContextReducer";
+import { hash } from "./utils";
 import createUseContextEffect from "./createUseContextEffect";
+import createUseContextReducer from "./createUseContextReducer";
+import createUseContextRef from "./createUseContextRef";
+import createUseContextState from "./createUseContextState";
 
 function createContext<State>(initialState: State) {
   const Context = React.createContext<ContextState<State>>(
@@ -12,7 +13,7 @@ function createContext<State>(initialState: State) {
       let changedBits = 0;
       for (const contextKey in next) {
         if (prev[contextKey] !== next[contextKey]) {
-          changedBits |= getCharCodes(contextKey);
+          changedBits |= hash(contextKey);
         }
       }
       return changedBits;
@@ -28,6 +29,7 @@ function createContext<State>(initialState: State) {
   return {
     Context,
     Provider,
+    useContextRef: createUseContextRef(Context),
     useContextState: createUseContextState(Context),
     useContextReducer: createUseContextReducer(Context),
     useContextEffect: createUseContextEffect(Context),

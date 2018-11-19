@@ -1,5 +1,5 @@
 import * as React from "react";
-import { getCharCodes, parseInitialState } from "./utils";
+import { hash } from "./utils";
 import { ContextReducer, ContextState, Reducer } from "./types";
 import EmptyContext from "./EmptyContext";
 
@@ -20,7 +20,7 @@ export interface UseContextReducer<State> {
 }
 
 function createUseContextReducer<State>(
-  Context: React.Context<ContextState<State>>
+  context: React.Context<ContextState<State>>
 ) {
   return ((
     contextKey: keyof State | undefined | null,
@@ -28,14 +28,11 @@ function createUseContextReducer<State>(
     initialState?: State[keyof State],
     initialAction?: any
   ) => {
-    const createObservedBits = () =>
-      contextKey ? getCharCodes(contextKey as string) : undefined;
-
-    const observedBits = React.useMemo(createObservedBits, [contextKey]);
+    const observedBits = contextKey ? hash(contextKey as string) : undefined;
 
     // @ts-ignore
     const [contextState, setContextState] = React.useContext(
-      contextKey ? Context : EmptyContext,
+      contextKey ? context : EmptyContext,
       observedBits
     );
 
@@ -46,10 +43,9 @@ function createUseContextReducer<State>(
     );
 
     if (contextKey) {
-      state =
-        contextState[contextKey] != null
-          ? contextState[contextKey]
-          : parseInitialState(initialState)!;
+      if (contextState[contextKey] != null) {
+        state = contextState[contextKey];
+      }
 
       dispatch = (action: any) =>
         setContextState((prevState: State) =>
@@ -61,20 +57,21 @@ function createUseContextReducer<State>(
 
     React.useMutationEffect(
       () => {
-        if (contextKey) {
-          if (contextState[contextKey] == null && initialState != null) {
-            setContextState((prevState: State) => {
-              if (prevState[contextKey] == null) {
-                return Object.assign({}, prevState, {
-                  [contextKey]: initialState
-                });
-              }
-              return prevState;
-            });
-          }
-          if (initialAction) {
-            dispatch(initialAction);
-          }
+        if (
+          contextKey &&
+          contextState[contextKey] == null &&
+          initialState != null
+        ) {
+          setContextState((prevState: State) => {
+            if (prevState[contextKey] == null) {
+              return Object.assign({}, prevState, {
+                [contextKey]: initialAction
+                  ? reducer(state, initialAction)
+                  : state
+              });
+            }
+            return prevState;
+          });
         }
       },
       [contextKey]

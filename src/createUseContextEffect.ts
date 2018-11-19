@@ -3,41 +3,56 @@ import { ContextState } from "./types";
 import createUseContextState from "./createUseContextState";
 
 function createUseContextEffect<State>(
-  Context: React.Context<ContextState<State>>,
+  context: React.Context<ContextState<State>>,
   type: "useEffect" | "useMutationEffect" | "useLayoutEffect" = "useEffect"
 ) {
-  const useContextState = createUseContextState(Context);
+  const useContextState = createUseContextState(context);
 
   return (
     contextKey: keyof State | undefined | null,
     create: () => void | (() => void),
     inputs?: ReadonlyArray<any>
   ) => {
-    const ref = React.useRef(null);
-    const [refs, setRefs] = useContextState(
+    const consumer = React.useRef(null);
+    const [consumers, setConsumers] = useContextState(
       // @ts-ignore
-      `__${contextKey}_refs`,
+      contextKey ? `__${contextKey}_consumers` : null,
       []
     ) as ContextState<Array<React.RefObject<any>>>;
 
-    React.useMutationEffect(() => {
-      if (refs.indexOf(ref) === -1) {
-        setRefs([...refs, ref]);
-      }
-      return () => {
-        setRefs(prevRefs => {
-          const index = prevRefs.indexOf(ref);
-          return [...prevRefs.slice(0, index), ...prevRefs.slice(index + 1)];
-        });
-      };
-    }, []);
+    const isNewConsumer = consumers.indexOf(consumer) === -1;
+    const nextConsumers = isNewConsumer ? [consumer, ...consumers] : consumers;
 
-    React[type](() => {
-      if (refs.indexOf(ref) === 0) {
-        return create();
-      }
-      return undefined;
-    }, inputs);
+    React.useMutationEffect(
+      () => {
+        if (!contextKey) return undefined;
+
+        if (isNewConsumer) {
+          setConsumers(nextConsumers);
+        }
+
+        return () => {
+          setConsumers(prevConsumers => {
+            const index = prevConsumers.indexOf(consumer);
+            return [
+              ...prevConsumers.slice(0, index),
+              ...prevConsumers.slice(index + 1)
+            ];
+          });
+        };
+      },
+      [contextKey]
+    );
+
+    React[type](
+      () => {
+        if (!contextKey || nextConsumers.indexOf(consumer) === 0) {
+          return create();
+        }
+        return undefined;
+      },
+      inputs ? [contextKey, ...inputs] : undefined
+    );
   };
 }
 
