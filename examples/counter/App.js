@@ -1,5 +1,5 @@
 import React from "react";
-import { useContextState, Provider } from "constate";
+import { Provider, useContextState } from "constate";
 
 function useCounter(context) {
   const [count, setCount] = useContextState(context, 0);
