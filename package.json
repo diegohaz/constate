@@ -29,7 +29,12 @@
     "build": "tsc --emitDeclarationOnly && rollup -c",
     "preversion": "npm run lint && npm test && npm run build",
     "version": "standard-changelog && git add CHANGELOG.md",
-    "postpublish": "git push origin master --follow-tags"
+    "postpublish": "git push origin master --follow-tags",
+    "postinstall": "npm run examples:install",
+    "examples:install": "yarn --cwd examples",
+    "examples:start": "npm run start --prefix examples",
+    "examples:build": "npm run build --prefix examples",
+    "examples:upgrade": "yarn upgrade-interactive --latest --cwd examples"
   },
   "husky": {
     "hooks": {

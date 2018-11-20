@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "workspaces": [
+    "*"
+  ],
+  "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "parcel-bundler": "^1.10.0",
+    "react": "^16.7.0-alpha.2",
+    "react-dom": "^16.7.0-alpha.2"
+  }
+}
