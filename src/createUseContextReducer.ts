@@ -1,7 +1,6 @@
 import * as React from "react";
 import { hash } from "./utils";
 import { ContextReducer, ContextState, Reducer } from "./types";
-import EmptyContext from "./EmptyContext";
 
 export interface UseContextReducer<State> {
   <K extends keyof State, Action>(
@@ -18,6 +17,8 @@ export interface UseContextReducer<State> {
     initialAction?: Action
   ): ContextReducer<S, Action>;
 }
+
+const EmptyContext = React.createContext<any>([]);
 
 function createUseContextReducer<State>(
   context: React.Context<ContextState<State>>

@@ -12,6 +12,8 @@ test("local effect", () => {
   expect(fn).toBeCalledTimes(0);
   rerender(<Counter />);
   expect(fn).toBeCalledTimes(1);
+  rerender(<Counter />);
+  expect(fn).toBeCalledTimes(1);
 });
 
 test("shared effect", () => {
@@ -40,25 +42,3 @@ test("shared effect", () => {
   rerender(<App />);
   expect(fn).toBeCalledTimes(2);
 });
-
-// test("shared state", () => {
-//   const useCounter = () => useContextEffect("counter1", 0);
-//   const Button = () => {
-//     const [count, setCount] = useCounter();
-//     return <button onClick={() => setCount(count + 1)}>Button</button>;
-//   };
-//   const Value = () => {
-//     const [count] = useCounter();
-//     return <span>{count}</span>;
-//   };
-//   const App = () => (
-//     <Provider>
-//       <Button />
-//       <Value />
-//     </Provider>
-//   );
-//   const { getByText } = render(<App />);
-//   expect(getByText("0")).toBeDefined();
-//   fireEvent.click(getByText("Button"));
-//   expect(getByText("1")).toBeDefined();
-// });
