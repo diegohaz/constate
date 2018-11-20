@@ -3,7 +3,6 @@ import { ContextState } from "./types";
 import { hash } from "./utils";
 import createUseContextEffect from "./createUseContextEffect";
 import createUseContextReducer from "./createUseContextReducer";
-import createUseContextRef from "./createUseContextRef";
 import createUseContextState from "./createUseContextState";
 
 function createContext<State>(initialState: State) {
@@ -29,15 +28,11 @@ function createContext<State>(initialState: State) {
   return {
     Context,
     Provider,
-    useContextRef: createUseContextRef(Context),
     useContextState: createUseContextState(Context),
     useContextReducer: createUseContextReducer(Context),
-    useContextEffect: createUseContextEffect(Context),
-    useContextLayoutEffect: createUseContextEffect(Context, "useLayoutEffect"),
-    useContextMutationEffect: createUseContextEffect(
-      Context,
-      "useMutationEffect"
-    )
+    useContextEffect: createUseContextEffect<State>(),
+    useContextLayoutEffect: createUseContextEffect<State>("useLayoutEffect"),
+    useContextMutationEffect: createUseContextEffect<State>("useMutationEffect")
   };
 }
 

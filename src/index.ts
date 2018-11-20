@@ -3,7 +3,6 @@ import createContext from "./createContext";
 const {
   Context,
   Provider,
-  useContextRef,
   useContextReducer,
   useContextState,
   useContextEffect,
@@ -15,7 +14,6 @@ export {
   createContext,
   Context,
   Provider,
-  useContextRef,
   useContextReducer,
   useContextState,
   useContextEffect,

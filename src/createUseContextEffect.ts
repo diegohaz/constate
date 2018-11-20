@@ -1,57 +1,39 @@
 import * as React from "react";
-import { ContextState } from "./types";
-import createUseContextState from "./createUseContextState";
 
 function createUseContextEffect<State>(
-  context: React.Context<ContextState<State>>,
   type: "useEffect" | "useMutationEffect" | "useLayoutEffect" = "useEffect"
 ) {
-  const useContextState = createUseContextState(context);
+  const consumers: { [key: string]: React.MutableRefObject<any> | null } = {};
 
   return (
     contextKey: keyof State | undefined | null,
     create: () => void | (() => void),
     inputs?: ReadonlyArray<any>
   ) => {
+    const key = contextKey as string;
     const consumer = React.useRef(null);
-    const [consumers, setConsumers] = useContextState(
-      // @ts-ignore
-      contextKey ? `__${contextKey}_consumers` : null,
-      []
-    ) as ContextState<Array<React.RefObject<any>>>;
-
-    const isNewConsumer = consumers.indexOf(consumer) === -1;
-    const nextConsumers = isNewConsumer ? [consumer, ...consumers] : consumers;
+    if (consumers[key] == null) {
+      consumers[key] = consumer;
+    }
 
     React.useMutationEffect(
       () => {
-        if (!contextKey) return undefined;
-
-        if (isNewConsumer) {
-          setConsumers(nextConsumers);
-        }
-
+        if (!key) return undefined;
         return () => {
-          setConsumers(prevConsumers => {
-            const index = prevConsumers.indexOf(consumer);
-            return [
-              ...prevConsumers.slice(0, index),
-              ...prevConsumers.slice(index + 1)
-            ];
-          });
+          consumers[key] = null;
         };
       },
-      [contextKey]
+      [key]
     );
 
     React[type](
       () => {
-        if (!contextKey || nextConsumers.indexOf(consumer) === 0) {
+        if (!key || consumers[key] === consumer) {
           return create();
         }
         return undefined;
       },
-      inputs ? [contextKey, ...inputs] : undefined
+      inputs ? [key, ...inputs] : undefined
     );
   };
 }

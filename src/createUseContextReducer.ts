@@ -60,7 +60,7 @@ function createUseContextReducer<State>(
         if (
           contextKey &&
           contextState[contextKey] == null &&
-          initialState != null
+          (initialState != null || initialAction)
         ) {
           setContextState((prevState: State) => {
             if (prevState[contextKey] == null) {
