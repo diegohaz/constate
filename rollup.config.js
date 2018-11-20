@@ -2,7 +2,6 @@ import babel from "rollup-plugin-babel";
 import resolve from "rollup-plugin-node-resolve";
 import replace from "rollup-plugin-replace";
 import commonjs from "rollup-plugin-commonjs";
-import filesize from "rollup-plugin-filesize";
 import { uglify } from "rollup-plugin-uglify";
 import ignore from "rollup-plugin-ignore";
 import pkg from "./package.json";
@@ -15,8 +14,7 @@ const createCommonPlugins = () => [
   babel({
     extensions,
     exclude: "node_modules/**"
-  }),
-  filesize()
+  })
 ];
 
 const main = {
