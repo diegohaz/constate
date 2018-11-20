@@ -30,7 +30,7 @@
     "preversion": "npm run lint && npm test && npm run build",
     "version": "standard-changelog && git add CHANGELOG.md",
     "postpublish": "git push origin master --follow-tags",
-    "postinstall": "npm run examples:install",
+    "prepare": "npm run examples:install",
     "examples:install": "yarn --cwd examples",
     "examples:start": "npm run start --prefix examples",
     "examples:build": "npm run build --prefix examples",
