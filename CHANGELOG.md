@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.0-alpha.1"></a>
+# [1.0.0-alpha.1](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.0...v1.0.0-alpha.1) (2018-11-21)
+
+
+### Bug Fixes
+
+* Fix `useContextEffect` when it's used more than once ([3a28d2d](https://github.com/diegohaz/constate/commit/3a28d2d))
+
+
+### BREAKING CHANGES
+
+* Renamed `useContextEffect` and its variations to `unstable_useContextEffect`
+
+
+
 <a name="1.0.0-alpha.0"></a>
 # [1.0.0-alpha.0](https://github.com/diegohaz/constate/compare/v0.9.0...v1.0.0-alpha.0) (2018-11-21)
 
