@@ -4,7 +4,8 @@
 <br>
 
 <p align="center">
-  1 kB React state management library that lets you write contextual state as if it were local state using <a href="https://reactjs.org/docs/hooks-intro.html">React Hooks</a>.
+  1 kB React state management library that lets you write contextual state<br>
+  as if it were local state, using <a href="https://reactjs.org/docs/hooks-intro.html">React Hooks</a>.
 </p>
 
 <br>
@@ -71,7 +72,7 @@ function App() {
 - [`useContextState`](#usecontextstate)
 - [`useContextReducer`](#usecontextreducer)
 - [`useContextEffect`](#usecontexteffect)
-- [`createContext`](#createContext)
+- [`createContext`](#createcontext)
 
 <br>
 
