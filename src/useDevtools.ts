@@ -18,6 +18,7 @@ function useDevtools<State>(
     ReduxDevtoolsExtension["connect"]
   > | null>(null);
   const prevState = React.useRef<State | null>(null);
+  const lastStateSentFromDevtools = React.useRef<State | null>(null);
 
   React.useEffect(
     () => {
@@ -26,7 +27,8 @@ function useDevtools<State>(
         devtools.current.init(state);
         devtools.current.subscribe(message => {
           if (message.type === "DISPATCH" && message.state) {
-            setState(JSON.parse(message.state));
+            lastStateSentFromDevtools.current = JSON.parse(message.state);
+            setState(lastStateSentFromDevtools.current!);
           }
         });
         return () => {
@@ -45,13 +47,15 @@ function useDevtools<State>(
     () => {
       if (enabled && devtoolsExtension) {
         let changedKey;
-        for (const key in state) {
-          if (prevState.current && state[key] !== prevState.current[key]) {
-            changedKey = key;
+        if (lastStateSentFromDevtools.current !== state) {
+          for (const key in state) {
+            if (prevState.current && state[key] !== prevState.current[key]) {
+              changedKey = key;
+            }
           }
-        }
-        if (changedKey && devtools.current) {
-          devtools.current.send(changedKey, state);
+          if (changedKey && devtools.current) {
+            devtools.current.send(changedKey, state);
+          }
         }
         prevState.current = state;
       }
