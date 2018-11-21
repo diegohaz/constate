@@ -17,6 +17,7 @@
     }
   },
   "rules": {
+    "camelcase": "off",
     "no-underscore-dangle": "off",
     "no-bitwise": "off",
     "no-restricted-syntax": "off",

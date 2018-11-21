@@ -71,7 +71,6 @@ function App() {
 - [`Provider`](#provider)
 - [`useContextState`](#usecontextstate)
 - [`useContextReducer`](#usecontextreducer)
-- [`useContextEffect`](#usecontexteffect)
 - [`createContext`](#createcontext)
 
 <br>
@@ -196,51 +195,6 @@ function ContextualCounter() {
 
 <br>
 
-## `useContextEffect`
-
-<sup><a href="#table-of-contents">↑ Back to top</a></sup>
-
-Constate provides all contextual versions of [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect), such as `useContextEffect`, `useContextMutationEffect` and `useContextLayoutEffect`. 
-
-They receive `contextKey` as the first argument. If `contextKey` is `null` or `undefined`, the hook will work exactly as the React one.
-
-```js
-import { Provider, useContextEffect } from "constate";
-
-let count = 0;
-
-function useCounter(context) {
-  useContextEffect(context, () => {
-    count += 1;
-  }, []);
-}
-
-function ContextualCounter1() {
-  useCounter("counter1");
-  ...
-}
-
-function ContextualCounter2() {
-  useCounter("counter1");
-  ...
-}
-
-function App() {
-  return (
-    <Provider>
-      <ContextualCounter1 />
-      <ContextualCounter2 />
-    </Provider>
-  );
-}
-```
-
-In the example above, if we were using [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect), `count` would be `2`. With `useContextEffect`, it's `1`.
-
-`useContextEffect` ensures that the function will be called only once per `contextKey` no matter how many components are using it.
-
-<br>
-
 ## `createContext`
 
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
@@ -251,28 +205,14 @@ If you want to set a initial state for the whole context tree and/or want to cre
 // MyContext.js
 import { createContext } from "constate";
 
-const {
-  Provider,
-  useContextState,
-  useContextReducer,
-  useContextEffect,
-  useContextMutationEffect,
-  useContextLayoutEffect
-} = createContext({
+const { Provider, useContextState, useContextReducer } = createContext({
   counter1: 0,
   posts: [
     { id: 1, title: "Hello World!" }
   ]
 });
 
-export {
-  Provider,
-  useContextState,
-  useContextReducer,
-  useContextEffect,
-  useContextMutationEffect,
-  useContextLayoutEffect
-};
+export { Provider, useContextState, useContextReducer };
 ```
 
 ```jsx

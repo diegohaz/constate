@@ -1,5 +1,11 @@
 import * as React from "react";
 
+// I'm unemployed anyway
+function getCurrentOwner() {
+  return (React as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+    .ReactCurrentOwner.current;
+}
+
 function createUseContextEffect<State>(
   type: "useEffect" | "useMutationEffect" | "useLayoutEffect" = "useEffect"
 ) {
@@ -11,9 +17,9 @@ function createUseContextEffect<State>(
     inputs?: ReadonlyArray<any>
   ) => {
     const key = contextKey as string;
-    const consumer = React.useRef(null);
+    const consumer = React.useRef(getCurrentOwner());
     if (consumers[key] == null) {
-      consumers[key] = consumer;
+      consumers[key] = consumer.current;
     }
 
     React.useMutationEffect(
@@ -28,7 +34,7 @@ function createUseContextEffect<State>(
 
     React[type](
       () => {
-        if (!key || consumers[key] === consumer) {
+        if (!key || consumers[key] === consumer.current) {
           return create();
         }
         return undefined;

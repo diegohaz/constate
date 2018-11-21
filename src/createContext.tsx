@@ -39,9 +39,13 @@ function createContext<State>(initialState: State, name?: string) {
     Provider,
     useContextState: createUseContextState(Context),
     useContextReducer: createUseContextReducer(Context),
-    useContextEffect: createUseContextEffect<State>(),
-    useContextLayoutEffect: createUseContextEffect<State>("useLayoutEffect"),
-    useContextMutationEffect: createUseContextEffect<State>("useMutationEffect")
+    unstable_useContextEffect: createUseContextEffect<State>(),
+    unstable_useContextLayoutEffect: createUseContextEffect<State>(
+      "useLayoutEffect"
+    ),
+    unstable_useContextMutationEffect: createUseContextEffect<State>(
+      "useMutationEffect"
+    )
   };
 }
 

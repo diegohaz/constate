@@ -7,9 +7,9 @@ const {
   Provider,
   useContextState,
   useContextReducer,
-  useContextEffect,
-  useContextLayoutEffect,
-  useContextMutationEffect
+  unstable_useContextEffect: useContextEffect,
+  unstable_useContextLayoutEffect: useContextLayoutEffect,
+  unstable_useContextMutationEffect: useContextMutationEffect
 } = createContext({
   counter1: 0,
   foo: "foo",
