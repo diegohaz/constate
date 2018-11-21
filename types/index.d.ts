@@ -1,6 +1,6 @@
 declare interface ReduxDevtoolsExtension {
   connect: (
-    options: { name: string }
+    options?: { name?: string }
   ) => {
     init: (initialState: any) => void;
     send: (type: string, state: any) => void;

@@ -25,7 +25,7 @@ function Count() {
 
 function App() {
   return (
-    <Provider>
+    <Provider devtools>
       <DecrementButton />
       <Count />
       <IncrementButton />

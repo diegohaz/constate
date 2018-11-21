@@ -4,8 +4,14 @@ import { hash } from "./utils";
 import createUseContextEffect from "./createUseContextEffect";
 import createUseContextReducer from "./createUseContextReducer";
 import createUseContextState from "./createUseContextState";
+import useDevtools from "./useDevtools";
 
-function createContext<State>(initialState: State) {
+export type ProviderProps = {
+  children: React.ReactNode;
+  devtools?: boolean;
+};
+
+function createContext<State>(initialState: State, name?: string) {
   const Context = React.createContext<ContextState<State>>(
     [initialState, () => {}],
     ([prev], [next]) => {
@@ -19,9 +25,12 @@ function createContext<State>(initialState: State) {
     }
   );
 
-  const Provider = ({ children }: { children: React.ReactNode }) => {
+  const Provider = ({ children, devtools }: ProviderProps) => {
     const state = React.useState(initialState);
     const value = React.useMemo(() => state, [state[0]]);
+
+    useDevtools(state[0], state[1], { name, enabled: devtools });
+
     return <Context.Provider value={value}>{children}</Context.Provider>;
   };
 

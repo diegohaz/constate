@@ -95,12 +95,18 @@ import { Provider } from "constate";
 
 function App() {
   return (
-    <Provider>
+    <Provider devtools={process.env.NODE_ENV === "development"}>
       ...
     </Provider>
   );
 }
 ```
+
+Passing `devtools` prop to `Provider` will enable the [redux-devtools-extension](https://github.com/zalmoxisus/redux-devtools-extension) integration, if that's installed in your browser. With that, you can easily debug the state of your application.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/3068563/48814011-62601300-ed20-11e8-896b-c5c7a080989e.png" alt="Using Redux Devtools Extension" width="800">
+</p>
 
 <br>
 
@@ -290,6 +296,8 @@ function App() {
 ```
 
 > When importing hooks directly from the `constate` package, you're, in fact, using a default context created by our [index file](src/index.ts).
+
+`createContext` receives a second argument `name`, which will be displayed in the Redux Devtools when using the `devtools` prop on `Provider`.
 
 <br>
 
