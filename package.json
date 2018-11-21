@@ -29,7 +29,7 @@
     "build": "tsc --emitDeclarationOnly && rollup -c",
     "prerelease": "npm run lint && npm test && npm run build",
     "release": "standard-version",
-    "postpublish": "git push origin master --follow-tags",
+    "postpublish": "git push origin HEAD --follow-tags",
     "prepare": "npm run examples:install",
     "examples:install": "yarn --cwd examples",
     "examples:start": "npm run start --prefix examples",
