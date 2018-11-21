@@ -1,28 +1,29 @@
 import React from "react";
-import { render } from "react-dom";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import Counter from "./counter";
-import Nested from "./nested";
+import ReactDOM from "react-dom";
+import { Router, Link } from "@reach/router";
+import Counter from "./counter/App";
 
-const routeMap = { Counter, Nested };
+const paths = {
+  counter: Counter
+};
 
 const App = () => (
-  <Router>
-    <div>
-      <ul>
-        {Object.entries(routeMap).map(([key]) => (
-          <li key={key}>
-            <Link to={`/${key}`}>{key}</Link>
-          </li>
-        ))}
-      </ul>
-      {Object.entries(routeMap).map(([key, value]) => (
-        <div key={key}>
-          <Route path={`/${key}`} component={value} />
-        </div>
+  <div style={{ display: "flex" }}>
+    <ul style={{ flex: 0 }}>
+      {Object.keys(paths).map(path => (
+        <li key={path}>
+          <Link to={path}>{path}</Link>
+        </li>
       ))}
+    </ul>
+    <div style={{ margin: 16 }}>
+      <Router>
+        {Object.entries(paths).map(([path, Component]) => (
+          <Component key={path} path={path} />
+        ))}
+      </Router>
     </div>
-  </Router>
+  </div>
 );
 
-render(<App />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById("root"));

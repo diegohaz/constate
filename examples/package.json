@@ -1,0 +1,21 @@
+{
+  "private": true,
+  "workspaces": [
+    "*"
+  ],
+  "scripts": {
+    "start": "parcel index.html --open --no-hmr",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "@reach/router": "^1.2.1",
+    "parcel-bundler": "^1.10.0",
+    "react": "^16.7.0-alpha.2",
+    "react-dom": "^16.7.0-alpha.2"
+  },
+  "alias": {
+    "constate": "../src",
+    "react": "./node_modules/react",
+    "react-dom": "./node_modules/react-dom"
+  }
+}

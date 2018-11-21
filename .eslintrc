@@ -18,6 +18,8 @@
   },
   "rules": {
     "no-underscore-dangle": "off",
+    "no-bitwise": "off",
+    "no-restricted-syntax": "off",
     "react/prop-types": "off",
     "react/button-has-type": "off",
     "react/forbid-prop-types": "off",
@@ -25,6 +27,7 @@
     "react/require-default-props": "off",
     "react/destructuring-assignment": "off",
     "import/no-extraneous-dependencies": "off",
+    "import/prefer-default-export": "off",
     "jsx-a11y/anchor-is-valid": "off"
   },
   "overrides": [

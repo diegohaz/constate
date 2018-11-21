@@ -1,6 +1,7 @@
 module.exports = {
+  collectCoverageFrom: ["src/**/*.{ts,tsx,js}"],
   coveragePathIgnorePatterns: ["/node_modules/", "<rootDir>/test/"],
-  setupFiles: ["<rootDir>/test/testSetup.ts"],
+  setupTestFrameworkScriptFile: "<rootDir>/jest.setup.js",
   moduleFileExtensions: ["js", "jsx", "ts", "tsx"],
   testMatch: ["**/?(*.)+(spec|test).(j|t)s?(x)"],
   transform: {

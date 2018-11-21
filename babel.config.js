@@ -3,7 +3,7 @@ module.exports = {
     [
       "@babel/preset-env",
       {
-        modules: false,
+        modules: process.env.NODE_ENV === "test" ? "commonjs" : false,
         loose: true,
         targets: {
           browsers: "defaults"
@@ -13,13 +13,5 @@ module.exports = {
     "@babel/preset-typescript",
     "@babel/preset-react"
   ],
-  plugins: [
-    "@babel/plugin-proposal-class-properties",
-    "@babel/plugin-proposal-object-rest-spread"
-  ],
-  env: {
-    test: {
-      plugins: ["transform-es2015-modules-commonjs"]
-    }
-  }
+  plugins: ["@babel/plugin-proposal-object-rest-spread"]
 };

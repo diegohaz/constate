@@ -1,7 +1,22 @@
-import Consumer from "./Consumer";
-import Container from "./Container";
-import Provider from "./Provider";
+import createContext from "./createContext";
 
-export * from "./types";
+const {
+  Context,
+  Provider,
+  useContextReducer,
+  useContextState,
+  useContextEffect,
+  useContextLayoutEffect,
+  useContextMutationEffect
+} = createContext<{ [key: string]: any }>({});
 
-export { Consumer, Container, Provider };
+export {
+  createContext,
+  Context,
+  Provider,
+  useContextReducer,
+  useContextState,
+  useContextEffect,
+  useContextLayoutEffect,
+  useContextMutationEffect
+};
