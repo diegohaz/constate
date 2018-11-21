@@ -1,3 +1,17 @@
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="1.0.0-alpha.0"></a>
+# [1.0.0-alpha.0](https://github.com/diegohaz/constate/compare/v0.9.0...v1.0.0-alpha.0) (2018-11-21)
+
+
+### Features
+
+* Hooks ([#51](https://github.com/diegohaz/constate/issues/51)) ([10dd41d](https://github.com/diegohaz/constate/commit/10dd41d)), closes [#48](https://github.com/diegohaz/constate/issues/48)
+
+
+
 <a name="0.9.0"></a>
 # [0.9.0](https://github.com/diegohaz/constate/compare/v0.8.2...v0.9.0) (2018-10-03)
 
@@ -65,7 +79,3 @@
 ### Features
 
 * Add shouldUpdate ([#32](https://github.com/diegohaz/constate/issues/32)) ([88d49f8](https://github.com/diegohaz/constate/commit/88d49f8))
-
-
-
-
