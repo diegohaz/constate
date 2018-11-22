@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.0-alpha.2"></a>
+# [1.0.0-alpha.2](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2018-11-22)
+
+
+### Bug Fixes
+
+* Fix Redux DevTools creating unnecessary entries ([7162ad2](https://github.com/diegohaz/constate/commit/7162ad2))
+* Fix usage of `useContext(Context)` ([3ff531a](https://github.com/diegohaz/constate/commit/3ff531a))
+* Make `initialAction` on `useContextReducer` synchronous on render ([bde4b3c](https://github.com/diegohaz/constate/commit/bde4b3c))
+
+
+### BREAKING CHANGES
+
+* `createContext` doesn't accept a `name` argument anymore.
+
+
+
 <a name="1.0.0-alpha.1"></a>
 # [1.0.0-alpha.1](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.0...v1.0.0-alpha.1) (2018-11-21)
 
