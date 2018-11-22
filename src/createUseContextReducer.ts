@@ -29,18 +29,16 @@ function createUseContextReducer<State>(
     initialState?: State[keyof State],
     initialAction?: any
   ) => {
-    const observedBits = contextKey ? hash(contextKey as string) : undefined;
-
     // @ts-ignore
     const [contextState, setContextState] = React.useContext(
       contextKey ? context : EmptyContext,
-      observedBits
+      contextKey ? hash(contextKey as string) : undefined
     );
 
     let [state, dispatch] = React.useReducer(
       reducer,
       initialState!,
-      contextKey ? undefined : initialAction
+      initialAction
     );
 
     if (contextKey) {
@@ -58,17 +56,11 @@ function createUseContextReducer<State>(
 
     React.useMutationEffect(
       () => {
-        if (
-          contextKey &&
-          contextState[contextKey] == null &&
-          (initialState != null || initialAction)
-        ) {
+        if (contextKey && contextState[contextKey] == null && state != null) {
           setContextState((prevState: State) => {
             if (prevState[contextKey] == null) {
               return Object.assign({}, prevState, {
-                [contextKey]: initialAction
-                  ? reducer(state, initialAction)
-                  : state
+                [contextKey]: state
               });
             }
             return prevState;
