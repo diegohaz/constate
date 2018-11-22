@@ -11,25 +11,35 @@ export type ProviderProps = {
   devtools?: boolean;
 };
 
-function createContext<State>(initialState: State, name?: string) {
+function defaultCalculateChangedBits<T>(prev: T, next: T) {
+  let changedBits = 0;
+  for (const contextKey in next) {
+    if (prev[contextKey] !== next[contextKey]) {
+      changedBits |= hash(contextKey);
+    }
+  }
+  return changedBits;
+}
+
+function createContext<State>(
+  initialState: State,
+  calculateChangedBits: (
+    prev: State,
+    next: State
+  ) => number = defaultCalculateChangedBits
+) {
   const Context = React.createContext<ContextState<State>>(
     [initialState, () => {}],
-    ([prev], [next]) => {
-      let changedBits = 0;
-      for (const contextKey in next) {
-        if (prev[contextKey] !== next[contextKey]) {
-          changedBits |= hash(contextKey);
-        }
-      }
-      return changedBits;
-    }
+    calculateChangedBits
+      ? ([prev], [next]) => calculateChangedBits(prev, next)
+      : undefined
   );
 
   const Provider = ({ children, devtools }: ProviderProps) => {
     const state = React.useState(initialState);
     const value = React.useMemo(() => state, [state[0]]);
 
-    useDevtools(state[0], state[1], { name, enabled: devtools });
+    useDevtools(state[0], state[1], { enabled: devtools });
 
     return <Context.Provider value={value}>{children}</Context.Provider>;
   };

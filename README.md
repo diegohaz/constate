@@ -243,8 +243,6 @@ function App() {
 
 > When importing hooks directly from the `constate` package, you're, in fact, using a default context created by our [index file](src/index.ts).
 
-`createContext` receives a second argument `name`, which will be displayed in the Redux Devtools when using the `devtools` prop on `Provider`.
-
 <br>
 
 ## Contributing
