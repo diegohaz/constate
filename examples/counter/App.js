@@ -2,6 +2,7 @@ import React from "react";
 import { Provider, useContextState } from "constate";
 
 function useCounter(context) {
+  // [count, setCount] = React.useState(0);
   const [count, setCount] = useContextState(context, 0);
   const increment = () => setCount(count + 1);
   const decrement = () => setCount(count - 1);

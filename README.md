@@ -32,23 +32,26 @@
 import React from "react";
 import { Provider, useContextState } from "constate";
 
+function useCounter(context) {
+  // replacing React.useState(0);
+  const [count, setCount] = useContextState(context, 0);
+  const increment = () => setCount(count + 1);
+  const decrement = () => setCount(count - 1);
+  return { count, increment, decrement };
+}
+
 function DecrementButton() {
-  // const [count, setCount] = React.useState(0);
-  const [count, setCount] = useContextState("counter1", 0);
-  const decrement = () => setCount(count - 1)
+  const { decrement } = useCounter("counter1");
   return <button onClick={decrement}>-</button>;
 }
 
 function IncrementButton() {
-  // const [count, setCount] = React.useState(0);
-  const [count, setCount] = useContextState("counter1", 0);
-  const increment = () => setCount(count + 1)
+  const { increment } = useCounter("counter1");
   return <button onClick={increment}>+</button>;
 }
 
 function Count() {
-  // const [count] = React.useState(0);
-  const [count] = useContextState("counter1", 0);
+  const { count } = useCounter("counter1");
   return <span>{count}</span>
 }
 
@@ -80,6 +83,8 @@ function App() {
 ```sh
 npm i constate@next
 ```
+
+> Constate `v1` is in alpha version. If you're looking for `v0`, see [`v0` docs](https://github.com/diegohaz/constate/tree/v0#readme) or read the [migration guide](MIGRATING_FROM_V0_TO_V1.md).
 
 <br>
 
