@@ -19,7 +19,7 @@ function createHash(skipLength: number) {
     }
     const { length } = Object.keys(hashMap);
     // 2, 4, 8, 16...
-    hashMap[key] = 1 << ((length % 29) + skipLength);
+    hashMap[key] = 1 << ((length % (30 - skipLength)) + skipLength);
     return hashMap[key];
   };
 }
