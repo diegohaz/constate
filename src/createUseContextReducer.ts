@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hash } from "./utils";
 import { ContextReducer, ContextState, Reducer } from "./types";
 
 export interface UseContextReducer<State> {
@@ -21,14 +20,15 @@ export interface UseContextReducer<State> {
 const EmptyContext = React.createContext<any>([]);
 
 function createUseContextReducer<State>(
-  context: React.Context<ContextState<State>>
+  context: React.Context<ContextState<State>>,
+  hash: (key: string) => number
 ) {
-  return ((
+  return function useContextReducer(
     contextKey: keyof State | undefined | null,
     reducer: Reducer<State[keyof State], any>,
     initialState?: State[keyof State],
     initialAction?: any
-  ) => {
+  ) {
     // @ts-ignore
     const [contextState, setContextState] = React.useContext(
       contextKey ? context : EmptyContext,
@@ -71,7 +71,7 @@ function createUseContextReducer<State>(
     );
 
     return [state, dispatch];
-  }) as UseContextReducer<State>;
+  } as UseContextReducer<State>;
 }
 
 export default createUseContextReducer;

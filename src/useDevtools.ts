@@ -41,8 +41,8 @@ function useDevtools<State>(
   React.useEffect(
     () => {
       if (enabled && devtoolsExtension) {
-        let changedKey;
         if (lastStateSentFromDevtools.current !== state) {
+          let changedKey;
           for (const key in state) {
             if (prevState.current && state[key] !== prevState.current[key]) {
               changedKey = key;

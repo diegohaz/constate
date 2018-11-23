@@ -1,7 +1,6 @@
 import * as React from "react";
 import { ContextState } from "./types";
 import createUseContextReducer from "./createUseContextReducer";
-import { parseUpdater } from "./utils";
 
 export interface UseContextState<State> {
   <K extends keyof State>(contextKey?: K | null): ContextState<State[K]>;
@@ -13,20 +12,17 @@ export interface UseContextState<State> {
 }
 
 function basicStateReducer(state: any, action: any) {
-  return parseUpdater(action, state);
+  return typeof action === "function" ? action(state) : action;
 }
 
 function createUseContextState<State>(
-  context: React.Context<ContextState<State>>
+  context: React.Context<ContextState<State>>,
+  hash: (key: string) => number
 ) {
-  const useContextReducer = createUseContextReducer(context);
-
-  return ((contextKey?: any, initialState?: any) =>
-    useContextReducer(
-      contextKey,
-      basicStateReducer,
-      initialState
-    )) as UseContextState<State>;
+  const useContextReducer = createUseContextReducer(context, hash);
+  return function useContextState(contextKey?: any, initialState?: any) {
+    return useContextReducer(contextKey, basicStateReducer, initialState);
+  } as UseContextState<State>;
 }
 
 export default createUseContextState;

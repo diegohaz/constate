@@ -185,3 +185,35 @@ test("useContextMutationEffect", () => {
   rerender(<App />);
   expect(count).toBe(3);
 });
+
+test("non object context", () => {
+  const Count = createContext(0);
+  const Counter = () => {
+    const [count, setCount] = React.useContext(Count.Context);
+    return <button onClick={() => setCount(count + 1)}>{count}</button>;
+  };
+  const App = () => (
+    <Count.Provider>
+      <Counter />
+    </Count.Provider>
+  );
+  const { getByText } = render(<App />);
+  fireEvent.click(getByText("0"));
+  expect(getByText("1")).toBeDefined();
+});
+
+test("null calculateChangedBits", () => {
+  const Count = createContext(0, null);
+  const Counter = () => {
+    const [count, setCount] = React.useContext(Count.Context);
+    return <button onClick={() => setCount(count + 1)}>{count}</button>;
+  };
+  const App = () => (
+    <Count.Provider>
+      <Counter />
+    </Count.Provider>
+  );
+  const { getByText } = render(<App />);
+  fireEvent.click(getByText("0"));
+  expect(getByText("1")).toBeDefined();
+});

@@ -15,8 +15,12 @@ test("local state", () => {
 test("shared state", () => {
   const useCounter = () => useContextState("counter1", 0);
   const Button = () => {
-    const [count, setCount] = useCounter();
-    return <button onClick={() => setCount(count + 1)}>Button</button>;
+    const [, setCount] = useCounter();
+    return (
+      <button onClick={() => setCount(prevCount => prevCount + 1)}>
+        Button
+      </button>
+    );
   };
   const Value = () => {
     const [count] = useCounter();
@@ -63,4 +67,60 @@ test("re-render only for the key", () => {
   fireEvent.click(getByText("button1"));
   expect(rerenders1).toBe(2);
   expect(rerenders2).toBe(1);
+});
+
+test("re-render with 29 keys", () => {
+  const amount = 29;
+  let rerenders = 0;
+  const Component = ({ index }: { index: number }) => {
+    const [count, setState] = useContextState(`${index}`, 0);
+    React.useMutationEffect(() => {
+      rerenders += 1;
+    });
+    return <button onClick={() => setState(count + 1)}>{index}</button>;
+  };
+  const App = () => (
+    <Provider>
+      {Array(amount)
+        .fill(0)
+        .map((_, i) => (
+          <Component key={i} index={i} />
+        ))}
+    </Provider>
+  );
+  const { getByText } = render(<App />);
+  // renders twice to set initial state
+  expect(rerenders).toBe(amount * 2);
+  // click on the first button
+  fireEvent.click(getByText("0"));
+  expect(rerenders).toBe(amount * 2 + 1);
+  fireEvent.click(getByText("0"));
+  expect(rerenders).toBe(amount * 2 + 2);
+});
+
+test("re-render with 30 keys", () => {
+  const amount = 30;
+  let rerenders = 0;
+  const Component = ({ index }: { index: number }) => {
+    const [count, setState] = useContextState(`${index}`, 0);
+    React.useMutationEffect(() => {
+      rerenders += 1;
+    });
+    return <button onClick={() => setState(count + 1)}>{index}</button>;
+  };
+  const App = () => (
+    <Provider>
+      {Array(amount)
+        .fill(0)
+        .map((_, i) => (
+          <Component key={i} index={i} />
+        ))}
+    </Provider>
+  );
+  const { getByText } = render(<App />);
+  expect(rerenders).toBe(amount * 2);
+  fireEvent.click(getByText("0"));
+  expect(rerenders).toBe(amount * 2 + 2);
+  fireEvent.click(getByText("0"));
+  expect(rerenders).toBe(amount * 2 + 4);
 });

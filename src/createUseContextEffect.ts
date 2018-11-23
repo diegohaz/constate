@@ -11,11 +11,11 @@ function createUseContextEffect<State>(
 ) {
   const consumers: { [key: string]: React.MutableRefObject<any> | null } = {};
 
-  return (
+  return function useContextEffect(
     contextKey: keyof State | undefined | null,
     create: () => void | (() => void),
     inputs?: ReadonlyArray<any>
-  ) => {
+  ) {
     const key = contextKey as string;
     const consumer = React.useRef(getCurrentOwner());
     if (consumers[key] == null) {
