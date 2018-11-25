@@ -23,7 +23,7 @@
 <p align="center">
   <strong>🎮 Play with CodeSandbox examples</strong>
   <br>
-  <a href="https://codesandbox.io/s/github/diegohaz/constate/tree/next/examples/counter">Counter</a>
+  <a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/counter">Counter</a>
 </p>
 
 <br>
