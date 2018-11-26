@@ -4,13 +4,15 @@
 <br>
 
 <p align="center">
-  1 kB React state management library that lets you write contextual state as if it were local state, using <a href="https://reactjs.org/docs/hooks-intro.html">React Hooks</a>.
+  1 kB React state management library that lets you write contextual state as if it were local state<br>
+  using <a href="https://reactjs.org/docs/hooks-intro.html">React Hooks</a> and <a href="https://reactjs.org/docs/context.html">React Context</a>.
 </p>
 
 <br>
 
 <p align="center">
   <a href="https://npmjs.org/package/constate"><img alt="NPM version" src="https://img.shields.io/npm/v/constate/next.svg?style=flat-square"></a>
+  <a href="https://npmjs.org/package/constate"><img alt="NPM downloads" src="https://img.shields.io/npm/dm/constate.svg?style=flat-square"></a>
   <a href="https://unpkg.com/constate@next"><img alt="Gzip size" src="https://img.badgesize.io/https://unpkg.com/constate@next?style=flat-square&compression=gzip"></a>
   <a href="https://david-dm.org/diegohaz/constate"><img alt="Dependencies" src="https://img.shields.io/david/diegohaz/constate/master.svg?style=flat-square"></a>
   <a href="https://travis-ci.org/diegohaz/constate"><img alt="Build Status" src="https://img.shields.io/travis/diegohaz/constate/master.svg?style=flat-square"></a>
@@ -19,11 +21,18 @@
 
 <br>
 
-<p align="center">
-  <strong>🎮 Play with CodeSandbox examples</strong>
-  <br>
-  <a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/counter">Counter</a>
-</p>
+<table>
+  <thead>
+    <tr>
+      <th>🕹 CodeSandbox demos 🕹</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/counter">Counter</a></td>
+    </tr>
+  </tbody>
+</table>
 
 <br>
 
