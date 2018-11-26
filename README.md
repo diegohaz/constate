@@ -4,8 +4,7 @@
 <br>
 
 <p align="center">
-  1 kB React state management library that lets you write contextual state<br>
-  as if it were local state, using <a href="https://reactjs.org/docs/hooks-intro.html">React Hooks</a>.
+  1 kB React state management library that lets you write contextual state as if it were local state, using <a href="https://reactjs.org/docs/hooks-intro.html">React Hooks</a>.
 </p>
 
 <br>
@@ -34,7 +33,7 @@ import { Provider, useContextState } from "constate";
 
 // 1. Create a custom hook
 function useCounter(key) {
-  // 2. Replace useState by useContextState passing a context key argument
+  // 2. Replace React.useState(0) by useContextState(key, 0)
   const [count, setCount] = useContextState(key, 0);
   const increment = () => setCount(count + 1);
   return { count, increment };
