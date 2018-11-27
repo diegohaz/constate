@@ -3,10 +3,12 @@ import { ContextState } from "./types";
 import createUseContextReducer from "./createUseContextReducer";
 
 export interface UseContextState<State> {
-  <K extends keyof State>(contextKey?: K | null): ContextState<State[K]>;
+  <K extends keyof State>(
+    contextKey?: React.MutableRefObject<K> | K | null
+  ): ContextState<State[K]>;
 
   <K extends keyof State, S extends State[K]>(
-    contextKey?: K | null,
+    contextKey?: React.MutableRefObject<K> | K | null,
     initialState?: S | (() => S) | null
   ): ContextState<S>;
 }

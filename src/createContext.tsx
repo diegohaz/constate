@@ -4,6 +4,7 @@ import createUseContextEffect from "./createUseContextEffect";
 import createUseContextReducer from "./createUseContextReducer";
 import createUseContextState from "./createUseContextState";
 import useDevtools from "./useDevtools";
+import createUseContextKey from "./createUseContextKey";
 
 export type ProviderProps = {
   children: React.ReactNode;
@@ -74,15 +75,12 @@ function createContext<State>(
   return {
     Context,
     Provider: createProvider(Context, initialState),
+    useContextKey: createUseContextKey<State>(),
     useContextState: createUseContextState(Context, hash),
     useContextReducer: createUseContextReducer(Context, hash),
-    unstable_useContextEffect: createUseContextEffect<State>(),
-    unstable_useContextLayoutEffect: createUseContextEffect<State>(
-      "useLayoutEffect"
-    ),
-    unstable_useContextMutationEffect: createUseContextEffect<State>(
-      "useMutationEffect"
-    )
+    useContextEffect: createUseContextEffect<State>(),
+    useContextLayoutEffect: createUseContextEffect<State>("useLayoutEffect"),
+    useContextMutationEffect: createUseContextEffect<State>("useMutationEffect")
   };
 }
 

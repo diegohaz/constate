@@ -1,9 +1,6 @@
 import * as React from "react";
 import { render } from "react-testing-library";
-import {
-  Provider,
-  unstable_useContextEffect as useContextEffect
-} from "../src";
+import { Provider, useContextKey, useContextEffect } from "../src";
 
 test("local effect", () => {
   const fn = jest.fn();
@@ -22,7 +19,8 @@ test("local effect", () => {
 test("shared effect", () => {
   const fn = jest.fn();
   const useCounter = () => {
-    useContextEffect("counter1", fn);
+    const key = useContextKey("counter1");
+    useContextEffect(key, fn);
   };
   const Component1 = () => {
     useCounter();
@@ -50,8 +48,9 @@ test("two shared effects", () => {
   const fn1 = jest.fn();
   const fn2 = jest.fn();
   const useCounter = () => {
-    useContextEffect("counter1", fn1);
-    useContextEffect("counter1", fn2);
+    const key = useContextKey("counter1");
+    useContextEffect(key, fn1);
+    useContextEffect(key, fn2);
   };
   const Component1 = () => {
     useCounter();

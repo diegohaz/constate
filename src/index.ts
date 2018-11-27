@@ -5,9 +5,10 @@ const {
   Provider,
   useContextReducer,
   useContextState,
-  unstable_useContextEffect,
-  unstable_useContextLayoutEffect,
-  unstable_useContextMutationEffect
+  useContextKey,
+  useContextEffect,
+  useContextLayoutEffect,
+  useContextMutationEffect
 } = createContext<{ [key: string]: any }>({});
 
 export {
@@ -16,7 +17,8 @@ export {
   Provider,
   useContextReducer,
   useContextState,
-  unstable_useContextEffect,
-  unstable_useContextLayoutEffect,
-  unstable_useContextMutationEffect
+  useContextKey,
+  useContextEffect,
+  useContextLayoutEffect,
+  useContextMutationEffect
 };

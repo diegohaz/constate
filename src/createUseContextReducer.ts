@@ -3,14 +3,14 @@ import { ContextReducer, ContextState, Reducer } from "./types";
 
 export interface UseContextReducer<State> {
   <K extends keyof State, Action>(
-    contextKey: K | undefined | null,
+    contextKey: React.MutableRefObject<K> | K | undefined | null,
     reducer: Reducer<State[K], Action>,
     initialState?: null,
     initialAction?: Action
   ): ContextReducer<State[K], Action>;
 
   <K extends keyof State, S extends State[K], Action>(
-    contextKey: K | undefined | null,
+    contextKey: React.MutableRefObject<K> | K | undefined | null,
     reducer: Reducer<S, Action>,
     initialState?: S | (() => S) | null,
     initialAction?: Action
@@ -24,15 +24,24 @@ function createUseContextReducer<State>(
   hash: (key: string) => number
 ) {
   return function useContextReducer(
-    contextKey: keyof State | undefined | null,
+    contextKey:
+      | React.MutableRefObject<keyof State>
+      | keyof State
+      | undefined
+      | null,
     reducer: Reducer<State[keyof State], any>,
     initialState?: State[keyof State],
     initialAction?: any
   ) {
+    const key =
+      typeof contextKey === "object" && contextKey
+        ? contextKey.current
+        : contextKey;
+
     // @ts-ignore
     const [contextState, setContextState] = React.useContext(
-      contextKey ? context : EmptyContext,
-      contextKey ? hash(contextKey as string) : undefined
+      key ? context : EmptyContext,
+      key ? hash(key as string) : undefined
     );
 
     let [state, dispatch] = React.useReducer(
@@ -41,33 +50,33 @@ function createUseContextReducer<State>(
       initialAction
     );
 
-    if (contextKey) {
-      if (contextState[contextKey] != null) {
-        state = contextState[contextKey];
+    if (key) {
+      if (contextState[key] != null) {
+        state = contextState[key];
       }
 
       dispatch = (action: any) =>
         setContextState((prevState: State) =>
           Object.assign({}, prevState, {
-            [contextKey]: reducer(prevState[contextKey], action)
+            [key]: reducer(prevState[key], action)
           })
         );
     }
 
     React.useMutationEffect(
       () => {
-        if (contextKey && contextState[contextKey] == null && state != null) {
+        if (key && contextState[key] == null && state != null) {
           setContextState((prevState: State) => {
-            if (prevState[contextKey] == null) {
+            if (prevState[key] == null) {
               return Object.assign({}, prevState, {
-                [contextKey]: state
+                [key]: state
               });
             }
             return prevState;
           });
         }
       },
-      [contextKey]
+      [key]
     );
 
     return [state, dispatch];

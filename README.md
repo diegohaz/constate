@@ -4,7 +4,7 @@
 <br>
 
 <p align="center">
-  1 kB React state management library that lets you write contextual state as if it were local state<br>
+  ~1 kB React state management library that lets you write contextual state as if it were local state<br>
   using <a href="https://reactjs.org/docs/hooks-intro.html">React Hooks</a> and <a href="https://reactjs.org/docs/context.html">React Context</a>.
 </p>
 
@@ -81,6 +81,8 @@ function App() {
 - [`Provider`](#provider)
 - [`useContextState`](#usecontextstate)
 - [`useContextReducer`](#usecontextreducer)
+- [`useContextKey`](#usecontextkey)
+- [`useContextEffect`](#usecontexteffect)
 - [`createContext`](#createcontext)
 
 <br>
@@ -126,7 +128,9 @@ Passing `devtools` prop to `Provider` will enable the [redux-devtools-extension]
 
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
-`useContextState` has the same API as [`React.useState`](https://reactjs.org/docs/hooks-reference.html#usestate), except that it receives `contextKey` as the first argument.
+`useContextState` has the same API as [`React.useState`](https://reactjs.org/docs/hooks-reference.html#usestate), except that it receives `contextKey` as the first argument. It can be either a string or the return value of [`useContextKey`](#usecontextkey).
+
+All `useContextState` calls with the same `contextKey` will share the same state.
 
 ```jsx
 import { useContextState } from "constate";
@@ -156,8 +160,8 @@ This means you can create [custom hooks](https://reactjs.org/docs/hooks-custom.h
 import React from "react";
 import { useContextState } from "constate";
 
-function useCounter(context) {
-  const [count, setCount] = useContextState(context, 0);
+function useCounter(key) {
+  const [count, setCount] = useContextState(key, 0);
   const increment = () => setCount(count + 1);
   return { count, increment };
 }
@@ -179,7 +183,7 @@ function LocalCounter() {
 
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
-Just like [`useContextState`](#usecontextstate), `useContextReducer` works similarly to [`React.useReducer`](https://reactjs.org/docs/hooks-reference.html#usereducer), but accepting a `contextKey` argument:
+Just like [`useContextState`](#usecontextstate), `useContextReducer` works similarly to [`React.useReducer`](https://reactjs.org/docs/hooks-reference.html#usereducer), but accepting a `contextKey` argument, which can be either a string or the return value of [`useContextKey`](#usecontextkey):
 
 ```jsx
 import { useContextReducer } from "constate";
@@ -192,8 +196,8 @@ function reducer(state, action) {
   }
 }
 
-function useCounter(context) {
-  const [count, dispatch] = useContextReducer(context, reducer, 0);
+function useCounter(key) {
+  const [count, dispatch] = useContextReducer(key, reducer, 0);
   const increment = () => dispatch({ type: "INCREMENT" });
   const decrement = () => dispatch({ type: "DECREMENT" });
   return { count, increment, decrement };
@@ -207,6 +211,73 @@ function ContextualCounter() {
 
 <br>
 
+## `useContextKey`
+
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
+
+Instead of passing strings to [`useContextState`](#usecontextstate) and [`useContextReducer`](#usecontextreducer), you can create a reference to the context key.
+
+```js
+import { useContextKey } from "constate";
+
+function Counter() {
+  const key = useContextKey("counter1");
+  const [count, setCount] = useContextState(key, 0);
+  ...
+}
+```
+
+It uses [`React.useRef`](https://reactjs.org/docs/hooks-reference.html#useref) underneath and is neccessary when using [`useContextEffect`](#usecontexteffect).
+
+<br>
+
+## `useContextEffect`
+
+<sup><a href="#table-of-contents">↑ Back to top</a></sup>
+
+Constate provides all contextual versions of [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect), such as `useContextEffect`, `useContextMutationEffect` and `useContextLayoutEffect`. 
+
+They receive `contextKey` as the first argument. But, unless [`useContextState`](#usecontextstate) and [`useContextReducer`](#usecontextreducer), it's limited to the object returned by [`useContextKey`](#usecontextkey). If `contextKey` is `null` or `undefined`, the hook will work exactly as the React one.
+
+```js
+import { Provider, useContextKey, useContextEffect } from "constate";
+
+let count = 0;
+
+function useCounter(context) {
+  // useContextKey is required for effects
+  const key = useContextKey(context);
+  useContextEffect(key, () => {
+    count += 1;
+  }, []);
+}
+
+function ContextualCounter1() {
+  useCounter("counter1");
+  ...
+}
+
+function ContextualCounter2() {
+  useCounter("counter1");
+  ...
+}
+
+function App() {
+  return (
+    <Provider>
+      <ContextualCounter1 />
+      <ContextualCounter2 />
+    </Provider>
+  );
+}
+```
+
+In the example above, if we were using [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect), `count` would be `2`. With `useContextEffect`, it's `1`.
+
+`useContextEffect` ensures that the function will be called only once per `contextKey` no matter how many components are using it.
+
+<br>
+
 ## `createContext`
 
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
@@ -217,14 +288,30 @@ If you want to set a initial state for the whole context tree and/or want to cre
 // MyContext.js
 import { createContext } from "constate";
 
-const { Provider, useContextState, useContextReducer } = createContext({
+const {
+  Provider,
+  useContextKey,
+  useContextState,
+  useContextReducer,
+  useContextEffect,
+  useContextLayoutEffect,
+  useContextMutationEffect
+} = createContext({
   counter1: 0,
   posts: [
     { id: 1, title: "Hello World!" }
   ]
 });
 
-export { Provider, useContextState, useContextReducer };
+export {
+  Provider,
+  useContextKey,
+  useContextState,
+  useContextReducer,
+  useContextEffect,
+  useContextLayoutEffect,
+  useContextMutationEffect
+};
 ```
 
 ```jsx

@@ -5,11 +5,12 @@ import { createContext } from "../src";
 const {
   Context,
   Provider,
+  useContextKey,
   useContextState,
   useContextReducer,
-  unstable_useContextEffect: useContextEffect,
-  unstable_useContextLayoutEffect: useContextLayoutEffect,
-  unstable_useContextMutationEffect: useContextMutationEffect
+  useContextEffect,
+  useContextLayoutEffect,
+  useContextMutationEffect
 } = createContext({
   counter1: 0,
   foo: "foo",
@@ -70,6 +71,22 @@ test("useContextState", () => {
   expect(getByText("bar")).toBeDefined();
 });
 
+test("useContextState with useContextKey", () => {
+  const Component = () => {
+    const key = useContextKey("foo");
+    const [state, setState] = useContextState(key);
+    return <button onClick={() => setState("bar")}>{state}</button>;
+  };
+  const App = () => (
+    <Provider>
+      <Component />
+    </Provider>
+  );
+  const { getByText } = render(<App />);
+  fireEvent.click(getByText("foo"));
+  expect(getByText("bar")).toBeDefined();
+});
+
 test("useContextReducer", () => {
   const reducer = (
     state: { count: number },
@@ -105,13 +122,15 @@ test("useContextReducer", () => {
 test("useContextEffect", () => {
   let count = 0;
   const Component1 = () => {
-    useContextEffect("foo", () => {
+    const key = useContextKey("foo");
+    useContextEffect(key, () => {
       count += 1;
     });
     return null;
   };
   const Component2 = () => {
-    useContextEffect("foo", () => {
+    const key = useContextKey("foo");
+    useContextEffect(key, () => {
       count += 1;
     });
     return null;
@@ -133,13 +152,15 @@ test("useContextEffect", () => {
 test("useContextLayoutEffect", () => {
   let count = 0;
   const Component1 = () => {
-    useContextLayoutEffect("foo", () => {
+    const key = useContextKey("foo");
+    useContextLayoutEffect(key, () => {
       count += 1;
     });
     return null;
   };
   const Component2 = () => {
-    useContextLayoutEffect("foo", () => {
+    const key = useContextKey("foo");
+    useContextLayoutEffect(key, () => {
       count += 1;
     });
     return null;
@@ -161,13 +182,15 @@ test("useContextLayoutEffect", () => {
 test("useContextMutationEffect", () => {
   let count = 0;
   const Component1 = () => {
-    useContextMutationEffect("foo", () => {
+    const key = useContextKey("foo");
+    useContextMutationEffect(key, () => {
       count += 1;
     });
     return null;
   };
   const Component2 = () => {
-    useContextMutationEffect("foo", () => {
+    const key = useContextKey("foo");
+    useContextMutationEffect(key, () => {
       count += 1;
     });
     return null;

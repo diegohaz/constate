@@ -223,8 +223,8 @@ function App() {
 ```jsx
 import { Provider, useContextState } from "constate";
 
-function useCounter(context) {
-  const [count, setCount] = useContextState(context, 0);
+function useCounter(key) {
+  const [count, setCount] = useContextState(key, 0);
   const increment = () => setCount(count + 1);
   return { count, increment };
 }
@@ -278,15 +278,13 @@ function Counter() {
 #### v1
 
 ```jsx
-import {
-  useContextState,
-  unstable_useContextEffect as useContextEffect
-} from "constate";
+import { useContextKey, useContextState, useContextEffect } from "constate";
 
 function Counter() {
-  const [count, setCount] = useContextState("counter1", 0);
+  const key = useContextKey("counter1")
+  const [count, setCount] = useContextState(key, 0);
 
-  useContextEffect("counter1", () => {
+  useContextEffect(key, () => {
     const fn = () => setCount(count + 1);
     const interval = setInterval(fn, 1000);
     return () => clearInterval(interval);
@@ -329,20 +327,18 @@ function Counter() {
 `type` doesn't exist anymore.
 
 ```jsx
-import {
-  useContextState,
-  unstable_useContextEffect as useContextEffect
-} from "constate";
+import { useContextKey, useContextState, useContextEffect } from "constate";
 
 function Counter() {
-  const [count, setCount] = useContextState("counter1", 0);
+  const key = useContextKey("counter1");
+  const [count, setCount] = useContextState(key, 0);
 
-  useContextEffect("counter1", () => {
+  useContextEffect(key, () => {
     const fn = () => setCount(count + 1);
     setInterval(fn, 1000);
   }, []);
 
-  useContextEffect("counter1", () => {
+  useContextEffect(key, () => {
     if (count === 5) {
       // reset counter
       setCount(0);
