@@ -130,7 +130,7 @@ Passing `devtools` prop to `Provider` will enable the [redux-devtools-extension]
 
 `useContextState` has the same API as [`React.useState`](https://reactjs.org/docs/hooks-reference.html#usestate), except that it receives `contextKey` as the first argument. It can be either a string or the return value of [`useContextKey`](#usecontextkey).
 
-All `useContextState` calls with the same `contextKey` will share the same state.
+All `useContextState` calls with the same `contextKey` throughout components in the [`Provider`](#provider) tree will share the same state.
 
 ```jsx
 import { useContextState } from "constate";
@@ -227,7 +227,7 @@ function Counter() {
 }
 ```
 
-It uses [`React.useRef`](https://reactjs.org/docs/hooks-reference.html#useref) underneath and is neccessary when using [`useContextEffect`](#usecontexteffect).
+It uses [`React.useRef`](https://reactjs.org/docs/hooks-reference.html#useref) underneath and is required when using [`useContextEffect`](#usecontexteffect).
 
 <br>
 
@@ -237,7 +237,7 @@ It uses [`React.useRef`](https://reactjs.org/docs/hooks-reference.html#useref) u
 
 Constate provides all contextual versions of [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect), such as `useContextEffect`, `useContextMutationEffect` and `useContextLayoutEffect`. 
 
-They receive `contextKey` as the first argument. But, unless [`useContextState`](#usecontextstate) and [`useContextReducer`](#usecontextreducer), it's limited to the object returned by [`useContextKey`](#usecontextkey). If `contextKey` is `null` or `undefined`, the hook will work exactly as the React one.
+They receive `contextKey` as the first argument. Unless [`useContextState`](#usecontextstate) and [`useContextReducer`](#usecontextreducer), it's limited to the value returned by [`useContextKey`](#usecontextkey). If `contextKey` is `null` or `undefined`, the hook will work exactly as the React one.
 
 ```js
 import { Provider, useContextKey, useContextEffect } from "constate";

@@ -1,7 +1,15 @@
 {
   "name": "counter",
+  "description": "A simple counter example using Constate",
   "version": "1.0.0",
   "private": true,
+  "keywords": [
+    "constate",
+    "context",
+    "state",
+    "react",
+    "hooks"
+  ],
   "scripts": {
     "start": "parcel index.html --open",
     "build": "parcel build index.html"
