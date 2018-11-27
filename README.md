@@ -12,16 +12,8 @@
 <a href="https://travis-ci.org/diegohaz/constate"><img alt="Build Status" src="https://img.shields.io/travis/diegohaz/constate/master.svg?style=flat-square"></a>
 <a href="https://codecov.io/gh/diegohaz/constate/branch/master"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/diegohaz/constate/master.svg?style=flat-square"></a>
 
-<p align="center">
-  ~1 kB React state management library that lets you write contextual state as if it were local state<br>
-  using <a href="https://reactjs.org/docs/hooks-intro.html">React Hooks</a> and <a href="https://reactjs.org/docs/context.html">React Context</a>.
-</p>
 
-<br>
-
-<p align="center">
-  
-</p>
+~1 kB React state management library that lets you write contextual state as if it were local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html) and [React Context](https://reactjs.org/docs/context.html).
 
 <br>
 
