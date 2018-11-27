@@ -3,6 +3,15 @@
 </p>
 <br>
 
+# Constate
+
+<a href="https://npmjs.org/package/constate"><img alt="NPM version" src="https://img.shields.io/npm/v/constate/next.svg?style=flat-square"></a>
+<a href="https://npmjs.org/package/constate"><img alt="NPM downloads" src="https://img.shields.io/npm/dm/constate.svg?style=flat-square"></a>
+<a href="https://unpkg.com/constate@next"><img alt="Gzip size" src="https://img.badgesize.io/https://unpkg.com/constate@next?style=flat-square&compression=gzip"></a>
+<a href="https://david-dm.org/diegohaz/constate"><img alt="Dependencies" src="https://img.shields.io/david/diegohaz/constate/master.svg?style=flat-square"></a>
+<a href="https://travis-ci.org/diegohaz/constate"><img alt="Build Status" src="https://img.shields.io/travis/diegohaz/constate/master.svg?style=flat-square"></a>
+<a href="https://codecov.io/gh/diegohaz/constate/branch/master"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/diegohaz/constate/master.svg?style=flat-square"></a>
+
 <p align="center">
   ~1 kB React state management library that lets you write contextual state as if it were local state<br>
   using <a href="https://reactjs.org/docs/hooks-intro.html">React Hooks</a> and <a href="https://reactjs.org/docs/context.html">React Context</a>.
@@ -11,12 +20,7 @@
 <br>
 
 <p align="center">
-  <a href="https://npmjs.org/package/constate"><img alt="NPM version" src="https://img.shields.io/npm/v/constate/next.svg?style=flat-square"></a>
-  <a href="https://npmjs.org/package/constate"><img alt="NPM downloads" src="https://img.shields.io/npm/dm/constate.svg?style=flat-square"></a>
-  <a href="https://unpkg.com/constate@next"><img alt="Gzip size" src="https://img.badgesize.io/https://unpkg.com/constate@next?style=flat-square&compression=gzip"></a>
-  <a href="https://david-dm.org/diegohaz/constate"><img alt="Dependencies" src="https://img.shields.io/david/diegohaz/constate/master.svg?style=flat-square"></a>
-  <a href="https://travis-ci.org/diegohaz/constate"><img alt="Build Status" src="https://img.shields.io/travis/diegohaz/constate/master.svg?style=flat-square"></a>
-  <a href="https://codecov.io/gh/diegohaz/constate/branch/master"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/diegohaz/constate/master.svg?style=flat-square"></a>
+  
 </p>
 
 <br>
