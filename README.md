@@ -29,9 +29,9 @@
   </thead>
   <tbody>
     <tr>
-      <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/counter">Counter</a></td>
-      <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/theming">Theming</a></td>
-      <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/i18n">I18n</a></td>
+      <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/counter?module=/App.js">Counter</a></td>
+      <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/theming?module=/App.js">Theming</a></td>
+      <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/i18n?module=/App.js">I18n</a></td>
     </tr>
   </tbody>
 </table>
