@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.0-alpha.4"></a>
+# [1.0.0-alpha.4](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2018-11-27)
+
+
+### Features
+
+* Add new `useContextKey` hook ([e0d8cd8](https://github.com/diegohaz/constate/commit/e0d8cd8))
+
+
+### BREAKING CHANGES
+
+* Removed `unstable_` prefix from `useContextEffect` hooks. They're no longer using React internal stuff, but now they require `useContextKey`. See [docs](https://github.com/diegohaz/constate#usecontexteffect).
+
+
+
 <a name="1.0.0-alpha.3"></a>
 # [1.0.0-alpha.3](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2018-11-25)
 

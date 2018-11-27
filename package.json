@@ -1,6 +1,6 @@
 {
   "name": "constate",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "Yet another React state management library that lets you work with local state and scale up to global state with ease",
   "license": "MIT",
   "repository": "diegohaz/constate",
