@@ -24,12 +24,14 @@
 <table>
   <thead>
     <tr>
-      <th>🕹 CodeSandbox demos 🕹</th>
+      <th colspan="3">🕹 CodeSandbox demos 🕹</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/counter">Counter</a></td>
+      <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/theming">Theming</a></td>
+      <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/i18n">I18n</a></td>
     </tr>
   </tbody>
 </table>

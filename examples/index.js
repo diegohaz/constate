@@ -2,14 +2,18 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Router, Link } from "@reach/router";
 import Counter from "./counter/App";
+import I18n from "./i18n/App";
+import Theming from "./theming/App";
 
 const paths = {
-  counter: Counter
+  counter: Counter,
+  i18n: I18n,
+  theming: Theming
 };
 
 const App = () => (
   <div style={{ display: "flex" }}>
-    <ul style={{ flex: 0 }}>
+    <ul style={{ flex: 0, whiteSpace: "nowrap" }}>
       {Object.keys(paths).map(path => (
         <li key={path}>
           <Link to={path}>{path}</Link>

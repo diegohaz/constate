@@ -7,7 +7,7 @@ const devtoolsExtension =
 function useDevtools<State>(
   state: State,
   setState: SetState<State>,
-  { enabled = true }: { enabled?: boolean } = {}
+  { enabled }: { enabled?: boolean } = {}
 ) {
   const devtools = React.useRef<ReturnType<
     ReduxDevtoolsExtension["connect"]
