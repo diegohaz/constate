@@ -63,7 +63,7 @@ function createUseContextReducer<State>(
         );
     }
 
-    React.useMutationEffect(
+    React.useLayoutEffect(
       () => {
         if (key && contextState[key] == null && state != null) {
           setContextState((prevState: State) => {

@@ -238,7 +238,7 @@ It uses [`React.useRef`](https://reactjs.org/docs/hooks-reference.html#useref) u
 
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
-Constate provides all contextual versions of [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect), such as `useContextEffect`, `useContextMutationEffect` and `useContextLayoutEffect`. 
+Constate provides all contextual versions of [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect), such as `useContextEffect` and `useContextLayoutEffect`. 
 
 They receive `contextKey` as the first argument. Unless [`useContextState`](#usecontextstate) and [`useContextReducer`](#usecontextreducer), it's limited to the value returned by [`useContextKey`](#usecontextkey). If `contextKey` is `null` or `undefined`, the hook will work exactly as the React one.
 
@@ -297,8 +297,7 @@ const {
   useContextState,
   useContextReducer,
   useContextEffect,
-  useContextLayoutEffect,
-  useContextMutationEffect
+  useContextLayoutEffect
 } = createContext({
   counter1: 0,
   posts: [
@@ -312,8 +311,7 @@ export {
   useContextState,
   useContextReducer,
   useContextEffect,
-  useContextLayoutEffect,
-  useContextMutationEffect
+  useContextLayoutEffect
 };
 ```
 

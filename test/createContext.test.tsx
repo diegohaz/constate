@@ -9,8 +9,7 @@ const {
   useContextState,
   useContextReducer,
   useContextEffect,
-  useContextLayoutEffect,
-  useContextMutationEffect
+  useContextLayoutEffect
 } = createContext({
   counter1: 0,
   foo: "foo",
@@ -161,36 +160,6 @@ test("useContextLayoutEffect", () => {
   const Component2 = () => {
     const key = useContextKey("foo");
     useContextLayoutEffect(key, () => {
-      count += 1;
-    });
-    return null;
-  };
-  const App = () => (
-    <Provider>
-      <Component1 />
-      <Component2 />
-    </Provider>
-  );
-  const { rerender } = render(<App />);
-  expect(count).toBe(1);
-  rerender(<App />);
-  expect(count).toBe(2);
-  rerender(<App />);
-  expect(count).toBe(3);
-});
-
-test("useContextMutationEffect", () => {
-  let count = 0;
-  const Component1 = () => {
-    const key = useContextKey("foo");
-    useContextMutationEffect(key, () => {
-      count += 1;
-    });
-    return null;
-  };
-  const Component2 = () => {
-    const key = useContextKey("foo");
-    useContextMutationEffect(key, () => {
       count += 1;
     });
     return null;

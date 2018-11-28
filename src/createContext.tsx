@@ -79,8 +79,7 @@ function createContext<State>(
     useContextState: createUseContextState(Context, hash),
     useContextReducer: createUseContextReducer(Context, hash),
     useContextEffect: createUseContextEffect<State>(),
-    useContextLayoutEffect: createUseContextEffect<State>("useLayoutEffect"),
-    useContextMutationEffect: createUseContextEffect<State>("useMutationEffect")
+    useContextLayoutEffect: createUseContextEffect<State>("useLayoutEffect")
   };
 }
 

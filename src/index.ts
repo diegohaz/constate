@@ -7,8 +7,7 @@ const {
   useContextState,
   useContextKey,
   useContextEffect,
-  useContextLayoutEffect,
-  useContextMutationEffect
+  useContextLayoutEffect
 } = createContext<{ [key: string]: any }>({});
 
 export {
@@ -19,6 +18,5 @@ export {
   useContextState,
   useContextKey,
   useContextEffect,
-  useContextLayoutEffect,
-  useContextMutationEffect
+  useContextLayoutEffect
 };

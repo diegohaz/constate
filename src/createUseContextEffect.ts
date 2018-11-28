@@ -1,7 +1,7 @@
 import * as React from "react";
 
 function createUseContextEffect<State>(
-  type: "useEffect" | "useMutationEffect" | "useLayoutEffect" = "useEffect"
+  type: "useEffect" | "useLayoutEffect" = "useEffect"
 ) {
   const consumers: {
     [K in keyof State]?: React.MutableRefObject<K> | null
@@ -18,7 +18,7 @@ function createUseContextEffect<State>(
       consumers[key] = contextKey!;
     }
 
-    React.useMutationEffect(
+    React.useLayoutEffect(
       () => () => {
         if (key && consumers[key] === contextKey) {
           consumers[key] = null;

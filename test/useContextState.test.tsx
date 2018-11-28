@@ -72,14 +72,14 @@ test("re-render only for the key", () => {
   let rerenders2 = 0;
   const Component1 = () => {
     const [, setState] = useContextState("foo");
-    React.useMutationEffect(() => {
+    React.useLayoutEffect(() => {
       rerenders1 += 1;
     });
     return <button onClick={() => setState(1)}>button1</button>;
   };
   const Component2 = () => {
     const [, setState] = useContextState("bar");
-    React.useMutationEffect(() => {
+    React.useLayoutEffect(() => {
       rerenders2 += 1;
     });
     return <button onClick={() => setState(1)}>button2</button>;
@@ -103,7 +103,7 @@ test("re-render with 29 keys", () => {
   let rerenders = 0;
   const Component = ({ index }: { index: number }) => {
     const [count, setState] = useContextState(`${index}`, 0);
-    React.useMutationEffect(() => {
+    React.useLayoutEffect(() => {
       rerenders += 1;
     });
     return <button onClick={() => setState(count + 1)}>{index}</button>;
@@ -132,7 +132,7 @@ test("re-render with 30 keys", () => {
   let rerenders = 0;
   const Component = ({ index }: { index: number }) => {
     const [count, setState] = useContextState(`${index}`, 0);
-    React.useMutationEffect(() => {
+    React.useLayoutEffect(() => {
       rerenders += 1;
     });
     return <button onClick={() => setState(count + 1)}>{index}</button>;
