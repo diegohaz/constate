@@ -1,7 +1,6 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/diegohaz/constate/master/logo/logo.png" alt="constate logo" width="300" />
 </p>
-<br>
 
 # Constate
 
@@ -85,11 +84,19 @@ function App() {
 
 ## Installation
 
+npm:
 ```sh
 npm i constate@next
 ```
 
-> Constate `v1` is in alpha version. If you're looking for `v0`, see [`v0` docs](https://github.com/diegohaz/constate/tree/v0#readme) or read the [migration guide](MIGRATING_FROM_V0_TO_V1.md).
+Yarn:
+```sh
+yarn add constate@next
+```
+
+> You'll need to install `react@next` and `react-dom@next`
+
+> Constate `v1` is currently in early alpha. If you're looking for `v0`, see [`v0` docs](https://github.com/diegohaz/constate/tree/v0#readme) or read the [migration guide](MIGRATING_FROM_V0_TO_V1.md).
 
 <br>
 
