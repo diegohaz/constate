@@ -1,5 +1,5 @@
 {
-  "name": "i18n",
+  "name": "constate-i18n",
   "description": "A simple i18n example using Constate",
   "version": "1.0.0",
   "private": true,
@@ -16,7 +16,7 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "constate": "^1.0.0-alpha.3",
+    "constate": "^1.0.0-alpha.4",
     "parcel-bundler": "^1.10.0",
     "react": "^16.7.0-alpha.2",
     "react-dom": "^16.7.0-alpha.2"
