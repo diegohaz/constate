@@ -4,13 +4,11 @@ import {
   ContextState,
   HashFunction,
   ContextKey
-} from "./types";
-import {
-  parseContextKey,
-  useHashContext,
-  useInitialState,
-  redefineState
-} from "./utils";
+} from "./utils/types";
+import parseContextKey from "./utils/parseContextKey";
+import useHashContext from "./utils/useHashContext";
+import useInitialState from "./utils/useInitialState";
+import redefineState from "./utils/redefineState";
 
 export interface UseContextReducer<State> {
   <K extends keyof State, Action>(

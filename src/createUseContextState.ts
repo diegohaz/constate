@@ -1,11 +1,9 @@
 import * as React from "react";
-import { ContextState, HashFunction, ContextKey } from "./types";
-import {
-  parseContextKey,
-  useHashContext,
-  useInitialState,
-  redefineState
-} from "./utils";
+import { ContextState, HashFunction, ContextKey } from "./utils/types";
+import parseContextKey from "./utils/parseContextKey";
+import useHashContext from "./utils/useHashContext";
+import useInitialState from "./utils/useInitialState";
+import redefineState from "./utils/redefineState";
 
 export interface UseContextState<State> {
   <K extends keyof State>(contextKey?: ContextKey<K>): ContextState<State[K]>;

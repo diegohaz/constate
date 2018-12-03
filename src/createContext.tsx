@@ -1,10 +1,10 @@
 import * as React from "react";
-import { ContextState } from "./types";
+import { ContextState } from "./utils/types";
 import createUseContextEffect from "./createUseContextEffect";
 import createUseContextReducer from "./createUseContextReducer";
 import createUseContextState from "./createUseContextState";
 import createUseContextKey from "./createUseContextKey";
-import { useDevtools } from "./utils";
+import useDevtools from "./utils/useDevtools";
 
 export type ProviderProps = {
   children: React.ReactNode;

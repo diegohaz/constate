@@ -6,7 +6,7 @@ export type ContextReducer<S, A> = [S, React.Dispatch<A>];
 
 export type ContextKeyString<T> = T | undefined | null;
 
-export type ContextKeyObject<T> = React.MutableRefObject<T> | undefined | null;
+export type ContextKeyObject<T> = React.RefObject<T> | undefined | null;
 
 export type ContextKey<T> = ContextKeyString<T> | ContextKeyObject<T>;
 

@@ -1,17 +1,15 @@
 import * as React from "react";
-import { ContextKeyString } from "./types";
+import { ContextKeyString } from "./utils/types";
 
 export interface UseContextKey<State> {
-  (initialContextKey?: null): undefined;
-  <K extends keyof State>(initialContextKey: K): React.MutableRefObject<K>;
+  (contextKey?: null): undefined;
+  <K extends keyof State>(contextKey: K): React.RefObject<K>;
 }
 
 function createUseContextKey<State>() {
-  return function useContextKey(
-    initialContextKey?: ContextKeyString<keyof State>
-  ) {
-    const key = React.useRef(initialContextKey);
-    return initialContextKey ? key : undefined;
+  return function useContextKey(contextKey?: ContextKeyString<keyof State>) {
+    const key = React.useRef(contextKey);
+    return contextKey ? key : undefined;
   } as UseContextKey<State>;
 }
 
