@@ -3,8 +3,8 @@ import { ContextState } from "./types";
 import createUseContextEffect from "./createUseContextEffect";
 import createUseContextReducer from "./createUseContextReducer";
 import createUseContextState from "./createUseContextState";
-import useDevtools from "./useDevtools";
 import createUseContextKey from "./createUseContextKey";
+import { useDevtools } from "./utils";
 
 export type ProviderProps = {
   children: React.ReactNode;

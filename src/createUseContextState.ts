@@ -1,6 +1,6 @@
 import * as React from "react";
-import { ContextState } from "./types";
-import createUseContextReducer from "./createUseContextReducer";
+import { ContextState, HashFunction } from "./types";
+import { parseContextKey, useHashContext, useInitialState } from "./utils";
 
 export interface UseContextState<State> {
   <K extends keyof State>(
@@ -13,17 +13,37 @@ export interface UseContextState<State> {
   ): ContextState<S>;
 }
 
-function basicStateReducer(state: any, action: any) {
-  return typeof action === "function" ? action(state) : action;
-}
-
 function createUseContextState<State>(
   context: React.Context<ContextState<State>>,
-  hash: (key: string) => number
+  hash: HashFunction
 ) {
-  const useContextReducer = createUseContextReducer(context, hash);
-  return function useContextState(contextKey?: any, initialState?: any) {
-    return useContextReducer(contextKey, basicStateReducer, initialState);
+  return function useContextState(
+    contextKey?: React.MutableRefObject<keyof State> | keyof State | null,
+    initialState?: State[keyof State] | (() => State[keyof State]) | null
+  ) {
+    const key = parseContextKey(contextKey);
+    const [contextState, setContextState] = useHashContext(key, context, hash);
+    let [state, setState] = React.useState(initialState!);
+
+    if (key) {
+      if (contextState[key] != null) {
+        state = contextState[key];
+      }
+
+      setState = (nextState: any) =>
+        setContextState(prevState =>
+          Object.assign({}, prevState, {
+            [key]:
+              typeof nextState === "function"
+                ? nextState(prevState[key])
+                : nextState
+          })
+        );
+    }
+
+    useInitialState(key, state, contextState, setContextState);
+
+    return [state, setState];
   } as UseContextState<State>;
 }
 
