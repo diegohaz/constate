@@ -15,6 +15,7 @@ export function parseContextKey<State>(contextKey: ContextKey<State>) {
 }
 
 const EmptyContext = React.createContext<any>([]);
+
 export function useHashContext<State>(
   key: ContextKeyString<State>,
   context: React.Context<ContextState<State>>,
@@ -48,8 +49,11 @@ export function useInitialState<State>(
   );
 }
 
+// istanbul ignore next
 const devtoolsExtension =
   typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION__;
+
+// istanbul ignore next
 export function useDevtools<State>(
   state: State,
   setState: SetState<State>,
@@ -63,6 +67,7 @@ export function useDevtools<State>(
 
   React.useEffect(
     () => {
+      // istanbul ignore next
       if (enabled && devtoolsExtension) {
         devtools.current = devtoolsExtension.connect();
         devtools.current.init(state);
@@ -86,6 +91,7 @@ export function useDevtools<State>(
 
   React.useEffect(
     () => {
+      // istanbul ignore next
       if (enabled && devtoolsExtension) {
         if (lastStateSentFromDevtools.current !== state) {
           let changedKey;
