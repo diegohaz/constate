@@ -1,6 +1,11 @@
 import * as React from "react";
 import { ContextState, HashFunction, ContextKey } from "./types";
-import { parseContextKey, useHashContext, useInitialState } from "./utils";
+import {
+  parseContextKey,
+  useHashContext,
+  useInitialState,
+  redefineState
+} from "./utils";
 
 export interface UseContextState<State> {
   <K extends keyof State>(contextKey?: ContextKey<K>): ContextState<State[K]>;
@@ -20,27 +25,18 @@ function createUseContextState<State>(
     initialState?: State[keyof State] | (() => State[keyof State]) | null
   ) {
     const key = parseContextKey(contextKey);
-    const [contextState, setContextState] = useHashContext(key, context, hash);
-    let [state, setState] = React.useState(initialState!);
+    const contextState = useHashContext(key, context, hash);
+    const localState = React.useState(initialState!);
 
-    if (key) {
-      if (contextState[key] != null) {
-        state = contextState[key];
-      }
+    useInitialState(key, contextState, localState);
 
-      setState = (nextState: any) =>
-        setContextState(prevState => ({
-          ...prevState,
-          [key]:
-            typeof nextState === "function"
-              ? nextState(prevState[key])
-              : nextState
-        }));
-    }
-
-    useInitialState(key, state, contextState, setContextState);
-
-    return [state, setState];
+    return redefineState(
+      key,
+      contextState,
+      localState,
+      (prevState, nextState) =>
+        typeof nextState === "function" ? nextState(prevState) : nextState
+    );
   } as UseContextState<State>;
 }
 

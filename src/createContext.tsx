@@ -48,7 +48,7 @@ function createProvider<State>(
     const state = React.useState(initialState);
     const value = React.useMemo(() => state, [state[0]]);
 
-    useDevtools(state[0], state[1], { enabled: devtools });
+    useDevtools(state, { enabled: devtools });
 
     return <Context.Provider value={value}>{children}</Context.Provider>;
   };

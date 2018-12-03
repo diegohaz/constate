@@ -1,11 +1,30 @@
 import * as React from "react";
 import {
   ContextState,
-  SetState,
   ContextKey,
   ContextKeyString,
-  HashFunction
+  HashFunction,
+  ContextReducer
 } from "./types";
+
+export function redefineState<State, Action>(
+  key: ContextKeyString<keyof State>,
+  [contextState, setContextState]: ContextState<State>,
+  [state, dispatch]: ContextReducer<State[keyof State], Action>,
+  transformState: React.Reducer<typeof state, any>
+): ContextReducer<typeof state, Action> {
+  if (key) {
+    return [
+      contextState[key] != null ? contextState[key] : state,
+      (nextState: any) =>
+        setContextState(prevState => ({
+          ...prevState,
+          [key]: transformState(prevState[key], nextState)
+        }))
+    ];
+  }
+  return [state, dispatch];
+}
 
 export function parseContextKey<State>(contextKey: ContextKey<keyof State>) {
   if (typeof contextKey === "object" && contextKey) {
@@ -30,9 +49,8 @@ export function useHashContext<State>(
 
 export function useInitialState<State>(
   key: ContextKeyString<keyof State>,
-  state: State[keyof State] | undefined | null,
-  contextState: State,
-  setContextState: SetState<State>
+  [contextState, setContextState]: ContextState<State>,
+  [state]: ContextReducer<State[keyof State], any>
 ) {
   React.useLayoutEffect(
     () => {
@@ -55,8 +73,7 @@ const devtoolsExtension =
 
 // istanbul ignore next
 export function useDevtools<State>(
-  state: State,
-  setState: SetState<State>,
+  [state, setState]: ContextState<State>,
   { enabled }: { enabled?: boolean } = {}
 ) {
   const devtools = React.useRef<ReturnType<
