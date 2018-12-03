@@ -31,14 +31,13 @@ function createUseContextState<State>(
       }
 
       setState = (nextState: any) =>
-        setContextState(prevState =>
-          Object.assign({}, prevState, {
-            [key]:
-              typeof nextState === "function"
-                ? nextState(prevState[key])
-                : nextState
-          })
-        );
+        setContextState(prevState => ({
+          ...prevState,
+          [key]:
+            typeof nextState === "function"
+              ? nextState(prevState[key])
+              : nextState
+        }));
     }
 
     useInitialState(key, state, contextState, setContextState);

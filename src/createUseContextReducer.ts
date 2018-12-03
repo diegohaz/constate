@@ -46,11 +46,10 @@ function createUseContextReducer<State>(
       }
 
       dispatch = action =>
-        setContextState((prevState: State) =>
-          Object.assign({}, prevState, {
-            [key]: reducer(prevState[key], action)
-          })
-        );
+        setContextState((prevState: State) => ({
+          ...prevState,
+          [key]: reducer(prevState[key], action)
+        }));
     }
 
     useInitialState(key, state, contextState, setContextState);

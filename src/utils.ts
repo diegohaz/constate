@@ -38,9 +38,7 @@ export function useInitialState<State>(
       if (key && contextState[key] == null && state != null) {
         setContextState(prevState => {
           if (prevState[key] == null) {
-            return Object.assign({}, prevState, {
-              [key]: state
-            });
+            return { ...prevState, [key]: state };
           }
           return prevState;
         });
