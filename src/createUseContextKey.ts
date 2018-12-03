@@ -1,4 +1,5 @@
 import * as React from "react";
+import { ContextKeyString } from "./types";
 
 export interface UseContextKey<State> {
   (initialContextKey?: null): undefined;
@@ -6,8 +7,10 @@ export interface UseContextKey<State> {
 }
 
 function createUseContextKey<State>() {
-  return function useContextKey(initialContextKey?: keyof State | null) {
-    const key = React.useRef(initialContextKey!);
+  return function useContextKey(
+    initialContextKey?: ContextKeyString<keyof State>
+  ) {
+    const key = React.useRef(initialContextKey);
     return initialContextKey ? key : undefined;
   } as UseContextKey<State>;
 }

@@ -10,10 +10,10 @@ export type ContextState<State> = [State, SetState<State>];
 
 export type ContextReducer<State, Action> = [State, (action: Action) => void];
 
-export type ContextKeyString<State> = keyof State | undefined | null;
+export type ContextKeyString<T> = T | undefined | null;
 
-export type ContextKey<State> =
-  | React.RefObject<keyof State>
-  | ContextKeyString<State>;
+export type ContextKeyObject<T> = React.MutableRefObject<T> | undefined | null;
+
+export type ContextKey<T> = ContextKeyString<T> | ContextKeyObject<T>;
 
 export type HashFunction = (key: string) => number;

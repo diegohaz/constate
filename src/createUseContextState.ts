@@ -1,14 +1,12 @@
 import * as React from "react";
-import { ContextState, HashFunction } from "./types";
+import { ContextState, HashFunction, ContextKey } from "./types";
 import { parseContextKey, useHashContext, useInitialState } from "./utils";
 
 export interface UseContextState<State> {
-  <K extends keyof State>(
-    contextKey?: React.MutableRefObject<K> | K | null
-  ): ContextState<State[K]>;
+  <K extends keyof State>(contextKey?: ContextKey<K>): ContextState<State[K]>;
 
   <K extends keyof State, S extends State[K]>(
-    contextKey?: React.MutableRefObject<K> | K | null,
+    contextKey?: ContextKey<K>,
     initialState?: S | (() => S) | null
   ): ContextState<S>;
 }
@@ -18,7 +16,7 @@ function createUseContextState<State>(
   hash: HashFunction
 ) {
   return function useContextState(
-    contextKey?: React.MutableRefObject<keyof State> | keyof State | null,
+    contextKey?: ContextKey<keyof State>,
     initialState?: State[keyof State] | (() => State[keyof State]) | null
   ) {
     const key = parseContextKey(contextKey);

@@ -3,7 +3,7 @@ import { render } from "react-testing-library";
 import { useContextKey } from "../src";
 
 test("useContextKey", () => {
-  let key: React.MutableRefObject<string> | undefined;
+  let key: React.RefObject<string> | undefined;
   const Component = () => {
     key = useContextKey("foo");
     return null;
@@ -14,7 +14,7 @@ test("useContextKey", () => {
 });
 
 test("undefined useContextKey", () => {
-  let key: React.MutableRefObject<string> | undefined;
+  let key: React.RefObject<string> | undefined;
   const Component = () => {
     key = useContextKey(null);
     return null;

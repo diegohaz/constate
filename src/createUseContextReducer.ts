@@ -1,19 +1,25 @@
 import * as React from "react";
-import { ContextReducer, ContextState, Reducer, HashFunction } from "./types";
+import {
+  ContextReducer,
+  ContextState,
+  Reducer,
+  HashFunction,
+  ContextKey
+} from "./types";
 import { parseContextKey, useHashContext, useInitialState } from "./utils";
 
 export interface UseContextReducer<State> {
   <K extends keyof State, Action>(
-    contextKey: React.MutableRefObject<K> | K | undefined | null,
+    contextKey: ContextKey<K>,
     reducer: Reducer<State[K], Action>,
     initialState?: null,
     initialAction?: Action
   ): ContextReducer<State[K], Action>;
 
   <K extends keyof State, S extends State[K], Action>(
-    contextKey: React.MutableRefObject<K> | K | undefined | null,
+    contextKey: ContextKey<K>,
     reducer: Reducer<S, Action>,
-    initialState?: S | (() => S) | null,
+    initialState?: S | null,
     initialAction?: Action
   ): ContextReducer<S, Action>;
 }
@@ -23,11 +29,7 @@ function createUseContextReducer<State>(
   hash: HashFunction
 ) {
   return function useContextReducer<Action>(
-    contextKey:
-      | React.MutableRefObject<keyof State>
-      | keyof State
-      | undefined
-      | null,
+    contextKey: ContextKey<keyof State>,
     reducer: Reducer<State[keyof State], Action>,
     initialState?: State[keyof State],
     initialAction?: Action

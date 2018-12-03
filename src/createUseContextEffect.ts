@@ -1,4 +1,5 @@
 import * as React from "react";
+import { ContextKeyObject } from "./types";
 
 function createUseContextEffect<State>(
   type: "useEffect" | "useLayoutEffect" = "useEffect"
@@ -8,7 +9,7 @@ function createUseContextEffect<State>(
   } = {};
 
   return function useContextEffect(
-    contextKey: React.MutableRefObject<keyof State> | null | undefined,
+    contextKey: ContextKeyObject<keyof State>,
     create: () => void | (() => void),
     inputs?: ReadonlyArray<any>
   ) {

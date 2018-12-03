@@ -7,7 +7,7 @@ import {
   HashFunction
 } from "./types";
 
-export function parseContextKey<State>(contextKey: ContextKey<State>) {
+export function parseContextKey<State>(contextKey: ContextKey<keyof State>) {
   if (typeof contextKey === "object" && contextKey) {
     return contextKey.current;
   }
@@ -17,7 +17,7 @@ export function parseContextKey<State>(contextKey: ContextKey<State>) {
 const EmptyContext = React.createContext<any>([]);
 
 export function useHashContext<State>(
-  key: ContextKeyString<State>,
+  key: ContextKeyString<keyof State>,
   context: React.Context<ContextState<State>>,
   hash: HashFunction
 ): ContextState<State> {
@@ -29,7 +29,7 @@ export function useHashContext<State>(
 }
 
 export function useInitialState<State>(
-  key: ContextKeyString<State>,
+  key: ContextKeyString<keyof State>,
   state: State[keyof State] | undefined | null,
   contextState: State,
   setContextState: SetState<State>
