@@ -240,9 +240,9 @@ It uses [`React.useRef`](https://reactjs.org/docs/hooks-reference.html#useref) u
 
 Constate provides all contextual versions of [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect), such as `useContextEffect` and `useContextLayoutEffect`. 
 
-They receive `contextKey` as the first argument. Unless [`useContextState`](#usecontextstate) and [`useContextReducer`](#usecontextreducer), it's limited to the value returned by [`useContextKey`](#usecontextkey). If `contextKey` is `null` or `undefined`, the hook will work exactly as the React one.
+They receive `contextKey` as the first argument. Unlike [`useContextState`](#usecontextstate) and [`useContextReducer`](#usecontextreducer), it's limited to the value returned by [`useContextKey`](#usecontextkey). If `contextKey` is `null` or `undefined`, the hook will work exactly as the React one.
 
-```js
+```jsx
 import { Provider, useContextKey, useContextEffect } from "constate";
 
 let count = 0;
