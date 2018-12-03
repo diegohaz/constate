@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.0-alpha.5"></a>
+# [1.0.0-alpha.5](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2018-12-03)
+
+
+### Bug Fixes
+
+* Fix `useContextState` not supporting lazy initialization ([#54](https://github.com/diegohaz/constate/issues/54)) ([059216d](https://github.com/diegohaz/constate/commit/059216d)), closes [#53](https://github.com/diegohaz/constate/issues/53)
+
+
+### Code Refactoring
+
+* Replace `useMutationEffect` by `useLayoutEffect` ([4dada0f](https://github.com/diegohaz/constate/commit/4dada0f))
+
+
+### BREAKING CHANGES
+
+* `useContextMutationEffect` has been removed. `React.useMutationEffect` will be removed from React hooks, so this is just to reflect that (see https://github.com/facebook/react/pull/14336).
+
+
+
 <a name="1.0.0-alpha.4"></a>
 # [1.0.0-alpha.4](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2018-11-27)
 
