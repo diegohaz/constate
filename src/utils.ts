@@ -1,10 +1,58 @@
 import * as React from "react";
-import { SetState } from "./types";
+import {
+  ContextState,
+  SetState,
+  ContextKey,
+  ContextKeyString,
+  HashFunction
+} from "./types";
+
+export function parseContextKey<State>(contextKey: ContextKey<State>) {
+  if (typeof contextKey === "object" && contextKey) {
+    return contextKey.current;
+  }
+  return contextKey;
+}
+
+const EmptyContext = React.createContext<any>([]);
+export function useHashContext<State>(
+  key: ContextKeyString<State>,
+  context: React.Context<ContextState<State>>,
+  hash: HashFunction
+): ContextState<State> {
+  // @ts-ignore
+  return React.useContext(
+    key ? context : EmptyContext,
+    key ? hash(key as string) : undefined
+  );
+}
+
+export function useInitialState<State>(
+  key: ContextKeyString<State>,
+  state: State[keyof State] | undefined | null,
+  contextState: State,
+  setContextState: SetState<State>
+) {
+  React.useLayoutEffect(
+    () => {
+      if (key && contextState[key] == null && state != null) {
+        setContextState(prevState => {
+          if (prevState[key] == null) {
+            return Object.assign({}, prevState, {
+              [key]: state
+            });
+          }
+          return prevState;
+        });
+      }
+    },
+    [key]
+  );
+}
 
 const devtoolsExtension =
   typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION__;
-
-function useDevtools<State>(
+export function useDevtools<State>(
   state: State,
   setState: SetState<State>,
   { enabled }: { enabled?: boolean } = {}
@@ -58,5 +106,3 @@ function useDevtools<State>(
     [state, enabled]
   );
 }
-
-export default useDevtools;

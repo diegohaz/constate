@@ -1,5 +1,6 @@
 import * as React from "react";
-import { ContextReducer, ContextState, Reducer } from "./types";
+import { ContextReducer, ContextState, Reducer, HashFunction } from "./types";
+import { parseContextKey, useHashContext, useInitialState } from "./utils";
 
 export interface UseContextReducer<State> {
   <K extends keyof State, Action>(
@@ -17,33 +18,22 @@ export interface UseContextReducer<State> {
   ): ContextReducer<S, Action>;
 }
 
-const EmptyContext = React.createContext<any>([]);
-
 function createUseContextReducer<State>(
   context: React.Context<ContextState<State>>,
-  hash: (key: string) => number
+  hash: HashFunction
 ) {
-  return function useContextReducer(
+  return function useContextReducer<Action>(
     contextKey:
       | React.MutableRefObject<keyof State>
       | keyof State
       | undefined
       | null,
-    reducer: Reducer<State[keyof State], any>,
+    reducer: Reducer<State[keyof State], Action>,
     initialState?: State[keyof State],
-    initialAction?: any
+    initialAction?: Action
   ) {
-    const key =
-      typeof contextKey === "object" && contextKey
-        ? contextKey.current
-        : contextKey;
-
-    // @ts-ignore
-    const [contextState, setContextState] = React.useContext(
-      key ? context : EmptyContext,
-      key ? hash(key as string) : undefined
-    );
-
+    const key = parseContextKey(contextKey);
+    const [contextState, setContextState] = useHashContext(key, context, hash);
     let [state, dispatch] = React.useReducer(
       reducer,
       initialState!,
@@ -55,7 +45,7 @@ function createUseContextReducer<State>(
         state = contextState[key];
       }
 
-      dispatch = (action: any) =>
+      dispatch = action =>
         setContextState((prevState: State) =>
           Object.assign({}, prevState, {
             [key]: reducer(prevState[key], action)
@@ -63,21 +53,7 @@ function createUseContextReducer<State>(
         );
     }
 
-    React.useLayoutEffect(
-      () => {
-        if (key && contextState[key] == null && state != null) {
-          setContextState((prevState: State) => {
-            if (prevState[key] == null) {
-              return Object.assign({}, prevState, {
-                [key]: state
-              });
-            }
-            return prevState;
-          });
-        }
-      },
-      [key]
-    );
+    useInitialState(key, state, contextState, setContextState);
 
     return [state, dispatch];
   } as UseContextReducer<State>;

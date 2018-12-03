@@ -38,6 +38,32 @@ test("shared state", () => {
   expect(getByText("1")).toBeDefined();
 });
 
+test("lazy initialization", () => {
+  const useCounter = () => useContextState("counter1", () => 0);
+  const Button = () => {
+    const [, setCount] = useCounter();
+    return (
+      <button onClick={() => setCount(prevCount => prevCount + 1)}>
+        Button
+      </button>
+    );
+  };
+  const Value = () => {
+    const [count] = useCounter();
+    return <span>{count}</span>;
+  };
+  const App = () => (
+    <Provider>
+      <Button />
+      <Value />
+    </Provider>
+  );
+  const { getByText } = render(<App />);
+  expect(getByText("0")).toBeDefined();
+  fireEvent.click(getByText("Button"));
+  expect(getByText("1")).toBeDefined();
+});
+
 test("useContextKey", () => {
   const useCounter = () => {
     const key = useContextKey("counter1");
