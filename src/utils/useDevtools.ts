@@ -6,7 +6,7 @@ const devtoolsExtension =
 
 function useDevtools<State>(
   [state, setState]: ContextState<State>,
-  { enabled }: { enabled?: boolean } = {}
+  { enabled, name }: { enabled?: boolean; name?: string } = {}
 ) {
   const devtools = React.useRef<ReturnType<
     ReduxDevtoolsExtension["connect"]
@@ -17,7 +17,7 @@ function useDevtools<State>(
   React.useEffect(
     () => {
       if (enabled && devtoolsExtension) {
-        devtools.current = devtoolsExtension.connect();
+        devtools.current = devtoolsExtension.connect({ name });
         devtools.current.init(state);
         devtools.current.subscribe(message => {
           if (message.type === "DISPATCH" && message.state) {
