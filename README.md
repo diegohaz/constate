@@ -12,7 +12,7 @@
 <a href="https://codecov.io/gh/diegohaz/constate/branch/master"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/diegohaz/constate/master.svg?style=flat-square"></a>
 
 
-~1 kB React state management library that lets you write contextual state as if it were local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html) and [React Context](https://reactjs.org/docs/context.html).
+~ 1.5 kB React state management library that lets you write contextual state as if it were local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html) and [React Context](https://reactjs.org/docs/context.html).
 
 <br>
 

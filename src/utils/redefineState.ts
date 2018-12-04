@@ -4,7 +4,7 @@ function redefineState<State, Action>(
   key: ContextKeyString<keyof State>,
   [contextState, setContextState]: ContextState<State>,
   [state, dispatch]: ContextReducer<State[keyof State], Action>,
-  transformState: React.Reducer<typeof state, any>
+  reducer: React.Reducer<typeof state, any>
 ): ContextReducer<typeof state, Action> {
   if (key) {
     return [
@@ -12,7 +12,7 @@ function redefineState<State, Action>(
       (nextState: any) =>
         setContextState(prevState => ({
           ...prevState,
-          [key]: transformState(prevState[key], nextState)
+          [key]: reducer(prevState[key], nextState)
         }))
     ];
   }

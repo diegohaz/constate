@@ -14,17 +14,30 @@ export interface UseContextState<State> {
   ): ContextState<S>;
 }
 
+function isLazyState<T>(state?: any): state is () => T {
+  return typeof state === "function";
+}
+
 function createUseContextState<State>(
   context: React.Context<ContextState<State>>,
   hash: HashFunction
 ) {
+  // store lazy initial state returns so we won't call them on every consumer
+  const cache: { [K in keyof State]?: any } = {};
+
   return function useContextState(
     contextKey?: ContextKey<keyof State>,
     initialState?: State[keyof State] | (() => State[keyof State]) | null
   ) {
     const key = parseContextKey(contextKey);
+    const hasCache = key && isLazyState(initialState) && cache[key] != null;
     const contextState = useHashContext(key, context, hash);
-    const localState = React.useState(initialState!);
+    const localState = React.useState(hasCache ? cache[key!] : initialState);
+
+    if (key && isLazyState(initialState) && cache[key] == null) {
+      // cache localState[0] so the next consumers won't have to compute it
+      [cache[key]] = localState;
+    }
 
     useInitialState(key, contextState, localState);
 
