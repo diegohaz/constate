@@ -39,7 +39,8 @@ test("shared state", () => {
 });
 
 test("lazy initialization", () => {
-  const useCounter = () => useContextState("counter1", () => 0);
+  const lazyInitialState = jest.fn(() => 0) as () => number;
+  const useCounter = () => useContextState("counter1", lazyInitialState);
   const Button = () => {
     const [, setCount] = useCounter();
     return (
@@ -62,6 +63,7 @@ test("lazy initialization", () => {
   expect(getByText("0")).toBeDefined();
   fireEvent.click(getByText("Button"));
   expect(getByText("1")).toBeDefined();
+  expect(lazyInitialState).toHaveBeenCalledTimes(1);
 });
 
 test("useContextKey", () => {

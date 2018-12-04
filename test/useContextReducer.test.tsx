@@ -64,8 +64,9 @@ test("local initialAction", () => {
 });
 
 test("shared initialAction", () => {
+  const reducerSpy = jest.fn(reducer) as typeof reducer;
   const useCounter = () =>
-    useContextReducer("counter1", reducer, 0, { type: "INCREMENT" });
+    useContextReducer("counter1", reducerSpy, 0, { type: "INCREMENT" });
   const Button = () => {
     const [, dispatch] = useCounter();
     return (
@@ -80,10 +81,12 @@ test("shared initialAction", () => {
     <Provider>
       <Button />
       <Value />
+      <Value />
     </Provider>
   );
   const { getByText } = render(<App />);
   expect(getByText("1")).toBeDefined();
   fireEvent.click(getByText("Button"));
   expect(getByText("2")).toBeDefined();
+  expect(reducerSpy).toHaveBeenCalledTimes(2);
 });
