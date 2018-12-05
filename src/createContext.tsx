@@ -8,8 +8,7 @@ import useDevtools from "./utils/useDevtools";
 
 export type ProviderProps = {
   children: React.ReactNode;
-  devtools?: boolean;
-  devtoolsName?: string;
+  devtools?: boolean | string;
 };
 
 function createHash(skipLength: number) {
@@ -45,15 +44,14 @@ function createProvider<State>(
   Context: React.Context<ContextState<State>>,
   initialState: State
 ) {
-  return function Provider({
-    children,
-    devtools,
-    devtoolsName
-  }: ProviderProps) {
+  return function Provider({ children, devtools }: ProviderProps) {
     const state = React.useState(initialState);
     const value = React.useMemo(() => state, [state[0]]);
 
-    useDevtools(state, { enabled: devtools, name: devtoolsName });
+    useDevtools(state, {
+      enabled: devtools != null,
+      name: typeof devtools === "string" ? devtools : undefined
+    });
 
     return <Context.Provider value={value}>{children}</Context.Provider>;
   };
