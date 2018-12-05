@@ -49,7 +49,7 @@ function createProvider<State>(
     const value = React.useMemo(() => state, [state[0]]);
 
     useDevtools(state, {
-      enabled: devtools != null,
+      enabled: Boolean(devtools),
       name: typeof devtools === "string" ? devtools : undefined
     });
 

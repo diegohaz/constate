@@ -72,13 +72,17 @@ function App() {
 
 #### Table of Contents
 
-- [Installation](#installation)
-- [`Provider`](#provider)
-- [`useContextState`](#usecontextstate)
-- [`useContextReducer`](#usecontextreducer)
-- [`useContextKey`](#usecontextkey)
-- [`useContextEffect`](#usecontexteffect)
-- [`createContext`](#createcontext)
+- [Constate](#constate)
+      - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [`Provider`](#provider)
+  - [`useContextState`](#usecontextstate)
+  - [`useContextReducer`](#usecontextreducer)
+  - [`useContextKey`](#usecontextkey)
+  - [`useContextEffect`](#usecontexteffect)
+  - [`createContext`](#createcontext)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 <br>
 
@@ -124,6 +128,21 @@ Passing `devtools` prop to `Provider` will enable the [redux-devtools-extension]
 <p align="center">
   <img src="https://user-images.githubusercontent.com/3068563/48814011-62601300-ed20-11e8-896b-c5c7a080989e.png" alt="Using Redux Devtools Extension" width="800">
 </p>
+
+Passing `string` to `devtools` prop will customize [instance name shown on the monitor page](https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md#name)
+
+```jsx
+import React from "react";
+import { Provider } from "constate";
+
+function App() {
+  return (
+    <Provider devtools={process.env.NODE_ENV === "development" && 'App Store'}>
+      ...
+    </Provider>
+  );
+}
+```
 
 <br>
 
@@ -238,7 +257,7 @@ It uses [`React.useRef`](https://reactjs.org/docs/hooks-reference.html#useref) u
 
 <sup><a href="#table-of-contents">↑ Back to top</a></sup>
 
-Constate provides all contextual versions of [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect), such as `useContextEffect` and `useContextLayoutEffect`. 
+Constate provides all contextual versions of [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect), such as `useContextEffect` and `useContextLayoutEffect`.
 
 They receive `contextKey` as the first argument. Unlike [`useContextState`](#usecontextstate) and [`useContextReducer`](#usecontextreducer), it's limited to the value returned by [`useContextKey`](#usecontextkey). If `contextKey` is `null` or `undefined`, the hook will work exactly as the React one.
 
