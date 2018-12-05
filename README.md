@@ -72,17 +72,13 @@ function App() {
 
 #### Table of Contents
 
-- [Constate](#constate)
-      - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
-  - [`Provider`](#provider)
-  - [`useContextState`](#usecontextstate)
-  - [`useContextReducer`](#usecontextreducer)
-  - [`useContextKey`](#usecontextkey)
-  - [`useContextEffect`](#usecontexteffect)
-  - [`createContext`](#createcontext)
-  - [Contributing](#contributing)
-  - [License](#license)
+- [Installation](#installation)
+- [`Provider`](#provider)
+- [`useContextState`](#usecontextstate)
+- [`useContextReducer`](#usecontextreducer)
+- [`useContextKey`](#usecontextkey)
+- [`useContextEffect`](#usecontexteffect)
+- [`createContext`](#createcontext)
 
 <br>
 
