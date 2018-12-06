@@ -3,11 +3,13 @@ import ReactDOM from "react-dom";
 import { Router, Link } from "@reach/router";
 import Counter from "./counter/App";
 import I18n from "./i18n/App";
+import MultiStepForm from "./multi-step-form/App";
 import Theming from "./theming/App";
 
 const paths = {
   counter: Counter,
   i18n: I18n,
+  "multi-step-form": MultiStepForm,
   theming: Theming
 };
 

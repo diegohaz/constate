@@ -1,0 +1,23 @@
+{
+  "name": "constate-multi-step-form",
+  "description": "A multi step form example using Constate",
+  "version": "1.0.0",
+  "private": true,
+  "keywords": [
+    "constate",
+    "context",
+    "state",
+    "react",
+    "hooks"
+  ],
+  "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "constate": "^1.0.0-alpha.5",
+    "parcel-bundler": "^1.10.0",
+    "react": "^16.7.0-alpha.2",
+    "react-dom": "^16.7.0-alpha.2"
+  }
+}
