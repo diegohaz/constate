@@ -21,6 +21,7 @@
     "parcel-bundler": "^1.10.0",
     "react": "^16.7.0-alpha.2",
     "react-dom": "^16.7.0-alpha.2",
+    "tslib": "1.9.3",
     "typescript": "^3.2.1"
   }
 }
