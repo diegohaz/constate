@@ -1,6 +1,6 @@
 {
-  "name": "constate-multi-step-form",
-  "description": "A multi step form example using Constate",
+  "name": "constate-wizard-form",
+  "description": "A wizard form example using Constate",
   "version": "1.0.0",
   "private": true,
   "keywords": [

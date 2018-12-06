@@ -70,7 +70,7 @@ function Step2({ formKey }) {
   );
 }
 
-function MultiStepForm() {
+function Wizard() {
   const { step } = useStep();
   const steps = [Step1, Step2];
   return React.createElement(steps[step], { formKey: "form1" });
@@ -79,7 +79,7 @@ function MultiStepForm() {
 function App() {
   return (
     <Provider devtools>
-      <MultiStepForm />
+      <Wizard />
     </Provider>
   );
 }
