@@ -5,12 +5,14 @@ import Counter from "./counter/App";
 import I18n from "./i18n/App";
 import MultiStepForm from "./multi-step-form/App";
 import Theming from "./theming/App";
+import TypeScript from "./typescript/App";
 
 const paths = {
   counter: Counter,
   i18n: I18n,
   "multi-step-form": MultiStepForm,
-  theming: Theming
+  theming: Theming,
+  typescript: TypeScript
 };
 
 const App = () => (

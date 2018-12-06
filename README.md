@@ -19,7 +19,7 @@
 <table>
   <thead>
     <tr>
-      <th colspan="4"><center>🕹 CodeSandbox demos 🕹</center></th>
+      <th colspan="5"><center>🕹 CodeSandbox demos 🕹</center></th>
     </tr>
   </thead>
   <tbody>
@@ -28,6 +28,7 @@
       <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/i18n?module=/App.js">I18n</a></td>
       <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/multi-step-form?module=/App.js">Multi Step Form</a></td>
       <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/theming?module=/App.js">Theming</a></td>
+      <td><a href="https://codesandbox.io/s/github/diegohaz/constate/tree/master/examples/typescript?module=/App.js">TypeScript</a></td>
     </tr>
   </tbody>
 </table>

@@ -51,14 +51,14 @@
     "constate"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.1.5",
-    "@babel/core": "^7.1.6",
-    "@babel/preset-env": "^7.1.6",
+    "@babel/cli": "^7.2.0",
+    "@babel/core": "^7.2.0",
+    "@babel/preset-env": "^7.2.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.1.0",
     "@types/jest": "^23.3.10",
     "@types/prop-types": "^15.5.6",
-    "@types/react": "^16.7.11",
+    "@types/react": "^16.7.13",
     "babel-core": "^7.0.0-0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
@@ -81,7 +81,7 @@
     "react-test-renderer": "^16.6.3",
     "react-testing-library": "^5.3.1",
     "rimraf": "^2.6.2",
-    "rollup": "^0.67.1",
+    "rollup": "^0.67.4",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-filesize": "^5.0.1",
@@ -91,7 +91,7 @@
     "rollup-plugin-uglify": "^6.0.0",
     "standard-version": "^4.4.0",
     "typescript": "^3.2.1",
-    "typescript-eslint-parser": "^21.0.1"
+    "typescript-eslint-parser": "^21.0.2"
   },
   "peerDependencies": {
     "react": "^16.7.0-alpha.2"
