@@ -1,4 +1,5 @@
 import createContext from "./createContext";
+import createContainer from "./createContainer";
 
 const {
   Context,
@@ -11,6 +12,7 @@ const {
 } = createContext<{ [key: string]: any }>({});
 
 export {
+  createContainer,
   createContext,
   Context,
   Provider,
