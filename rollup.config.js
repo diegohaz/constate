@@ -20,7 +20,7 @@ const createCommonPlugins = () => [
 ];
 
 const main = {
-  input: "src/index.ts",
+  input: "src/index.tsx",
   output: [
     {
       file: pkg.main,
@@ -37,7 +37,7 @@ const main = {
 };
 
 const unpkg = {
-  input: "src/index.ts",
+  input: "src/index.tsx",
   output: {
     name: pkg.name,
     file: pkg.unpkg,

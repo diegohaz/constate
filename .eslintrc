@@ -18,6 +18,7 @@
   },
   "rules": {
     "camelcase": "off",
+    "no-use-before-define": "off",
     "no-underscore-dangle": "off",
     "no-bitwise": "off",
     "no-restricted-syntax": "off",
