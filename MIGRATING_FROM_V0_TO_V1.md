@@ -44,6 +44,7 @@ The `<Container />` component doesn't exist anymore. It's been replaced by `crea
 ### `initialState`
 
 #### v0
+
 ```jsx
 import { Container } from "constate";
 
@@ -56,9 +57,10 @@ function Counter() {
 }
 ```
 
+#### v1
+
 Just use [`React.useState`](https://reactjs.org/docs/hooks-reference.html#usestate):
 
-#### v1
 ```jsx
 import { useState } from "react";
 
@@ -71,6 +73,7 @@ function Counter() {
 ### `actions`
 
 #### v0
+
 ```jsx
 import { Container } from "constate";
 
@@ -91,6 +94,7 @@ function Counter() {
 ```
 
 #### v1
+
 ```jsx
 import { useState } from "react";
 
@@ -104,6 +108,7 @@ function Counter() {
 ### `selectors`
 
 #### v0
+
 ```jsx
 import { Container } from "constate";
 
@@ -115,15 +120,14 @@ function Counter() {
         getParity: () => state => (state.count % 2 === 0 ? "even" : "odd")
       }}
     >
-      {({ getParity }) => (
-        <button>{getParity()}</button>
-      )}
+      {({ getParity }) => <button>{getParity()}</button>}
     </Container>
   );
 }
 ```
 
 #### v1
+
 ```jsx
 import { useState } from "react";
 
@@ -137,6 +141,7 @@ function Counter() {
 ### `effects`
 
 #### v0
+
 ```jsx
 import { Container } from "constate";
 
@@ -151,15 +156,14 @@ function Counter() {
         }
       }}
     >
-      {({ count, tick }) => (
-        <button onClick={tick}>{count}</button>
-      )}
+      {({ count, tick }) => <button onClick={tick}>{count}</button>}
     </Container>
   );
 }
 ```
 
 #### v1
+
 ```jsx
 import { useState } from "react";
 
@@ -168,7 +172,7 @@ function Counter() {
   const tick = () => {
     const fn = () => setCount(count + 1);
     setInterval(fn, 1000);
-  }
+  };
   return <button onClick={tick}>{count}</button>;
 }
 ```
@@ -222,7 +226,7 @@ function App() {
 import { useState, useContext } from "react";
 import createContainer from "constate";
 
-const Counter1 = createContainer(useCounter, state => [state.count]);
+const Counter1 = createContainer(useCounter);
 
 function useCounter() {
   const [count, setCount] = useState(0);
@@ -348,12 +352,15 @@ function useCounter() {
     setInterval(fn, 1000);
   }, []);
 
-  useEffect(() => {
-    if (count === 5) {
-      // reset counter
-      setCount(0);
-    }
-  }, [count]); // runs only when count changes
+  useEffect(
+    () => {
+      if (count === 5) {
+        // reset counter
+        setCount(0);
+      }
+    },
+    [count] // runs only when count changes
+  );
 
   return count;
 }
@@ -373,10 +380,7 @@ import { Container } from "constate";
 
 function Counter() {
   return (
-    <Container
-      initialState={{ count: 0 }}
-      shouldUpdate={() => false}
-    >
+    <Container initialState={{ count: 0 }} shouldUpdate={() => false}>
       {({ count }) => <button>{count}</button>}
     </Container>
   );
@@ -407,11 +411,7 @@ function Counter() {
 import { Provider } from "constate";
 
 function App() {
-  return (
-    <Provider initialState={{ counter1: { count: 0 } }}>
-      ...
-    </Provider>
-  );
+  return <Provider initialState={{ counter1: { count: 0 } }}>...</Provider>;
 }
 ```
 
@@ -519,13 +519,16 @@ function useCounter() {
   const [calls, setCalls] = useState(0);
   const prevCount = useRef(null);
 
-  useEffect(() => {
-    // if (type === "increment")
-    if (prevCount.current != null && prevCount.current < count) {
-      setCalls(prevCalls => prevCalls + 1);
-    }
-    prevCount.current = count;
-  }, [count]); // if (context === "counter1")
+  useEffect(
+    () => {
+      // if (type === "increment")
+      if (prevCount.current != null && prevCount.current < count) {
+        setCalls(prevCalls => prevCalls + 1);
+      }
+      prevCount.current = count;
+    },
+    [count] // if (context === "counter1")
+  );
 
   return count;
 }
