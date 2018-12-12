@@ -35,7 +35,7 @@ However, scaling from local to context continues to be a problem. So Constate's 
 
 First of all, if you don't want or have time to update your code, you should stick with `v0`. It's totally fine.
 
-If you want to update your code incrementally, that is, update part of your code base while keeping others in the old version, you can re-create `<Container />` using the new hooks. See an [example](https://codesandbox.io/s/rw2mz784x4).
+If you want to update your code incrementally, that is, update part of your code base while keeping others in the old version, you can copy and paste the [source code](src/index.tsx) in your project and use it until you have updated the entire app.
 
 ## `Container`
 
