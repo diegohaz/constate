@@ -164,10 +164,10 @@ You can also achieve the same behavior within the custom hook. This is an equiva
 ```js
 import { useMemo } from "react";
 
-// same as passing `value => [value.count]` to `createInputs` parameter
 const MainCounter = createContainer(() => {
   const [count, setCount] = useState(0);
   const increment = () => setCount(count + 1);
+  // same as passing `value => [value.count]` to `createInputs` parameter
   return useMemo(() => ({ count, increment }), [count]);
 });
 ```
