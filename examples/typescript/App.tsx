@@ -1,8 +1,8 @@
-import React, { useState, useContext } from "react";
+import * as React from "react";
 import createContainer from "constate";
 
 function useCounter({ initialCount = 0 } = {}) {
-  const [count, setCount] = useState(initialCount);
+  const [count, setCount] = React.useState(initialCount);
   const increment = () => setCount(count + 1);
   return { count, increment };
 }
@@ -10,12 +10,12 @@ function useCounter({ initialCount = 0 } = {}) {
 const MainCounter = createContainer(useCounter, value => [value.count]);
 
 function IncrementButton() {
-  const { increment } = useContext(MainCounter.Context);
+  const { increment } = React.useContext(MainCounter.Context);
   return <button onClick={increment}>+</button>;
 }
 
 function Count() {
-  const { count } = useContext(MainCounter.Context);
+  const { count } = React.useContext(MainCounter.Context);
   return <span>{count}</span>;
 }
 
