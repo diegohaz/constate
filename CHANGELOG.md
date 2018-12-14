@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.0-alpha.6"></a>
+# [1.0.0-alpha.6](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2018-12-14)
+
+
+### Bug Fixes
+
+* Ensure lazy initialization happens only once per context key ([#55](https://github.com/diegohaz/constate/issues/55)) ([0cfc10f](https://github.com/diegohaz/constate/commit/0cfc10f))
+
+
+### Features
+
+* `createContainer` ([#58](https://github.com/diegohaz/constate/issues/58)) ([bb90895](https://github.com/diegohaz/constate/commit/bb90895))
+* Support `devtools` string on `Provider` ([#56](https://github.com/diegohaz/constate/issues/56)) ([939ba36](https://github.com/diegohaz/constate/commit/939ba36))
+
+
+### BREAKING CHANGES
+
+* Removed `useContextState` and other hooks. They've been replaced by `createContainer`.
+
+
+
 <a name="1.0.0-alpha.5"></a>
 # [1.0.0-alpha.5](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2018-12-03)
 
