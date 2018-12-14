@@ -129,13 +129,13 @@ function App() {
 }
 ```
 
-The value returned in `useValue` will be accessible when using `useContext(MainCounter)`:
+The value returned in `useValue` will be accessible when using `useContext(MainCounter.Context)`:
 
 ```jsx
 import React, { useContext } from "react";
 
 function Counter() {
-  const count = useContext(MainCounter);
+  const count = useContext(MainCounter.Context);
   console.log(count); // 10
 }
 ```
