@@ -12,7 +12,7 @@
 <a href="https://codecov.io/gh/diegohaz/constate/branch/master"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/diegohaz/constate/master.svg?style=flat-square"></a>
 
 
-~ 1.5 kB React state management library that lets you write contextual state as if it were local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html) and [React Context](https://reactjs.org/docs/context.html).
+Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html) and lift it up to [React Context](https://reactjs.org/docs/context.html) only when needed with minimum effort.
 
 <br>
 
@@ -36,53 +36,43 @@
 <br>
 
 ```jsx
-import React from "react";
-import { Provider, useContextState } from "constate";
+import React, { useState, useContext } from "react";
+import createContainer from "constate";
 
-// 1. Create a custom hook
-function useCounter(key) {
-  // 2. Replace React.useState(0) by useContextState(key, 0)
-  const [count, setCount] = useContextState(key, 0);
+// 1️⃣ Create a custom hook as usual
+function useCounter() {
+  const [count, setCount] = useState(0);
   const increment = () => setCount(count + 1);
   return { count, increment };
 }
 
-function Count() {
-  // 3. Consume the custom hook as usual
-  const { count } = useCounter("counter1");
-  return <span>{count}</span>
-}
+// 2️⃣ Create container
+const MainCounter = createContainer(useCounter);
 
-function IncrementButton() {
-  // 4. Consume the same key in other components
-  const { increment } = useCounter("counter1");
+function Button() {
+  // 3️⃣ Use container context instead of custom hook
+  // const { increment } = useCounter();
+  const { increment } = useContext(MainCounter.Context);
   return <button onClick={increment}>+</button>;
 }
 
+function Count() {
+  // 4️⃣ Use container context in other components
+  // const { count } = useCounter();
+  const { count } = useContext(MainCounter.Context);
+  return <span>{count}</span>;
+}
+
 function App() {
-  // 5. Wrap your app with Provider
+  // 5️⃣ Wrap your components with container provider
   return (
-    <Provider>
+    <MainCounter.Provider>
       <Count />
-      <IncrementButton />
-    </Provider>
+      <Button />
+    </MainCounter.Provider>
   );
 }
 ```
-
-<br>
-
-#### Table of Contents
-
-- [Installation](#installation)
-- [`Provider`](#provider)
-- [`useContextState`](#usecontextstate)
-- [`useContextReducer`](#usecontextreducer)
-- [`useContextKey`](#usecontextkey)
-- [`useContextEffect`](#usecontexteffect)
-- [`createContext`](#createcontext)
-
-<br>
 
 ## Installation
 
@@ -100,262 +90,87 @@ yarn add constate@next
 
 > Constate `v1` is currently in early alpha. If you're looking for `v0`, see [`v0` docs](https://github.com/diegohaz/constate/tree/v0#readme) or read the [migration guide](MIGRATING_FROM_V0_TO_V1.md).
 
-<br>
+## API
 
-## `Provider`
+### `createContainer(useValue[, createInputs])`
 
-<sup><a href="#table-of-contents">↑ Back to top</a></sup>
+Constate exports a single method called `createContainer`. It receives two arguments: [`useValue`](#usevalue) and [`createInputs`](#createinputs) (optional). And returns `{ Context, Provider }`.
 
-First, you should wrap your app (or the part using Constate) with `Provider` so as to access contextual state within hooks:
+#### `useValue`
+
+It's a [custom hook](https://reactjs.org/docs/hooks-custom.html) that returns the Context value:
+
+```js
+import React, { useState } from "react";
+import createContainer from "constate";
+
+const MainCounter = createContainer(() => {
+  const [count] = useState(0);
+  return count;
+});
+
+console.log(MainCounter); // { Context, Provider }
+```
+
+You can receive arguments in the custom hook function. They will be populated with `<Provider />`:
 
 ```jsx
-import React from "react";
-import { Provider } from "constate";
+const MainCounter = createContainer(({ initialCount = 0 }) => {
+  const [count] = useState(initialCount);
+  return count;
+});
 
 function App() {
   return (
-    <Provider devtools={process.env.NODE_ENV === "development"}>
+    <MainCounter.Provider initialCount={10}>
       ...
-    </Provider>
+    </MainCounter.Provider>
   );
 }
 ```
 
-Passing `devtools` prop to `Provider` will enable the [redux-devtools-extension](https://github.com/zalmoxisus/redux-devtools-extension) integration, if that's installed in your browser. With that, you can easily debug the state of your application.
-
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/3068563/48814011-62601300-ed20-11e8-896b-c5c7a080989e.png" alt="Using Redux Devtools Extension" width="800">
-</p>
-
-Passing `string` to `devtools` prop will customize [instance name shown on the monitor page](https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md#name)
+The value returned in `useValue` will be accessible when using `useContext(MainCounter)`:
 
 ```jsx
-import React from "react";
-import { Provider } from "constate";
+import React, { useContext } from "react";
 
-function App() {
-  return (
-    <Provider devtools={process.env.NODE_ENV === "development" && 'App Store'}>
-      ...
-    </Provider>
-  );
+function Counter() {
+  const count = useContext(MainCounter);
+  console.log(count); // 10
 }
 ```
 
-<br>
+#### `createInputs`
 
-## `useContextState`
+Optionally, you can pass in a function that receives the `value` returned by `useValue` and returns an array of inputs. When any input changes, `value` gets re-evaluated, triggering a re-render on all consumers (components calling `useContext()`).
 
-<sup><a href="#table-of-contents">↑ Back to top</a></sup>
+If `createInputs` is undefined, it'll be re-evaluated everytime `Provider` renders:
 
-`useContextState` has the same API as [`React.useState`](https://reactjs.org/docs/hooks-reference.html#usestate), except that it receives `contextKey` as the first argument. It can be either a string or the return value of [`useContextKey`](#usecontextkey).
+```js
+// re-render consumers only when value.count changes
+const MainCounter = createContainer(useCoutner, value => [value.count]);
 
-All `useContextState` calls with the same `contextKey` throughout components in the [`Provider`](#provider) tree will share the same state.
-
-```jsx
-import { useContextState } from "constate";
-
-function Component() {
-  // accesses state.contextKey in context
-  const [state, setState] = useContextState("contextKey", "initialValue");
-  ...
-}
-```
-
-If you pass `null` or `undefined` into the `contextKey` parameter, it'll work exactly like [`React.useState`](https://reactjs.org/docs/hooks-reference.html#usestate):
-
-```jsx
-import { useContextState } from "constate";
-
-function Component() {
-  // same as React.useState("initialValue")
-  const [state, setState] = useContextState(null, "initialValue");
-  ...
-}
-```
-
-This means you can create [custom hooks](https://reactjs.org/docs/hooks-custom.html) that can be either contextual or local depending on the component using it:
-
-```jsx
-import React from "react";
-import { useContextState } from "constate";
-
-function useCounter(key) {
-  const [count, setCount] = useContextState(key, 0);
+function useCounter() {
+  const [count, setCount] = useState(0);
   const increment = () => setCount(count + 1);
   return { count, increment };
 }
-
-function ContextualCounter() {
-  const { count, increment } = useCounter("counter1");
-  return <button onClick={increment}>{count}</button>;
-}
-
-function LocalCounter() {
-  const { count, increment } = useCounter();
-  return <button onClick={increment}>{count}</button>;
-}
 ```
 
-<br>
+This works similarly to the `inputs` parameter in [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect) and other React built-in hooks. In fact, Constate passes it to [`React.useMemo`](https://reactjs.org/docs/hooks-reference.html#usememo) `inputs` internally.
 
-## `useContextReducer`
-
-<sup><a href="#table-of-contents">↑ Back to top</a></sup>
-
-Just like [`useContextState`](#usecontextstate), `useContextReducer` works similarly to [`React.useReducer`](https://reactjs.org/docs/hooks-reference.html#usereducer), but accepting a `contextKey` argument, which can be either a string or the return value of [`useContextKey`](#usecontextkey):
-
-```jsx
-import { useContextReducer } from "constate";
-
-function reducer(state, action) {
-  switch(action.type) {
-    case "INCREMENT": return state + 1;
-    case "DECREMENT": return state - 1;
-    default: return state;
-  }
-}
-
-function useCounter(key) {
-  const [count, dispatch] = useContextReducer(key, reducer, 0);
-  const increment = () => dispatch({ type: "INCREMENT" });
-  const decrement = () => dispatch({ type: "DECREMENT" });
-  return { count, increment, decrement };
-}
-
-function ContextualCounter() {
-  const { count, increment } = useCounter("counter1");
-  return <button onClick={increment}>{count}</button>;
-}
-```
-
-<br>
-
-## `useContextKey`
-
-<sup><a href="#table-of-contents">↑ Back to top</a></sup>
-
-Instead of passing strings to [`useContextState`](#usecontextstate) and [`useContextReducer`](#usecontextreducer), you can create a reference to the context key.
+You can also achieve the same behavior within the custom hook. This is an equivalent implementation:
 
 ```js
-import { useContextKey } from "constate";
+import { useMemo } from "react";
 
-function Counter() {
-  const key = useContextKey("counter1");
-  const [count, setCount] = useContextState(key, 0);
-  ...
-}
-```
-
-It uses [`React.useRef`](https://reactjs.org/docs/hooks-reference.html#useref) underneath and is required when using [`useContextEffect`](#usecontexteffect).
-
-<br>
-
-## `useContextEffect`
-
-<sup><a href="#table-of-contents">↑ Back to top</a></sup>
-
-Constate provides all contextual versions of [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect), such as `useContextEffect` and `useContextLayoutEffect`.
-
-They receive `contextKey` as the first argument. Unlike [`useContextState`](#usecontextstate) and [`useContextReducer`](#usecontextreducer), it's limited to the value returned by [`useContextKey`](#usecontextkey). If `contextKey` is `null` or `undefined`, the hook will work exactly as the React one.
-
-```jsx
-import { Provider, useContextKey, useContextEffect } from "constate";
-
-let count = 0;
-
-function useCounter(context) {
-  // useContextKey is required for effects
-  const key = useContextKey(context);
-  useContextEffect(key, () => {
-    count += 1;
-  }, []);
-}
-
-function ContextualCounter1() {
-  useCounter("counter1");
-  ...
-}
-
-function ContextualCounter2() {
-  useCounter("counter1");
-  ...
-}
-
-function App() {
-  return (
-    <Provider>
-      <ContextualCounter1 />
-      <ContextualCounter2 />
-    </Provider>
-  );
-}
-```
-
-In the example above, if we were using [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect), `count` would be `2`. With `useContextEffect`, it's `1`.
-
-`useContextEffect` ensures that the function will be called only once per `contextKey` no matter how many components are using it.
-
-<br>
-
-## `createContext`
-
-<sup><a href="#table-of-contents">↑ Back to top</a></sup>
-
-If you want to set a initial state for the whole context tree and/or want to create separate contexts, you can use `createContext`:
-
-```js
-// MyContext.js
-import { createContext } from "constate";
-
-const {
-  Provider,
-  useContextKey,
-  useContextState,
-  useContextReducer,
-  useContextEffect,
-  useContextLayoutEffect
-} = createContext({
-  counter1: 0,
-  posts: [
-    { id: 1, title: "Hello World!" }
-  ]
-});
-
-export {
-  Provider,
-  useContextKey,
-  useContextState,
-  useContextReducer,
-  useContextEffect,
-  useContextLayoutEffect
-};
-```
-
-```jsx
-// App.js
-import React from "react";
-import { Provider, useContextState } from "./MyContext";
-
-function Counter() {
-  // no need for initial value, it has been set in context
-  const [count, setCount] = useContextState("counter1");
+const MainCounter = createContainer(() => {
+  const [count, setCount] = useState(0);
   const increment = () => setCount(count + 1);
-  return <button onClick={increment}>{count}</button>;
-}
-
-function App() {
-  return (
-    <Provider>
-      <Counter />
-    </Provider>
-  );
-}
+  // same as passing `value => [value.count]` to `createInputs` parameter
+  return useMemo(() => ({ count, increment }), [count]);
+});
 ```
-
-> When importing hooks directly from the `constate` package, you're, in fact, using a default context created by our [index file](src/index.ts).
-
-<br>
 
 ## Contributing
 
@@ -364,8 +179,6 @@ If you find a bug, please [create an issue](https://github.com/diegohaz/constate
 If you're a beginner, it'll be a pleasure to help you contribute. You can start by reading [the beginner's guide to contributing to a GitHub project](https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/).
 
 When working on this codebase, please use `yarn`. Run `yarn examples:start` to run examples.
-
-<br>
 
 ## License
 

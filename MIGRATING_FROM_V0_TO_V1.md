@@ -27,7 +27,7 @@ Before [React Hooks](https://reactjs.org/docs/hooks-intro.html), making stateful
 
 With `<Container />`, we were solving those two problems. Writing local state became easier, and turning it into context was just a matter of changing a prop.
 
-With the new [React.useState](https://reactjs.org/docs/hooks-reference.html#usestate), though, it turns out that writing local state is easier than ever – in fact, more than with `<Container />`. It wouldn't make sense to keep our API when React was already providing a better one.
+With the new [`React.useState`](https://reactjs.org/docs/hooks-reference.html#usestate), though, it turns out that writing local state is easier than ever – in fact, more than with `<Container />`. It wouldn't make sense to keep our API when React was already providing a better one.
 
 However, scaling from local to context continues to be a problem. So Constate's API has been changed to focus on this.
 
@@ -35,15 +35,16 @@ However, scaling from local to context continues to be a problem. So Constate's 
 
 First of all, if you don't want or have time to update your code, you should stick with `v0`. It's totally fine.
 
-If you want to update your code incrementally, that is, update part of your code base while keeping others in the old version, you can re-create `<Container />` using the new hooks. See an [example](https://codesandbox.io/s/rw2mz784x4).
+If you want to update your code incrementally, that is, update part of your code base while keeping others in the old version, you can copy and paste the [source code](src/index.tsx) into your project and use it until you have updated the entire app.
 
 ## `Container`
 
-The `<Container />` component doesn't exist anymore. It's been replaced by [`useContextState`](https://github.com/diegohaz/constate#usecontextstate).
+The `<Container />` component doesn't exist anymore. It's been replaced by `createContainer`.
 
 ### `initialState`
 
 #### v0
+
 ```jsx
 import { Container } from "constate";
 
@@ -57,12 +58,14 @@ function Counter() {
 ```
 
 #### v1
+
+Just use [`React.useState`](https://reactjs.org/docs/hooks-reference.html#usestate):
+
 ```jsx
-import { useContextState } from "constate";
+import { useState } from "react";
 
 function Counter() {
-  // same as React.useState(0)
-  const [count] = useContextState(null, 0);
+  const [count] = useState(0);
   return <button>{count}</button>;
 }
 ```
@@ -70,6 +73,7 @@ function Counter() {
 ### `actions`
 
 #### v0
+
 ```jsx
 import { Container } from "constate";
 
@@ -90,12 +94,12 @@ function Counter() {
 ```
 
 #### v1
+
 ```jsx
-import { useContextState } from "constate";
+import { useState } from "react";
 
 function Counter() {
-  // same as React.useState(0)
-  const [count, setCount] = useContextState(null, 0);
+  const [count, setCount] = useState(0);
   const increment = amount => setCount(count + 1);
   return <button onClick={() => increment(1)}>{count}</button>;
 }
@@ -104,6 +108,7 @@ function Counter() {
 ### `selectors`
 
 #### v0
+
 ```jsx
 import { Container } from "constate";
 
@@ -115,21 +120,19 @@ function Counter() {
         getParity: () => state => (state.count % 2 === 0 ? "even" : "odd")
       }}
     >
-      {({ getParity }) => (
-        <button>{getParity()}</button>
-      )}
+      {({ getParity }) => <button>{getParity()}</button>}
     </Container>
   );
 }
 ```
 
 #### v1
+
 ```jsx
-import { useContextState } from "constate";
+import { useState } from "react";
 
 function Counter() {
-  // same as React.useState(0)
-  const [count, setCount] = useContextState(null, 0);
+  const [count, setCount] = useState(0);
   const getParity = () => (count % 2 === 0 ? "even" : "odd");
   return <button>{getParity()}</button>;
 }
@@ -138,6 +141,7 @@ function Counter() {
 ### `effects`
 
 #### v0
+
 ```jsx
 import { Container } from "constate";
 
@@ -152,25 +156,23 @@ function Counter() {
         }
       }}
     >
-      {({ count, tick }) => (
-        <button onClick={tick}>{count}</button>
-      )}
+      {({ count, tick }) => <button onClick={tick}>{count}</button>}
     </Container>
   );
 }
 ```
 
 #### v1
+
 ```jsx
-import { useContextState } from "constate";
+import { useState } from "react";
 
 function Counter() {
-  // same as React.useState(0)
-  const [count, setCount] = useContextState(null, 0);
+  const [count, setCount] = useState(0);
   const tick = () => {
     const fn = () => setCount(count + 1);
     setInterval(fn, 1000);
-  }
+  };
   return <button onClick={tick}>{count}</button>;
 }
 ```
@@ -221,30 +223,33 @@ function App() {
 #### v1
 
 ```jsx
-import { Provider, useContextState } from "constate";
+import { useState, useContext } from "react";
+import createContainer from "constate";
 
-function useCounter(key) {
-  const [count, setCount] = useContextState(key, 0);
+const Counter1 = createContainer(useCounter);
+
+function useCounter() {
+  const [count, setCount] = useState(0);
   const increment = () => setCount(count + 1);
   return { count, increment };
 }
 
 function CounterButton() {
-  const { increment } = useCounter("counter1");
+  const { increment } = useContext(Counter1.Context);
   return <button onClick={increment}>Increment</button>;
 }
 
 function CounterValue() {
-  const { count } = useCounter("counter1");
+  const { count } = useContext(Counter1.Context);
   return <div>{count}</div>;
 }
 
 function App() {
   return (
-    <Provider>
+    <Counter1.Provider>
       <CounterButton />
       <CounterValue />
-    </Provider>
+    </Counter1.Provider>
   );
 }
 ```
@@ -278,18 +283,25 @@ function Counter() {
 #### v1
 
 ```jsx
-import { useContextKey, useContextState, useContextEffect } from "constate";
+import { useState, useEffect, useContext } from "react";
+import createContainer from "constate";
 
-function Counter() {
-  const key = useContextKey("counter1")
-  const [count, setCount] = useContextState(key, 0);
+const Counter1 = createContainer(useCounter);
 
-  useContextEffect(key, () => {
+function useCounter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
     const fn = () => setCount(count + 1);
     const interval = setInterval(fn, 1000);
     return () => clearInterval(interval);
   }, []);
 
+  return count;
+}
+
+function Counter() {
+  const count = useContext(Counter1.Context);
   return <button>{count}</button>;
 }
 ```
@@ -327,24 +339,34 @@ function Counter() {
 `type` doesn't exist anymore.
 
 ```jsx
-import { useContextKey, useContextState, useContextEffect } from "constate";
+import { useState, useEffect, useContext } from "react";
+import createContainer from "constate";
 
-function Counter() {
-  const key = useContextKey("counter1");
-  const [count, setCount] = useContextState(key, 0);
+const Counter1 = createContainer(useCounter);
 
-  useContextEffect(key, () => {
+function useCounter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
     const fn = () => setCount(count + 1);
     setInterval(fn, 1000);
   }, []);
 
-  useContextEffect(key, () => {
-    if (count === 5) {
-      // reset counter
-      setCount(0);
-    }
-  }, [count]); // runs only when count changes
+  useEffect(
+    () => {
+      if (count === 5) {
+        // reset counter
+        setCount(0);
+      }
+    },
+    [count] // runs only when count changes
+  );
 
+  return count;
+}
+
+function Counter() {
+  const count = useContext(Counter1.Context);
   return <button>{count}</button>;
 }
 ```
@@ -358,10 +380,7 @@ import { Container } from "constate";
 
 function Counter() {
   return (
-    <Container
-      initialState={{ count: 0 }}
-      shouldUpdate={() => false}
-    >
+    <Container initialState={{ count: 0 }} shouldUpdate={() => false}>
       {({ count }) => <button>{count}</button>}
     </Container>
   );
@@ -370,14 +389,13 @@ function Counter() {
 
 #### v1
 
-Just use [React.useMemo](https://reactjs.org/docs/hooks-reference.html#usememo).
+Just use [`React.useMemo`](https://reactjs.org/docs/hooks-reference.html#usememo).
 
 ```jsx
-import { useMemo } from "react";
-import { useContextState } from "constate";
+import { useState, useMemo } from "react";
 
 function Counter() {
-  const [count] = useContextState(null, 0);
+  const [count] = useState(0);
   const children = useMemo(() => <button>{count}</button>, []);
   return children;
 }
@@ -393,36 +411,28 @@ function Counter() {
 import { Provider } from "constate";
 
 function App() {
-  return (
-    <Provider initialState={{ counter1: { count: 0 } }}>
-      ...
-    </Provider>
-  );
+  return <Provider initialState={{ counter1: { count: 0 } }}>...</Provider>;
 }
 ```
 
 #### v1
 
 ```js
-// Context.js
-import { createContext } from "constate";
+import { useState } from "react";
+import createContainer from "constate";
 
-const { Provider, useContextState } = createContext({
-  counter1: 0
-});
+function useCounter({ initialCount = 0 } = {}) {
+  const [count, setCount] = useState(initialCount);
+  ...
+}
 
-export { Provider, useContextState };
-```
-
-```jsx
-// App.js
-import { Provider } from "./Context";
+const Counter1 = createContainer(useCounter);
 
 function App() {
   return (
-    <Provider>
+    <Counter1.Provider initialCount={10}>
       ...
-    </Provider>
+    </Counter1.Provider>
   );
 }
 ```
@@ -453,33 +463,20 @@ function App() {
 #### v1
 
 ```jsx
-import { useContext, useEffect } from "react";
-import { Context, Provider } from "constate";
+import { useState, useEffect } from "react";
+import createContainer from "constate";
 
-function AppEffects({ children }) {
-  const [state, setState] = useContext(Context);
+const Counter1 = createContainer(useCounter);
+
+function useCounter() {
+  const [state, setState] = useState(null);
 
   useEffect(() => {
-    setState({
-      ...state,
-      counter1: 0
-    });
-    return () => {
-      console.log(state);
-    }
+    setState(0);
+    return () => console.log(state);
   }, []);
 
-  return children;
-}
-
-function App() {
-  return (
-    <Provider>
-      <AppEffects>
-        ...
-      </AppEffects>
-    </Provider>
-  );
+  return state;
 }
 ```
 
@@ -512,43 +509,31 @@ function App() {
 `context` and `type` don't exist anymore.
 
 ```jsx
-import { useContext, useEffect, useRef } from "react";
-import { Context, Provider } from "constate";
+import { useState, useEffect } from "react";
+import createContainer from "constate";
 
-function AppEffects({ children }) {
-  const [state, setState] = useContext(Context);
-  const prevState = useRef(null);
+const Counter1 = createContainer(useCounter);
 
-  useEffect(() => {
-    // if (type === "increment")
-    if (prevState.current && prevState.current.counter1 < state.counter1) {
-      setState({
-        ...state,
-        incrementCalls: state.incrementCalls + 1
-      })
-    }
+function useCounter() {
+  const [count, setCount] = useState(0);
+  const [calls, setCalls] = useState(0);
+  const prevCount = useRef(null);
 
-    prevState.current = state;
-  }, [state.counter1]); // if (context === "counter1")
-
-  useEffect(() => {
-    prevState.current = state;
-  }, [state]);
-
-  return children;
-}
-
-function App() {
-  return (
-    <Provider>
-      <AppEffects>
-        ...
-      </AppEffects>
-    </Provider>
+  useEffect(
+    () => {
+      // if (type === "increment")
+      if (prevCount.current != null && prevCount.current < count) {
+        setCalls(prevCalls => prevCalls + 1);
+      }
+      prevCount.current = count;
+    },
+    [count] // if (context === "counter1")
   );
+
+  return count;
 }
 ```
 
 ### `devtools`
 
-The API didn't change. The only difference now is that it's not displaying `type` anymore.
+Redux DevTools isn't supported anymore. The React team is working on improvements on React DevTools to debug hooks. See https://github.com/facebook/react-devtools/issues/1215

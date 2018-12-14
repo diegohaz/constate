@@ -1,41 +1,35 @@
-import React from "react";
-import { Provider, useContextState } from "constate";
+import React, { useState, useContext } from "react";
+import createContainer from "constate";
 
-// 1. Create a custom hook
-function useCounter(key) {
-  // 2. Replace React.useState(0) by useContextState(key, 0)
-  const [count, setCount] = useContextState(key, 0);
+// 1️⃣ Create a custom hook as usual
+function useCounter() {
+  const [count, setCount] = useState(0);
   const increment = () => setCount(count + 1);
-  const decrement = () => setCount(count - 1);
-  return { count, increment, decrement };
+  return { count, increment };
 }
 
-function IncrementButton() {
-  // 3. Consume the custom hook as usual
-  const { increment } = useCounter("counter1");
+// 2️⃣ Create container
+const MainCounter = createContainer(useCounter, value => [value.count]);
+
+function Button() {
+  // 3️⃣ Use container context instead of custom hook
+  const { increment } = useContext(MainCounter.Context);
   return <button onClick={increment}>+</button>;
 }
 
-function DecrementButton() {
-  // 4. Consume the same key in other components
-  const { decrement } = useCounter("counter1");
-  return <button onClick={decrement}>-</button>;
-}
-
 function Count() {
-  // 5. Consume the same key in other components
-  const { count } = useCounter("counter1");
+  // 4️⃣ Use container context in other components
+  const { count } = useContext(MainCounter.Context);
   return <span>{count}</span>;
 }
 
 function App() {
-  // 6. Wrap your app with Provider
+  // 5️⃣ Wrap your components with container provider
   return (
-    <Provider devtools>
-      <DecrementButton />
+    <MainCounter.Provider>
       <Count />
-      <IncrementButton />
-    </Provider>
+      <Button />
+    </MainCounter.Provider>
   );
 }
 

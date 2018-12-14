@@ -1,50 +1,44 @@
-import React from "react";
-import { createContext } from "constate";
+import React, { useState, useContext } from "react";
+import createContainer from "constate";
 import { GithubPicker } from "react-color";
 
-const { Provider, useContextState } = createContext({
-  primary: "#d4c4fb",
-  secondary: "#fad0c3"
-});
+const Theme = createContainer(props => useState(props.initialColor));
+const PickerVisibility = createContainer(() => useState(false));
 
-function Picker({ kind }) {
-  const [color, setColor] = useContextState(kind);
-  const [on, setOn] = useContextState(`${kind}PickerVisibility`);
-  return on ? (
+function Picker() {
+  const [color, setColor] = useContext(Theme.Context);
+  const [visible, setVisible] = useContext(PickerVisibility.Context);
+  return visible ? (
     <GithubPicker
       style={{ position: "absolute" }}
       triangle="hide"
       color={color}
       onChange={c => {
         setColor(c.hex);
-        setOn(false);
+        setVisible(false);
       }}
     />
   ) : null;
 }
 
-function Button({ kind }) {
-  const [background] = useContextState(kind);
-  const [on, setOn] = useContextState(`${kind}PickerVisibility`);
+function Button() {
+  const [background] = useContext(Theme.Context);
+  const [visible, setVisible] = useContext(PickerVisibility.Context);
   return (
-    <button style={{ background }} onClick={() => setOn(!on)}>
-      Select {kind} color: {background}
+    <button style={{ background }} onClick={() => setVisible(!visible)}>
+      Select color: {background}
     </button>
   );
 }
 
 function App() {
   return (
-    <Provider devtools>
-      <div>
-        <Button kind="primary" />
-        <Picker kind="primary" />
-      </div>
-      <div>
-        <Button kind="secondary" />
-        <Picker kind="secondary" />
-      </div>
-    </Provider>
+    <Theme.Provider initialColor="red">
+      <PickerVisibility.Provider>
+        <Button />
+        <Picker />
+      </PickerVisibility.Provider>
+    </Theme.Provider>
   );
 }
 

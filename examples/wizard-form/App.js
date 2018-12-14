@@ -1,16 +1,19 @@
-import React, { useEffect } from "react";
-import { Provider, useContextState } from "constate";
+import React, { useContext, useState, useEffect } from "react";
+import createContainer from "constate";
 
-function useStep() {
-  const [step, setStep] = useContextState("step", 0);
+const Step = createContainer(useStep, value => [value.step]);
+const Form = createContainer(useFormState, value => [value.values]);
+
+function useStep({ initialStep = 0 } = {}) {
+  const [step, setStep] = useState(initialStep);
   const next = () => setStep(step + 1);
   const previous = () => setStep(step - 1);
   return { step, next, previous };
 }
 
-function useForm({ key, onSubmit }) {
-  const [values, setValues] = useContextState(key, {});
-  const state = {
+function useFormState({ initialValues = {} } = {}) {
+  const [values, setValues] = useState(initialValues);
+  return {
     values,
     register: (name, initialValue) =>
       setValues(prevValues => ({
@@ -20,13 +23,15 @@ function useForm({ key, onSubmit }) {
     update: (name, value) =>
       setValues(prevValues => ({ ...prevValues, [name]: value }))
   };
-  const form = {
+}
+
+function useForm({ onSubmit, values }) {
+  return {
     onSubmit: e => {
       e.preventDefault();
       onSubmit(values);
     }
   };
-  return { form, state };
 }
 
 function useFormInput({ register, values, update, name, initialValue = "" }) {
@@ -38,9 +43,9 @@ function useFormInput({ register, values, update, name, initialValue = "" }) {
   };
 }
 
-function Step1({ formKey }) {
-  const { next } = useStep();
-  const { form, state } = useForm({ key: formKey, onSubmit: next });
+function AgeForm({ onSubmit }) {
+  const state = useContext(Form.Context);
+  const form = useForm({ onSubmit, ...state });
   const age = useFormInput({ name: "age", ...state });
   return (
     <form {...form}>
@@ -50,17 +55,14 @@ function Step1({ formKey }) {
   );
 }
 
-function Step2({ formKey }) {
-  const { previous } = useStep();
-  const { form, state } = useForm({
-    key: formKey,
-    onSubmit: values => alert(JSON.stringify(values, null, 2)) // eslint-disable-line no-alert
-  });
+function NameEmailForm({ onSubmit, onBack }) {
+  const state = useContext(Form.Context);
+  const form = useForm({ onSubmit, ...state });
   const name = useFormInput({ name: "name", ...state });
   const email = useFormInput({ name: "email", ...state });
   return (
     <form {...form}>
-      <button type="button" onClick={previous}>
+      <button type="button" onClick={onBack}>
         Back
       </button>
       <input type="text" placeholder="Name" autoFocus {...name} />
@@ -70,17 +72,32 @@ function Step2({ formKey }) {
   );
 }
 
+function Values() {
+  const { values } = useContext(Form.Context);
+  return <pre>{JSON.stringify(values, null, 2)}</pre>;
+}
+
 function Wizard() {
-  const { step } = useStep();
-  const steps = [Step1, Step2];
-  return React.createElement(steps[step], { formKey: "form1" });
+  const { step, next, previous } = useContext(Step.Context);
+  const steps = [AgeForm, NameEmailForm];
+  const isLastStep = step === steps.length - 1;
+  const props = {
+    onSubmit: isLastStep
+      ? values => alert(JSON.stringify(values, null, 2)) // eslint-disable-line no-alert
+      : next,
+    onBack: previous
+  };
+  return React.createElement(steps[step], props);
 }
 
 function App() {
   return (
-    <Provider devtools>
-      <Wizard />
-    </Provider>
+    <Step.Provider>
+      <Form.Provider initialValues={{ age: 18 }}>
+        <Wizard />
+        <Values />
+      </Form.Provider>
+    </Step.Provider>
   );
 }
 

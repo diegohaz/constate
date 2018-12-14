@@ -18,5 +18,9 @@
     "sourceMap": true,
     "removeComments": true,
     "stripInternal": true
-  }
+  },
+  "exclude": [
+    "examples",
+    "dist"
+  ]
 }
