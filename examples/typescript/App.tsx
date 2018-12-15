@@ -7,24 +7,24 @@ function useCounter({ initialCount = 0 } = {}) {
   return { count, increment };
 }
 
-const MainCounter = createContainer(useCounter, value => [value.count]);
+const CounterContainer = createContainer(useCounter, value => [value.count]);
 
 function IncrementButton() {
-  const { increment } = React.useContext(MainCounter.Context);
+  const { increment } = React.useContext(CounterContainer.Context);
   return <button onClick={increment}>+</button>;
 }
 
 function Count() {
-  const { count } = React.useContext(MainCounter.Context);
+  const { count } = React.useContext(CounterContainer.Context);
   return <span>{count}</span>;
 }
 
 function App() {
   return (
-    <MainCounter.Provider initialCount={10}>
+    <CounterContainer.Provider initialCount={10}>
       <Count />
       <IncrementButton />
-    </MainCounter.Provider>
+    </CounterContainer.Provider>
   );
 }
 

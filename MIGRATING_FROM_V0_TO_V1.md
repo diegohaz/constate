@@ -226,7 +226,7 @@ function App() {
 import { useState, useContext } from "react";
 import createContainer from "constate";
 
-const Counter1 = createContainer(useCounter);
+const CounterContainer = createContainer(useCounter);
 
 function useCounter() {
   const [count, setCount] = useState(0);
@@ -235,21 +235,21 @@ function useCounter() {
 }
 
 function CounterButton() {
-  const { increment } = useContext(Counter1.Context);
+  const { increment } = useContext(CounterContainer.Context);
   return <button onClick={increment}>Increment</button>;
 }
 
 function CounterValue() {
-  const { count } = useContext(Counter1.Context);
+  const { count } = useContext(CounterContainer.Context);
   return <div>{count}</div>;
 }
 
 function App() {
   return (
-    <Counter1.Provider>
+    <CounterContainer.Provider>
       <CounterButton />
       <CounterValue />
-    </Counter1.Provider>
+    </CounterContainer.Provider>
   );
 }
 ```
@@ -286,7 +286,7 @@ function Counter() {
 import { useState, useEffect, useContext } from "react";
 import createContainer from "constate";
 
-const Counter1 = createContainer(useCounter);
+const CounterContainer = createContainer(useCounter);
 
 function useCounter() {
   const [count, setCount] = useState(0);
@@ -301,7 +301,7 @@ function useCounter() {
 }
 
 function Counter() {
-  const count = useContext(Counter1.Context);
+  const count = useContext(CounterContainer.Context);
   return <button>{count}</button>;
 }
 ```
@@ -342,7 +342,7 @@ function Counter() {
 import { useState, useEffect, useContext } from "react";
 import createContainer from "constate";
 
-const Counter1 = createContainer(useCounter);
+const CounterContainer = createContainer(useCounter);
 
 function useCounter() {
   const [count, setCount] = useState(0);
@@ -366,7 +366,7 @@ function useCounter() {
 }
 
 function Counter() {
-  const count = useContext(Counter1.Context);
+  const count = useContext(CounterContainer.Context);
   return <button>{count}</button>;
 }
 ```
@@ -426,13 +426,13 @@ function useCounter({ initialCount = 0 } = {}) {
   ...
 }
 
-const Counter1 = createContainer(useCounter);
+const CounterContainer = createContainer(useCounter);
 
 function App() {
   return (
-    <Counter1.Provider initialCount={10}>
+    <CounterContainer.Provider initialCount={10}>
       ...
-    </Counter1.Provider>
+    </CounterContainer.Provider>
   );
 }
 ```
@@ -466,7 +466,7 @@ function App() {
 import { useState, useEffect } from "react";
 import createContainer from "constate";
 
-const Counter1 = createContainer(useCounter);
+const CounterContainer = createContainer(useCounter);
 
 function useCounter() {
   const [state, setState] = useState(null);
@@ -512,7 +512,7 @@ function App() {
 import { useState, useEffect } from "react";
 import createContainer from "constate";
 
-const Counter1 = createContainer(useCounter);
+const CounterContainer = createContainer(useCounter);
 
 function useCounter() {
   const [count, setCount] = useState(0);

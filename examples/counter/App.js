@@ -9,27 +9,27 @@ function useCounter() {
 }
 
 // 2️⃣ Create container
-const MainCounter = createContainer(useCounter, value => [value.count]);
+const CounterContainer = createContainer(useCounter, value => [value.count]);
 
 function Button() {
   // 3️⃣ Use container context instead of custom hook
-  const { increment } = useContext(MainCounter.Context);
+  const { increment } = useContext(CounterContainer.Context);
   return <button onClick={increment}>+</button>;
 }
 
 function Count() {
   // 4️⃣ Use container context in other components
-  const { count } = useContext(MainCounter.Context);
+  const { count } = useContext(CounterContainer.Context);
   return <span>{count}</span>;
 }
 
 function App() {
   // 5️⃣ Wrap your components with container provider
   return (
-    <MainCounter.Provider>
+    <CounterContainer.Provider>
       <Count />
       <Button />
-    </MainCounter.Provider>
+    </CounterContainer.Provider>
   );
 }
 

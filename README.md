@@ -11,7 +11,6 @@
 <a href="https://travis-ci.org/diegohaz/constate"><img alt="Build Status" src="https://img.shields.io/travis/diegohaz/constate/master.svg?style=flat-square"></a>
 <a href="https://codecov.io/gh/diegohaz/constate/branch/master"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/diegohaz/constate/master.svg?style=flat-square"></a>
 
-
 Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html) and lift it up to [React Context](https://reactjs.org/docs/context.html) only when needed with minimum effort.
 
 <br>
@@ -47,29 +46,29 @@ function useCounter() {
 }
 
 // 2️⃣ Create container
-const MainCounter = createContainer(useCounter);
+const CounterContainer = createContainer(useCounter);
 
 function Button() {
   // 3️⃣ Use container context instead of custom hook
   // const { increment } = useCounter();
-  const { increment } = useContext(MainCounter.Context);
+  const { increment } = useContext(CounterContainer.Context);
   return <button onClick={increment}>+</button>;
 }
 
 function Count() {
   // 4️⃣ Use container context in other components
   // const { count } = useCounter();
-  const { count } = useContext(MainCounter.Context);
+  const { count } = useContext(CounterContainer.Context);
   return <span>{count}</span>;
 }
 
 function App() {
   // 5️⃣ Wrap your components with container provider
   return (
-    <MainCounter.Provider>
+    <CounterContainer.Provider>
       <Count />
       <Button />
-    </MainCounter.Provider>
+    </CounterContainer.Provider>
   );
 }
 ```
@@ -77,11 +76,13 @@ function App() {
 ## Installation
 
 npm:
+
 ```sh
 npm i constate@next
 ```
 
 Yarn:
+
 ```sh
 yarn add constate@next
 ```
@@ -104,38 +105,38 @@ It's a [custom hook](https://reactjs.org/docs/hooks-custom.html) that returns th
 import React, { useState } from "react";
 import createContainer from "constate";
 
-const MainCounter = createContainer(() => {
+const CounterContainer = createContainer(() => {
   const [count] = useState(0);
   return count;
 });
 
-console.log(MainCounter); // { Context, Provider }
+console.log(CounterContainer); // { Context, Provider }
 ```
 
 You can receive arguments in the custom hook function. They will be populated with `<Provider />`:
 
 ```jsx
-const MainCounter = createContainer(({ initialCount = 0 }) => {
+const CounterContainer = createContainer(({ initialCount = 0 }) => {
   const [count] = useState(initialCount);
   return count;
 });
 
 function App() {
   return (
-    <MainCounter.Provider initialCount={10}>
+    <CounterContainer.Provider initialCount={10}>
       ...
-    </MainCounter.Provider>
+    </CounterContainer.Provider>
   );
 }
 ```
 
-The value returned in `useValue` will be accessible when using `useContext(MainCounter.Context)`:
+The value returned in `useValue` will be accessible when using `useContext(CounterContainer.Context)`:
 
 ```jsx
 import React, { useContext } from "react";
 
 function Counter() {
-  const count = useContext(MainCounter.Context);
+  const count = useContext(CounterContainer.Context);
   console.log(count); // 10
 }
 ```
@@ -148,7 +149,7 @@ If `createInputs` is undefined, it'll be re-evaluated everytime `Provider` rende
 
 ```js
 // re-render consumers only when value.count changes
-const MainCounter = createContainer(useCoutner, value => [value.count]);
+const CounterContainer = createContainer(useCoutner, value => [value.count]);
 
 function useCounter() {
   const [count, setCount] = useState(0);
@@ -164,7 +165,7 @@ You can also achieve the same behavior within the custom hook. This is an equiva
 ```js
 import { useMemo } from "react";
 
-const MainCounter = createContainer(() => {
+const CounterContainer = createContainer(() => {
   const [count, setCount] = useState(0);
   const increment = () => setCount(count + 1);
   // same as passing `value => [value.count]` to `createInputs` parameter
