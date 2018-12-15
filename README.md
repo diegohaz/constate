@@ -153,7 +153,7 @@ const CounterContainer = createContainer(useCoutner, value => [value.count]);
 
 function useCounter() {
   const [count, setCount] = useState(0);
-  const increment = () => setCount(count + 1);
+  const increment = () => setCount(prevCount => prevCount + 1);
   return { count, increment };
 }
 ```
@@ -167,7 +167,7 @@ import { useMemo } from "react";
 
 const CounterContainer = createContainer(() => {
   const [count, setCount] = useState(0);
-  const increment = () => setCount(count + 1);
+  const increment = () => setCount(prevCount => prevCount + 1);
   // same as passing `value => [value.count]` to `createInputs` parameter
   return useMemo(() => ({ count, increment }), [count]);
 });
