@@ -149,7 +149,7 @@ If `createInputs` is undefined, it'll be re-evaluated everytime `Provider` rende
 
 ```js
 // re-render consumers only when value.count changes
-const CounterContainer = createContainer(useCoutner, value => [value.count]);
+const CounterContainer = createContainer(useCounter, value => [value.count]);
 
 function useCounter() {
   const [count, setCount] = useState(0);
