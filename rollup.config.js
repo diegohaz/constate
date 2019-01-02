@@ -4,7 +4,6 @@ import replace from "rollup-plugin-replace";
 import commonjs from "rollup-plugin-commonjs";
 import { uglify } from "rollup-plugin-uglify";
 import ignore from "rollup-plugin-ignore";
-import filesize from "rollup-plugin-filesize";
 import pkg from "./package.json";
 
 const external = Object.keys(pkg.peerDependencies || {});
@@ -15,8 +14,7 @@ const createCommonPlugins = () => [
   babel({
     extensions,
     exclude: "node_modules/**"
-  }),
-  filesize()
+  })
 ];
 
 const main = {
