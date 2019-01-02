@@ -30,8 +30,8 @@ test("default", () => {
   expect(getByText("1")).toBeDefined();
 });
 
-test("createInputs", () => {
-  const Container = createContainer(useCounter, state => [state.count]);
+test("createMemoInputs", () => {
+  const Container = createContainer(useCounter, value => [value.count]);
   const Increment = () => {
     const { increment } = React.useContext(Container.Context);
     return <button onClick={increment}>Increment</button>;
@@ -52,7 +52,7 @@ test("createInputs", () => {
   expect(getByText("1")).toBeDefined();
 });
 
-test("empty createInputs", () => {
+test("empty createMemoInputs", () => {
   const Container = createContainer(useCounter, () => []);
   const Increment = () => {
     const { increment } = React.useContext(Container.Context);

@@ -6,19 +6,19 @@ function warnNoProvider() {
   console.warn("[constate] Missing Provider");
 }
 
-function createContainer<P, S>(
-  useValue: (props: P) => S,
-  createInputs?: (state: S) => any[]
+function createContainer<P, V>(
+  useValue: (props: P) => V,
+  createMemoInputs?: (value: V) => any[]
 ) {
   const proxy = new Proxy({}, { get: warnNoProvider, apply: warnNoProvider });
 
-  const Context = React.createContext<S>(proxy as S);
+  const Context = React.createContext<V>(proxy as V);
 
   const Provider = (props: { children?: React.ReactNode } & P) => {
     const state = useValue(props);
-    // createInputs won't change between renders
-    const value = createInputs
-      ? React.useMemo(() => state, createInputs(state))
+    // createMemoInputs won't change between renders
+    const value = createMemoInputs
+      ? React.useMemo(() => state, createMemoInputs(state))
       : state;
     return <Context.Provider value={value}>{props.children}</Context.Provider>;
   };

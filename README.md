@@ -93,9 +93,9 @@ yarn add constate@next
 
 ## API
 
-### `createContainer(useValue[, createInputs])`
+### `createContainer(useValue[, createMemoInputs])`
 
-Constate exports a single method called `createContainer`. It receives two arguments: [`useValue`](#usevalue) and [`createInputs`](#createinputs) (optional). And returns `{ Context, Provider }`.
+Constate exports a single method called `createContainer`. It receives two arguments: [`useValue`](#usevalue) and [`createMemoInputs`](#creatememoinputs) (optional). And returns `{ Context, Provider }`.
 
 #### `useValue`
 
@@ -141,11 +141,11 @@ function Counter() {
 }
 ```
 
-#### `createInputs`
+#### `createMemoInputs`
 
 Optionally, you can pass in a function that receives the `value` returned by `useValue` and returns an array of inputs. When any input changes, `value` gets re-evaluated, triggering a re-render on all consumers (components calling `useContext()`).
 
-If `createInputs` is undefined, it'll be re-evaluated everytime `Provider` renders:
+If `createMemoInputs` is undefined, it'll be re-evaluated everytime `Provider` renders:
 
 ```js
 // re-render consumers only when value.count changes
@@ -168,7 +168,7 @@ import { useMemo } from "react";
 const CounterContainer = createContainer(() => {
   const [count, setCount] = useState(0);
   const increment = () => setCount(count + 1);
-  // same as passing `value => [value.count]` to `createInputs` parameter
+  // same as passing `value => [value.count]` to `createMemoInputs` parameter
   return useMemo(() => ({ count, increment }), [count]);
 });
 ```
