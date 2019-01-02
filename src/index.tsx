@@ -15,12 +15,16 @@ function createContainer<P, V>(
   const Context = React.createContext<V>(proxy as V);
 
   const Provider = (props: { children?: React.ReactNode } & P) => {
-    const state = useValue(props);
+    const value = useValue(props);
     // createMemoInputs won't change between renders
-    const value = createMemoInputs
-      ? React.useMemo(() => state, createMemoInputs(state))
-      : state;
-    return <Context.Provider value={value}>{props.children}</Context.Provider>;
+    const memoizedValue = createMemoInputs
+      ? React.useMemo(() => value, createMemoInputs(value))
+      : value;
+    return (
+      <Context.Provider value={memoizedValue}>
+        {props.children}
+      </Context.Provider>
+    );
   };
 
   return {
