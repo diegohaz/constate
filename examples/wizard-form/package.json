@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "constate": "1.0.0-alpha.6",
-    "parcel-bundler": "1.10.0",
+    "parcel-bundler": "1.11.0",
     "react": "16.7.0-alpha.2",
     "react-dom": "16.7.0-alpha.2"
   }
