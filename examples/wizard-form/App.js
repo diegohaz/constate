@@ -25,15 +25,6 @@ function useFormState({ initialValues = {} } = {}) {
   };
 }
 
-function useForm({ onSubmit, values }) {
-  return {
-    onSubmit: e => {
-      e.preventDefault();
-      onSubmit(values);
-    }
-  };
-}
-
 function useFormInput({ register, values, update, name, initialValue = "" }) {
   useEffect(() => register(name, initialValue), []);
   return {
@@ -45,10 +36,14 @@ function useFormInput({ register, values, update, name, initialValue = "" }) {
 
 function AgeForm({ onSubmit }) {
   const state = useContext(Form.Context);
-  const form = useForm({ onSubmit, ...state });
   const age = useFormInput({ name: "age", ...state });
   return (
-    <form {...form}>
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        onSubmit(state.values);
+      }}
+    >
       <input type="number" placeholder="Age" autoFocus {...age} />
       <button>Next</button>
     </form>
@@ -57,11 +52,15 @@ function AgeForm({ onSubmit }) {
 
 function NameEmailForm({ onSubmit, onBack }) {
   const state = useContext(Form.Context);
-  const form = useForm({ onSubmit, ...state });
   const name = useFormInput({ name: "name", ...state });
   const email = useFormInput({ name: "email", ...state });
   return (
-    <form {...form}>
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        onSubmit(state.values);
+      }}
+    >
       <button type="button" onClick={onBack}>
         Back
       </button>
