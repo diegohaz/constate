@@ -8,10 +8,10 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "@reach/router": "^1.2.1",
-    "parcel-bundler": "^1.11.0",
-    "react": "^16.7.0-alpha.2",
-    "react-dom": "^16.7.0-alpha.2"
+    "@reach/router": "1.2.1",
+    "parcel-bundler": "1.11.0",
+    "react": "16.8.0-alpha.1",
+    "react-dom": "16.8.0-alpha.1"
   },
   "alias": {
     "constate": "../src",

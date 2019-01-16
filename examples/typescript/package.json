@@ -19,8 +19,8 @@
     "@types/react-dom": "16.0.11",
     "constate": "1.0.0-alpha.6",
     "parcel-bundler": "1.11.0",
-    "react": "16.7.0-alpha.2",
-    "react-dom": "16.7.0-alpha.2",
+    "react": "16.8.0-alpha.1",
+    "react-dom": "16.8.0-alpha.1",
     "tslib": "1.9.3",
     "typescript": "3.2.2"
   }
