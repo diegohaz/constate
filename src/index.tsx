@@ -6,13 +6,18 @@ function warnNoProvider() {
   console.warn("[constate] Missing Provider");
 }
 
+const canUseProxy =
+  process.env.NODE_ENV === "development" && typeof Proxy !== "undefined";
+
+const defaultValue = canUseProxy
+  ? new Proxy({}, { get: warnNoProvider, apply: warnNoProvider })
+  : {};
+
 function createContainer<P, V>(
   useValue: (props: P) => V,
   createMemoInputs?: (value: V) => any[]
 ) {
-  const proxy = new Proxy({}, { get: warnNoProvider, apply: warnNoProvider });
-
-  const Context = React.createContext<V>(proxy as V);
+  const Context = React.createContext<V>(defaultValue as V);
 
   const Provider = (props: { children?: React.ReactNode } & P) => {
     const value = useValue(props);
