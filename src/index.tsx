@@ -19,7 +19,7 @@ function createContainer<P, V>(
   useValue: (props: P) => V,
   createMemoInputs?: (value: V) => any[]
 ) {
-  const Context = React.createContext<V>(defaultValue as V);
+  const Context = React.createContext(defaultValue as V);
 
   const Provider = (props: { children?: React.ReactNode } & P) => {
     const value = useValue(props);
