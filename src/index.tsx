@@ -6,9 +6,11 @@ function warnNoProvider() {
   console.warn("[constate] Missing Provider");
 }
 
+// istanbul ignore next
 const canUseProxy =
   process.env.NODE_ENV === "development" && typeof Proxy !== "undefined";
 
+// istanbul ignore next
 const defaultValue = canUseProxy
   ? new Proxy({}, { get: warnNoProvider, apply: warnNoProvider })
   : {};
