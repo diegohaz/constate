@@ -17,7 +17,7 @@
   "dependencies": {
     "@types/react": "16.7.20",
     "@types/react-dom": "16.0.11",
-    "constate": "1.0.0-alpha.6",
+    "constate": "1.0.0-alpha.7",
     "parcel-bundler": "1.11.0",
     "react": "16.8.0-alpha.1",
     "react-dom": "16.8.0-alpha.1",
