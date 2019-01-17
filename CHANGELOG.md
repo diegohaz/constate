@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.0-alpha.7"></a>
+# [1.0.0-alpha.7](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2019-01-17)
+
+
+### Bug Fixes
+
+* Use `Proxy` only when available and in `development` ([6745b35](https://github.com/diegohaz/constate/commit/6745b35)), closes [#65](https://github.com/diegohaz/constate/issues/65)
+
+
+
 <a name="1.0.0-alpha.6"></a>
 # [1.0.0-alpha.6](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2018-12-14)
 
