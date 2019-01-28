@@ -2,8 +2,8 @@
   "parser": "babel-eslint",
   "extends": [
     "airbnb",
-    "plugin:prettier/recommended",
-    "prettier/react"
+    "prettier/react",
+    "plugin:prettier/recommended"
   ],
   "env": {
     "jest": true,
@@ -39,16 +39,13 @@
   "overrides": [
     {
       "files": ["**/*.ts", "**/*.tsx"],
-      "parser": "typescript-eslint-parser",
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
       "plugins": [
-        "typescript"
-      ],
-      "rules": {
-        "no-undef": "off",
-        "no-unused-vars": "off",
-        "no-restricted-globals": "off",
-        "no-use-before-define": "off"
-      }
+        "@typescript-eslint"
+      ]
     }
   ]
 }
