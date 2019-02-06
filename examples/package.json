@@ -10,8 +10,8 @@
   "dependencies": {
     "@reach/router": "1.2.1",
     "parcel-bundler": "1.11.0",
-    "react": "16.8.0-alpha.1",
-    "react-dom": "16.8.0-alpha.1"
+    "react": "16.8.0",
+    "react-dom": "16.8.0"
   },
   "alias": {
     "constate": "../src",
