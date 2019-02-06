@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.7...v1.0.0) (2019-02-06)
+
+
+
 <a name="1.0.0-alpha.7"></a>
 # [1.0.0-alpha.7](https://github.com/diegohaz/constate/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2019-01-17)
 
