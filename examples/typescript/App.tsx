@@ -1,3 +1,4 @@
+// It just works! No need to type anything explicitly.
 import * as React from "react";
 import createContainer from "constate";
 
