@@ -62,6 +62,14 @@ function Count() {
   return <span>{count}</span>;
 }
 
+// [new] Alternatively, you can use the useContainer shorthand rather
+// than referencing the Context:
+const { Provider, useContainer } = createContainer(useCounter);
+function Button() {
+  const { increment } = useContainer();
+  return <button onClick={increment}>+</button>;
+}
+
 function App() {
   // 5️⃣ Wrap your components with container provider
   return (
@@ -91,7 +99,7 @@ yarn add constate
 
 ### `createContainer(useValue[, createMemoInputs])`
 
-Constate exports a single method called `createContainer`. It receives two arguments: [`useValue`](#usevalue) and [`createMemoInputs`](#creatememoinputs) (optional). And returns `{ Context, Provider }`.
+Constate exports a single method called `createContainer`. It receives two arguments: [`useValue`](#usevalue) and [`createMemoInputs`](#creatememoinputs) (optional). And returns `{ Context, Provider, useContainer }`.
 
 #### `useValue`
 
@@ -106,7 +114,7 @@ const CounterContainer = createContainer(() => {
   return count;
 });
 
-console.log(CounterContainer); // { Context, Provider }
+console.log(CounterContainer); // { Context, Provider, useContainer }
 ```
 
 You can receive arguments in the custom hook function. They will be populated with `<Provider />`:
@@ -126,13 +134,15 @@ function App() {
 }
 ```
 
-The value returned in `useValue` will be accessible when using `useContext(CounterContainer.Context)`:
+The value returned in `useValue` will be accessible when using `useContext(CounterContainer.Context)` or `useContainer()`:
 
 ```jsx
 import React, { useContext } from "react";
 
 function Counter() {
   const count = useContext(CounterContainer.Context);
+  // or:
+  const count = CounterContainer.useContext();
   console.log(count); // 10
 }
 ```
@@ -168,6 +178,38 @@ const CounterContainer = createContainer(() => {
   return useMemo(() => ({ count, increment }), [count]);
 });
 ```
+## `useContainer`
+
+In addition to the `Provider` and `Context` instances, `createContainer` returns a React hook which can be a useful shorthand when writing components, since you can simplify your component:
+
+```jsx
+const { Provider, useContainer } = createContainer(useCounter);
+
+function Count() {
+  const { count } = useContainer();
+  return <span>{count}</span>;
+}
+```
+
+### Testing
+
+Normally, you must wrap your components in a corresponding `<Provider>`. To facilitate testing, `useContainer` will return the hook value when no `<Provider>` is available. This can be very helpful when testing in isolation:
+
+```jsx
+test("Count component", () => {
+  const wrapper = render(<Count />)
+  expect(/* whatever */)
+})
+```
+Calling `useContainer()` outside of a `<Provider>` will throw an `Error` except in `development` or `test` environments.
+
+### Passing props via `useContainer`
+
+You can also pass your hook's props in via `useContainer`:
+```jsx
+  const { count } = useContainer({ initialCount: 10 });
+```
+But these properties are ignored whenever there is a a `<Provider>` (since providers pass the properties normally). Passing values into the hook via `useContainer` might be useful if you're testing your container using a library like [react-hooks-testing-library](https://github.com/mpeyper/react-hooks-testing-library).
 
 ## Contributing
 
