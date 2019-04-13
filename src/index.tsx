@@ -34,10 +34,10 @@ function createContainer<P, V>(
     );
   };
 
-  return {
-    Context,
-    Provider
-  };
+  const hook = () => React.useContext(Context);
+  hook.Context = Context;
+  hook.Provider = Provider;
+  return hook;
 }
 
 export default createContainer;
