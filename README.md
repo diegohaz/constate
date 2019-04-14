@@ -39,31 +39,32 @@ import React, { useState, useContext } from "react";
 import createUseContext from "constate";
 
 // 1️⃣ Create a custom hook as usual
-const useCounter = () => {
+function useCounter() {
   const [count, setCount] = useState(0);
   const increment = () => setCount(prevCount => prevCount + 1);
   return { count, increment };
 }
 
 // 2️⃣ When you need to share your state, simply wrap your hook
-//    with the createUseContext higher-order hook, like so:
+//    with the createUseContext factory, like so:
 const useCounterContext = createUseContext(useCounter);
 
 function Button() {
-  // 3️⃣ Use the new container hook to extract the value from the wrapped hook.
+  // 3️⃣ Use container context instead of custom hook
+  //    const { increment } = useCounter();
   const { increment } = useCounterContext()
   return <button onClick={increment}>+</button>;
 }
 
 function Count() {
-  // 4️⃣ But now you can use it in other components as well.
+  // 4️⃣ Use container context in other components
+  //    const { count } = useCounter();
   const { count } = useCounterContext()
   return <span>{count}</span>;
 }
 
 function App() {
-  // 5️⃣ The caveat: you wrap your components with the Provider that is
-  //    attached to the container hook
+  // 5️⃣ Wrap your components with provider
   return (
     <useCounterContext.Provider>
       <Count />
@@ -91,13 +92,11 @@ yarn add constate
 
 ### `createUseContext(useValue[, createMemoInputs])`
 
-Constate exports a single higher-order hook called `createUseContext`. It receives two arguments: [`useValue`](#usevalue) 
-and [`createMemoInputs`](#creatememoinputs) (optional). And returns a wrapped hook that can now read state from the 
-Context. The hook also has two static properties: `Provider` and `Context`.
+Constate exports a single factory method called `createUseContext`. It receives two arguments: [`useValue`](#usevalue) and [`createMemoInputs`](#creatememoinputs) (optional). And returns a wrapped hook that can now read state from the Context. The hook also has two static properties: `Provider` and `Context`.
 
 #### `useValue`
 
-It's any [custom hook](https://reactjs.org/docs/hooks-custom.html) that returns a value:
+It's any [custom hook](https://reactjs.org/docs/hooks-custom.html):
 
 ```js
 import { useState } from "react";
@@ -148,15 +147,14 @@ Optionally, you can pass in a function that receives the `value` returned by `us
 If `createMemoInputs` is undefined, it'll be re-evaluated everytime `Provider` renders:
 
 ```js
-const useCounterContext = createUseContext(
-  () => {
-    const [count, setCount] = useState(0);
-    const increment = () => setCount(count + 1);
-    return { count, increment };
-  }, 
-  // re-render consumers only when value.count changes
-  value => [value.count]
-);
+// re-render consumers only when value.count changes
+const useCounterContext = createUseContext(useCounter, value => [value.count]);
+
+function useCounter() {
+  const [count, setCount] = useState(0);
+  const increment = () => setCount(count + 1);
+  return { count, increment };
+}
 ```
 
 This works similarly to the `inputs` parameter in [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect) and other React built-in hooks. In fact, Constate passes it to [`React.useMemo`](https://reactjs.org/docs/hooks-reference.html#usememo) `inputs` internally.

@@ -34,10 +34,10 @@ function createUseContext<P, V>(
     );
   };
 
-  const useContextValue = () => React.useContext(Context);
-  useContextValue.Context = Context;
-  useContextValue.Provider = Provider;
-  return useContextValue;
+  const useContext = () => React.useContext(Context);
+  useContext.Context = Context;
+  useContext.Provider = Provider;
+  return useContext;
 }
 
 export default createUseContext;
