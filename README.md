@@ -35,7 +35,7 @@ Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html)
 <br>
 
 ```jsx
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import createUseContext from "constate";
 
 // 1️⃣ Create a custom hook as usual
