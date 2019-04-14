@@ -31,20 +31,20 @@ test("default", () => {
 });
 
 test("default - using return as hook", () => {
-  const useCounter2 = createContainer(useCounter);
+  const useCounterContainer = createContainer(useCounter);
   const Increment = () => {
-    const { increment } = useCounter2();
+    const { increment } = useCounterContainer();
     return <button onClick={increment}>Increment</button>;
   };
   const Count = () => {
-    const { count } = useCounter2();
+    const { count } = useCounterContainer();
     return <div>{count}</div>;
   };
   const App = () => (
-    <useCounter2.Provider>
+    <useCounterContainer.Provider>
       <Increment />
       <Count />
-    </useCounter2.Provider>
+    </useCounterContainer.Provider>
   );
   const { getByText } = render(<App />);
   expect(getByText("0")).toBeDefined();

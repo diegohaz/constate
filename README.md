@@ -36,7 +36,7 @@ Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html)
 
 ```jsx
 import React, { useState, useContext } from "react";
-import createContainer from "constate";
+import createUseContext from "constate";
 
 // 1️⃣ Create a custom hook as usual
 const useCounter = () => {
@@ -46,31 +46,29 @@ const useCounter = () => {
 }
 
 // 2️⃣ When you need to share your state, simply wrap your hook
-//    with the createContainer higher-order hook, like so:
-const useCounter = createContainer(() => {
-   // ... same logic here
-});
+//    with the createUseContext higher-order hook, like so:
+const useCounterContext = createUseContext(useCounter);
 
 function Button() {
-  // 3️⃣ Use the same hook like you were before, with the same api. No change.
-  const { increment } = useCounter()
+  // 3️⃣ Use the new container hook to extract the value from the wrapped hook.
+  const { increment } = useCounterContext()
   return <button onClick={increment}>+</button>;
 }
 
 function Count() {
   // 4️⃣ But now you can use it in other components as well.
-  const { count } = useCounter()
+  const { count } = useCounterContext()
   return <span>{count}</span>;
 }
 
 function App() {
-  // 5️⃣ The caveat, you wrap your components with the Provider that is
-  //    attached to the hook
+  // 5️⃣ The caveat: you wrap your components with the Provider that is
+  //    attached to the container hook
   return (
-    <useCounter.Provider>
+    <useCounterContext.Provider>
       <Count />
       <Button />
-    </useCounter.Provider>
+    </useCounterContext.Provider>
   );
 }
 ```
@@ -91,9 +89,9 @@ yarn add constate
 
 ## API
 
-### `createContainer(useValue[, createMemoInputs])`
+### `createUseContext(useValue[, createMemoInputs])`
 
-Constate exports a single higher-order hook called `createContainer`. It receives two arguments: [`useValue`](#usevalue) 
+Constate exports a single higher-order hook called `createUseContext`. It receives two arguments: [`useValue`](#usevalue) 
 and [`createMemoInputs`](#creatememoinputs) (optional). And returns a wrapped hook that can now read state from the 
 Context. The hook also has two static properties: `Provider` and `Context`.
 
@@ -103,42 +101,42 @@ It's any [custom hook](https://reactjs.org/docs/hooks-custom.html) that returns 
 
 ```js
 import { useState } from "react";
-import createContainer from "constate";
+import createUseContext from "constate";
 
-const useCounter = createContainer(() => {
+const useCounterContext = createUseContext(() => {
   const [count] = useState(0);
   return count;
 });
 
-console.log(useCounter); // React Hook
-console.log(useCounter.Provider); // React Provider
-console.log(useCounter.Context); // React Context (if needed)
+console.log(useCounterContext); // React Hook
+console.log(useCounterContext.Provider); // React Provider
+console.log(useCounterContext.Context); // React Context (if needed)
 ```
 
 You can receive arguments in the custom hook function. They will be populated with `<Provider />`:
 
 ```jsx
-const useCounter = createContainer(({ initialCount = 0 }) => {
+const useCounterContext = createUseContext(({ initialCount = 0 }) => {
   const [count] = useState(initialCount);
   return count;
 });
 
 function App() {
   return (
-    <useCounter.Provider initialCount={10}>
+    <useCounterContext.Provider initialCount={10}>
       ...
-    </useCounter.Provider>
+    </useCounterContext.Provider>
   );
 }
 ```
 
-The API of your custom hook remains the same, just use it as you normally would. As long as it is a descendant of the Provider:
+The API of the containerized hook returns the same value(s) as the original, as long as it is a descendant of the Provider:
 
 ```jsx
 import React, { useContext } from "react";
 
 function Counter() {
-  const count = useCounter();
+  const count = useCounterContext();
   console.log(count); // 10
 }
 ```
@@ -150,7 +148,7 @@ Optionally, you can pass in a function that receives the `value` returned by `us
 If `createMemoInputs` is undefined, it'll be re-evaluated everytime `Provider` renders:
 
 ```js
-const useCounter = createContainer(
+const useCounterContext = createUseContext(
   () => {
     const [count, setCount] = useState(0);
     const increment = () => setCount(count + 1);
@@ -168,7 +166,7 @@ You can also achieve the same behavior within the custom hook. This is an equiva
 ```js
 import { useMemo } from "react";
 
-const useCounter = createContainer(() => {
+const useCounterContext = createUseContext(() => {
   const [count, setCount] = useState(0);
   const increment = () => setCount(count + 1);
   // same as passing `value => [value.count]` to `createMemoInputs` parameter

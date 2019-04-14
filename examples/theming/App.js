@@ -1,13 +1,13 @@
-import React, { useState, useContext } from "react";
-import createContainer from "constate";
+import React, { useState } from "react";
+import createUseContext from "constate";
 import { GithubPicker } from "react-color";
 
-const Theme = createContainer(props => useState(props.initialColor));
-const PickerVisibility = createContainer(() => useState(false));
+const useThemeContext = createUseContext(props => useState(props.initialColor));
+const usePickerVisibilityContext = createUseContext(() => useState(false));
 
 function Picker() {
-  const [color, setColor] = useContext(Theme.Context);
-  const [visible, setVisible] = useContext(PickerVisibility.Context);
+  const [color, setColor] = useThemeContext();
+  const [visible, setVisible] = usePickerVisibilityContext();
   return visible ? (
     <GithubPicker
       style={{ position: "absolute" }}
@@ -22,8 +22,8 @@ function Picker() {
 }
 
 function Button() {
-  const [background] = useContext(Theme.Context);
-  const [visible, setVisible] = useContext(PickerVisibility.Context);
+  const [background] = useThemeContext();
+  const [visible, setVisible] = usePickerVisibilityContext();
   return (
     <button style={{ background }} onClick={() => setVisible(!visible)}>
       Select color: {background}
@@ -33,12 +33,12 @@ function Button() {
 
 function App() {
   return (
-    <Theme.Provider initialColor="red">
-      <PickerVisibility.Provider>
+    <useThemeContext.Provider initialColor="red">
+      <usePickerVisibilityContext.Provider>
         <Button />
         <Picker />
-      </PickerVisibility.Provider>
-    </Theme.Provider>
+      </usePickerVisibilityContext.Provider>
+    </useThemeContext.Provider>
   );
 }
 
