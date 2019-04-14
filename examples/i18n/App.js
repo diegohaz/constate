@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import createContainer from "constate";
+import React, { useState } from "react";
+import createUseContext from "constate";
 
 const translations = {
   en: {
@@ -17,15 +17,15 @@ function useI18n() {
 }
 
 // Only re-evaluate useI18n return value when lang changes
-const I18n = createContainer(useI18n, value => [value.lang]);
+const useI18NContext = createUseContext(useI18n, value => [value.lang]);
 
 function useTranslation(key) {
-  const { lang } = useContext(I18n.Context);
+  const { lang } = useI18NContext();
   return translations[lang][key];
 }
 
 function Select(props) {
-  const { lang, locales, setLang } = useContext(I18n.Context);
+  const { lang, locales, setLang } = useI18NContext();
   return (
     <select {...props} onChange={e => setLang(e.target.value)} value={lang}>
       {locales.map(locale => (
@@ -42,11 +42,11 @@ function Label(props) {
 
 function App() {
   return (
-    <I18n.Provider>
+    <useI18NContext.Provider>
       <Label htmlFor="select" />
       <br />
       <Select id="select" />
-    </I18n.Provider>
+    </useI18NContext.Provider>
   );
 }
 

@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import createContainer from "constate";
+import React, { useState } from "react";
+import createUseContext from "constate";
 
 // 1️⃣ Create a custom hook as usual
 function useCounter() {
@@ -9,27 +9,27 @@ function useCounter() {
 }
 
 // 2️⃣ Create container
-const CounterContainer = createContainer(useCounter, value => [value.count]);
+const useCounterContext = createUseContext(useCounter, value => [value.count]);
 
 function Button() {
   // 3️⃣ Use container context instead of custom hook
-  const { increment } = useContext(CounterContainer.Context);
+  const { increment } = useCounterContext();
   return <button onClick={increment}>+</button>;
 }
 
 function Count() {
   // 4️⃣ Use container context in other components
-  const { count } = useContext(CounterContainer.Context);
+  const { count } = useCounterContext();
   return <span>{count}</span>;
 }
 
 function App() {
   // 5️⃣ Wrap your components with container provider
   return (
-    <CounterContainer.Provider>
+    <useCounterContext.Provider>
       <Count />
       <Button />
-    </CounterContainer.Provider>
+    </useCounterContext.Provider>
   );
 }
 

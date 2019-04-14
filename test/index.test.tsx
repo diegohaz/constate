@@ -30,6 +30,28 @@ test("default", () => {
   expect(getByText("1")).toBeDefined();
 });
 
+test("default - using return as hook", () => {
+  const useCounterContainer = createContainer(useCounter);
+  const Increment = () => {
+    const { increment } = useCounterContainer();
+    return <button onClick={increment}>Increment</button>;
+  };
+  const Count = () => {
+    const { count } = useCounterContainer();
+    return <div>{count}</div>;
+  };
+  const App = () => (
+    <useCounterContainer.Provider>
+      <Increment />
+      <Count />
+    </useCounterContainer.Provider>
+  );
+  const { getByText } = render(<App />);
+  expect(getByText("0")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("1")).toBeDefined();
+});
+
 test("createMemoInputs", () => {
   const Container = createContainer(useCounter, value => [value.count]);
   const Increment = () => {

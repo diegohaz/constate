@@ -1,8 +1,8 @@
-import React, { useContext, useState, useEffect } from "react";
-import createContainer from "constate";
+import React, { useState, useEffect } from "react";
+import createUseContext from "constate";
 
-const Step = createContainer(useStep, value => [value.step]);
-const Form = createContainer(useFormState, value => [value.values]);
+const useStepContext = createUseContext(useStep, value => [value.step]);
+const useFormContext = createUseContext(useFormState, value => [value.values]);
 
 function useStep({ initialStep = 0 } = {}) {
   const [step, setStep] = useState(initialStep);
@@ -35,7 +35,7 @@ function useFormInput({ register, values, update, name, initialValue = "" }) {
 }
 
 function AgeForm({ onSubmit }) {
-  const state = useContext(Form.Context);
+  const state = useFormContext();
   const age = useFormInput({ name: "age", ...state });
   return (
     <form
@@ -51,7 +51,7 @@ function AgeForm({ onSubmit }) {
 }
 
 function NameEmailForm({ onSubmit, onBack }) {
-  const state = useContext(Form.Context);
+  const state = useFormContext();
   const name = useFormInput({ name: "name", ...state });
   const email = useFormInput({ name: "email", ...state });
   return (
@@ -72,12 +72,12 @@ function NameEmailForm({ onSubmit, onBack }) {
 }
 
 function Values() {
-  const { values } = useContext(Form.Context);
+  const { values } = useFormContext();
   return <pre>{JSON.stringify(values, null, 2)}</pre>;
 }
 
 function Wizard() {
-  const { step, next, previous } = useContext(Step.Context);
+  const { step, next, previous } = useStepContext();
   const steps = [AgeForm, NameEmailForm];
   const isLastStep = step === steps.length - 1;
   const props = {
@@ -91,12 +91,12 @@ function Wizard() {
 
 function App() {
   return (
-    <Step.Provider>
-      <Form.Provider initialValues={{ age: 18 }}>
+    <useStepContext.Provider>
+      <useFormContext.Provider initialValues={{ age: 18 }}>
         <Wizard />
         <Values />
-      </Form.Provider>
-    </Step.Provider>
+      </useFormContext.Provider>
+    </useStepContext.Provider>
   );
 }
 

@@ -15,7 +15,7 @@ const defaultValue = canUseProxy
   ? new Proxy({}, { get: warnNoProvider, apply: warnNoProvider })
   : {};
 
-function createContainer<P, V>(
+function createUseContext<P, V>(
   useValue: (props: P) => V,
   createMemoInputs?: (value: V) => any[]
 ) {
@@ -34,10 +34,10 @@ function createContainer<P, V>(
     );
   };
 
-  return {
-    Context,
-    Provider
-  };
+  const useContextValue = () => React.useContext(Context);
+  useContextValue.Context = Context;
+  useContextValue.Provider = Provider;
+  return useContextValue;
 }
 
-export default createContainer;
+export default createUseContext;

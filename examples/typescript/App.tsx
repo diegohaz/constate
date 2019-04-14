@@ -1,6 +1,6 @@
 // It just works! No need to type anything explicitly.
 import * as React from "react";
-import createContainer from "constate";
+import createUseContext from "constate";
 
 function useCounter({ initialCount = 0 } = {}) {
   const [count, setCount] = React.useState(initialCount);
@@ -8,24 +8,24 @@ function useCounter({ initialCount = 0 } = {}) {
   return { count, increment };
 }
 
-const CounterContainer = createContainer(useCounter, value => [value.count]);
+const useCounterContext = createUseContext(useCounter, value => [value.count]);
 
 function IncrementButton() {
-  const { increment } = React.useContext(CounterContainer.Context);
+  const { increment } = useCounterContext();
   return <button onClick={increment}>+</button>;
 }
 
 function Count() {
-  const { count } = React.useContext(CounterContainer.Context);
+  const { count } = useCounterContext();
   return <span>{count}</span>;
 }
 
 function App() {
   return (
-    <CounterContainer.Provider initialCount={10}>
+    <useCounterContext.Provider initialCount={10}>
       <Count />
       <IncrementButton />
-    </CounterContainer.Provider>
+    </useCounterContext.Provider>
   );
 }
 
