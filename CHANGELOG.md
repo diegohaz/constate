@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.1](https://github.com/diegohaz/constate/compare/v1.1.0...v1.1.1) (2019-04-14)
+
+
+### Bug Fixes
+
+* Fix React peer dependency range ([7132e3d](https://github.com/diegohaz/constate/commit/7132e3d))
+
+
+
 # [1.1.0](https://github.com/diegohaz/constate/compare/v1.0.0...v1.1.0) (2019-04-14)
 
 
