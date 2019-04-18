@@ -45,26 +45,23 @@ function useCounter() {
   return { count, increment };
 }
 
-// 2️⃣ When you need to share your state, simply wrap your hook
-//    with the createUseContext factory, like so:
+// 2️⃣ Wrap your hook with the createUseContext factory
 const useCounterContext = createUseContext(useCounter);
 
 function Button() {
-  // 3️⃣ Use container context instead of custom hook
-  //    const { increment } = useCounter();
+  // 3️⃣ Use context instead of custom hook
   const { increment } = useCounterContext()
   return <button onClick={increment}>+</button>;
 }
 
 function Count() {
-  // 4️⃣ Use container context in other components
-  //    const { count } = useCounter();
+  // 4️⃣ Use context in other components
   const { count } = useCounterContext()
   return <span>{count}</span>;
 }
 
 function App() {
-  // 5️⃣ Wrap your components with provider
+  // 5️⃣ Wrap your components with Provider
   return (
     <useCounterContext.Provider>
       <Count />
