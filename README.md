@@ -129,8 +129,6 @@ function App() {
 The API of the containerized hook returns the same value(s) as the original, as long as it is a descendant of the Provider:
 
 ```jsx
-import React, { useContext } from "react";
-
 function Counter() {
   const count = useCounterContext();
   console.log(count); // 10
