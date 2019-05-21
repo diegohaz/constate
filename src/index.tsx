@@ -21,7 +21,7 @@ function createUseContext<P, V>(
 ) {
   const Context = React.createContext(defaultValue as V);
 
-  const Provider = (props: { children?: React.ReactNode } & P) => {
+  const Provider: React.FunctionComponent<P> = props => {
     const value = useValue(props);
     // createMemoInputs won't change between renders
     const memoizedValue = createMemoInputs
@@ -33,6 +33,11 @@ function createUseContext<P, V>(
       </Context.Provider>
     );
   };
+
+  if (useValue.name) {
+    Context.displayName = `${useValue.name}.Context`;
+    Provider.displayName = `${useValue.name}.Provider`;
+  }
 
   const useContext = () => React.useContext(Context);
   useContext.Context = Context;

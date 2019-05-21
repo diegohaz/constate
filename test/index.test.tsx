@@ -117,3 +117,15 @@ test("provider props", () => {
   fireEvent.click(getByText("Increment"));
   expect(getByText("11")).toBeDefined();
 });
+
+test("displayName with named hook", () => {
+  const Container = createContainer(useCounter);
+  expect(Container.Provider.displayName).toBe("useCounter.Provider");
+  expect(Container.Context.displayName).toBe("useCounter.Context");
+});
+
+test("displayName with anonymous hook", () => {
+  const Container = createContainer(() => {});
+  expect(Container.Provider.displayName).toBeUndefined();
+  expect(Container.Context.displayName).toBeUndefined();
+});
