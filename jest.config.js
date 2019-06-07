@@ -3,6 +3,6 @@ module.exports = {
   coveragePathIgnorePatterns: ["/node_modules/", "<rootDir>/test/"],
   setupFilesAfterEnv: [
     "raf/polyfill",
-    "react-testing-library/cleanup-after-each"
+    "@testing-library/react/cleanup-after-each"
   ]
 };
