@@ -7,7 +7,7 @@ import ignore from "rollup-plugin-ignore";
 import pkg from "./package.json";
 
 const external = Object.keys(pkg.peerDependencies || {});
-const allExternal = [...external, Object.keys(pkg.dependencies || {})];
+const allExternal = [...external, ...Object.keys(pkg.dependencies || {})];
 const extensions = [".ts", ".tsx", ".js", ".jsx", ".json"];
 
 const createCommonPlugins = () => [
