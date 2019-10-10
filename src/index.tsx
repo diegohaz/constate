@@ -45,6 +45,7 @@ export function createContextHook<P, V>(
   return useContext;
 }
 
+// istanbul ignore next
 export default function<P, V>(
   useValue: (props: P) => V,
   createMemoDeps?: (value: V) => any[]
