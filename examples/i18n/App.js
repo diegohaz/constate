@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import createUseContext from "constate";
+import { createContextHook } from "constate";
 
 const translations = {
   en: {
@@ -17,7 +17,7 @@ function useI18n() {
 }
 
 // Only re-evaluate useI18n return value when lang changes
-const useI18NContext = createUseContext(useI18n, value => [value.lang]);
+const useI18NContext = createContextHook(useI18n, value => [value.lang]);
 
 function useTranslation(key) {
   const { lang } = useI18NContext();

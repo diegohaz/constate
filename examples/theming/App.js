@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import createUseContext from "constate";
+import { createContextHook } from "constate";
 import { GithubPicker } from "react-color";
 
-const useThemeContext = createUseContext(props => useState(props.initialColor));
-const usePickerVisibilityContext = createUseContext(() => useState(false));
+const useThemeContext = createContextHook(props =>
+  useState(props.initialColor)
+);
+const usePickerVisibilityContext = createContextHook(() => useState(false));
 
 function Picker() {
   const [color, setColor] = useThemeContext();
