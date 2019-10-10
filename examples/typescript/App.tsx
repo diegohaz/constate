@@ -1,6 +1,6 @@
 // It just works! No need to type anything explicitly.
 import * as React from "react";
-import createUseContext from "constate";
+import { createContextHook } from "constate";
 
 function useCounter({ initialCount = 0 } = {}) {
   const [count, setCount] = React.useState(initialCount);
@@ -8,7 +8,7 @@ function useCounter({ initialCount = 0 } = {}) {
   return { count, increment };
 }
 
-const useCounterContext = createUseContext(useCounter, value => [value.count]);
+const useCounterContext = createContextHook(useCounter, value => [value.count]);
 
 function IncrementButton() {
   const { increment } = useCounterContext();

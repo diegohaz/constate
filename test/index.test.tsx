@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render, fireEvent } from "@testing-library/react";
-import createContainer from "../src";
+import { createContextHook } from "../src";
 
 function useCounter({ initialCount = 0 } = {}) {
   const [count, setCount] = React.useState(initialCount);
@@ -9,7 +9,7 @@ function useCounter({ initialCount = 0 } = {}) {
 }
 
 test("default", () => {
-  const Container = createContainer(useCounter);
+  const Container = createContextHook(useCounter);
   const Increment = () => {
     const { increment } = React.useContext(Container.Context);
     return <button onClick={increment}>Increment</button>;
@@ -31,7 +31,7 @@ test("default", () => {
 });
 
 test("default - using return as hook", () => {
-  const useCounterContainer = createContainer(useCounter);
+  const useCounterContainer = createContextHook(useCounter);
   const Increment = () => {
     const { increment } = useCounterContainer();
     return <button onClick={increment}>Increment</button>;
@@ -52,8 +52,8 @@ test("default - using return as hook", () => {
   expect(getByText("1")).toBeDefined();
 });
 
-test("createMemoInputs", () => {
-  const Container = createContainer(useCounter, value => [value.count]);
+test("createMemoDeps", () => {
+  const Container = createContextHook(useCounter, value => [value.count]);
   const Increment = () => {
     const { increment } = React.useContext(Container.Context);
     return <button onClick={increment}>Increment</button>;
@@ -74,8 +74,8 @@ test("createMemoInputs", () => {
   expect(getByText("1")).toBeDefined();
 });
 
-test("empty createMemoInputs", () => {
-  const Container = createContainer(useCounter, () => []);
+test("empty createMemoDeps", () => {
+  const Container = createContextHook(useCounter, () => []);
   const Increment = () => {
     const { increment } = React.useContext(Container.Context);
     return <button onClick={increment}>Increment</button>;
@@ -97,7 +97,7 @@ test("empty createMemoInputs", () => {
 });
 
 test("provider props", () => {
-  const Container = createContainer(useCounter);
+  const Container = createContextHook(useCounter);
   const Increment = () => {
     const { increment } = React.useContext(Container.Context);
     return <button onClick={increment}>Increment</button>;
@@ -119,13 +119,13 @@ test("provider props", () => {
 });
 
 test("displayName with named hook", () => {
-  const Container = createContainer(useCounter);
+  const Container = createContextHook(useCounter);
   expect(Container.Provider.displayName).toBe("useCounter.Provider");
   expect(Container.Context.displayName).toBe("useCounter.Context");
 });
 
 test("displayName with anonymous hook", () => {
-  const Container = createContainer(() => {});
+  const Container = createContextHook(() => {});
   expect(Container.Provider.displayName).toBeUndefined();
   expect(Container.Context.displayName).toBeUndefined();
 });

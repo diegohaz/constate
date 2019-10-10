@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import createUseContext from "constate";
+import { createContextHook } from "constate";
 
-const useStepContext = createUseContext(useStep, value => [value.step]);
-const useFormContext = createUseContext(useFormState, value => [value.values]);
+const useStepContext = createContextHook(useStep, value => [value.step]);
+const useFormContext = createContextHook(useFormState, value => [value.values]);
 
 function useStep({ initialStep = 0 } = {}) {
   const [step, setStep] = useState(initialStep);

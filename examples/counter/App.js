@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import createUseContext from "constate";
+import { createContextHook } from "constate";
 
 // 1️⃣ Create a custom hook as usual
 function useCounter() {
@@ -9,7 +9,7 @@ function useCounter() {
 }
 
 // 2️⃣ Create container
-const useCounterContext = createUseContext(useCounter, value => [value.count]);
+const useCounterContext = createContextHook(useCounter, value => [value.count]);
 
 function Button() {
   // 3️⃣ Use container context instead of custom hook

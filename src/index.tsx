@@ -15,17 +15,17 @@ const defaultValue = canUseProxy
   ? new Proxy({}, { get: warnNoProvider, apply: warnNoProvider })
   : {};
 
-function createUseContext<P, V>(
+export function createContextHook<P, V>(
   useValue: (props: P) => V,
-  createMemoInputs?: (value: V) => any[]
+  createMemoDeps?: (value: V) => any[]
 ) {
   const Context = React.createContext(defaultValue as V);
 
   const Provider: React.FunctionComponent<P> = props => {
     const value = useValue(props);
-    // createMemoInputs won't change between renders
-    const memoizedValue = createMemoInputs
-      ? React.useMemo(() => value, createMemoInputs(value))
+    // createMemoDeps won't change between renders
+    const memoizedValue = createMemoDeps
+      ? React.useMemo(() => value, createMemoDeps(value))
       : value;
     return (
       <Context.Provider value={memoizedValue}>
@@ -45,4 +45,15 @@ function createUseContext<P, V>(
   return useContext;
 }
 
-export default createUseContext;
+export default /* istanbul ignore next */ function<P, V>(
+  useValue: (props: P) => V,
+  createMemoDeps?: (value: V) => any[]
+) {
+  if (process.env.NODE_ENV !== "production") {
+    // eslint-disable-next-line no-console
+    console.warn(
+      '[constate] Importing default from "constate" is deprecated. Please `import { createContextHook } from "constate"` instead'
+    );
+  }
+  return createContextHook(useValue, createMemoDeps);
+}

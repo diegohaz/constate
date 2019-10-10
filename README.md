@@ -36,7 +36,7 @@ Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html)
 
 ```jsx
 import React, { useState } from "react";
-import createUseContext from "constate";
+import { createContextHook } from "constate";
 
 // 1️⃣ Create a custom hook as usual
 function useCounter() {
@@ -45,8 +45,8 @@ function useCounter() {
   return { count, increment };
 }
 
-// 2️⃣ Wrap your hook with the createUseContext factory
-const useCounterContext = createUseContext(useCounter);
+// 2️⃣ Wrap your hook with the createContextHook factory
+const useCounterContext = createContextHook(useCounter);
 
 function Button() {
   // 3️⃣ Use context instead of custom hook
@@ -87,9 +87,9 @@ yarn add constate
 
 ## API
 
-### `createUseContext(useValue[, createMemoInputs])`
+### `createContextHook(useValue[, createMemoDeps])`
 
-Constate exports a single factory method called `createUseContext`. It receives two arguments: [`useValue`](#usevalue) and [`createMemoInputs`](#creatememoinputs) (optional). And returns a wrapped hook that can now read state from the Context. The hook also has two static properties: `Provider` and `Context`.
+Constate exports a single factory method called `createContextHook`. It receives two arguments: [`useValue`](#usevalue) and [`createMemoDeps`](#creatememoinputs) (optional). And returns a wrapped hook that can now read state from the Context. The hook also has two static properties: `Provider` and `Context`.
 
 #### `useValue`
 
@@ -97,9 +97,9 @@ It's any [custom hook](https://reactjs.org/docs/hooks-custom.html):
 
 ```js
 import { useState } from "react";
-import createUseContext from "constate";
+import { createContextHook } from "constate";
 
-const useCounterContext = createUseContext(() => {
+const useCounterContext = createContextHook(() => {
   const [count] = useState(0);
   return count;
 });
@@ -112,7 +112,7 @@ console.log(useCounterContext.Context); // React Context (if needed)
 You can receive arguments in the custom hook function. They will be populated with `<Provider />`:
 
 ```jsx
-const useCounterContext = createUseContext(({ initialCount = 0 }) => {
+const useCounterContext = createContextHook(({ initialCount = 0 }) => {
   const [count] = useState(initialCount);
   return count;
 });
@@ -135,15 +135,15 @@ function Counter() {
 }
 ```
 
-#### `createMemoInputs`
+#### `createMemoDeps`
 
 Optionally, you can pass in a function that receives the `value` returned by `useValue` and returns an array of inputs. When any input changes, `value` gets re-evaluated, triggering a re-render on all consumers (components calling `useContext()`).
 
-If `createMemoInputs` is undefined, it'll be re-evaluated everytime `Provider` renders:
+If `createMemoDeps` is undefined, it'll be re-evaluated everytime `Provider` renders:
 
 ```js
 // re-render consumers only when value.count changes
-const useCounterContext = createUseContext(useCounter, value => [value.count]);
+const useCounterContext = createContextHook(useCounter, value => [value.count]);
 
 function useCounter() {
   const [count, setCount] = useState(0);
@@ -159,10 +159,10 @@ You can also achieve the same behavior within the custom hook. This is an equiva
 ```js
 import { useMemo } from "react";
 
-const useCounterContext = createUseContext(() => {
+const useCounterContext = createContextHook(() => {
   const [count, setCount] = useState(0);
   const increment = () => setCount(count + 1);
-  // same as passing `value => [value.count]` to `createMemoInputs` parameter
+  // same as passing `value => [value.count]` to `createMemoDeps` parameter
   return useMemo(() => ({ count, increment }), [count]);
 });
 ```
