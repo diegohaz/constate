@@ -45,17 +45,15 @@ export function createContextHook<P, V>(
   return useContext;
 }
 
-export default function<P, V>(
+export default /* istanbul ignore next */ function<P, V>(
   useValue: (props: P) => V,
   createMemoDeps?: (value: V) => any[]
 ) {
-  // istanbul ignore next
   if (process.env.NODE_ENV !== "production") {
     // eslint-disable-next-line no-console
     console.warn(
       '[constate] Importing default from "constate" is deprecated. Please `import { createContextHook } from "constate"` instead'
     );
   }
-  // istanbul ignore next
   return createContextHook(useValue, createMemoDeps);
 }
