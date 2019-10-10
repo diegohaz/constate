@@ -1,27 +1,24 @@
-{
-  "parser": "babel-eslint",
-  "extends": [
-    "airbnb",
-    "prettier/react",
-    "plugin:prettier/recommended"
-  ],
-  "env": {
-    "jest": true,
-    "browser": true
+module.exports = {
+  parser: "babel-eslint",
+  extends: ["airbnb", "prettier/react", "plugin:prettier/recommended"],
+  env: {
+    jest: true,
+    browser: true
   },
-  "settings": {
+  settings: {
     "import/resolver": {
-      "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      node: {
+        extensions: [".js", ".jsx", ".ts", ".tsx"]
       }
     }
   },
-  "rules": {
-    "camelcase": "off",
+  rules: {
+    camelcase: "off",
     "no-use-before-define": "off",
     "no-underscore-dangle": "off",
     "no-bitwise": "off",
     "no-restricted-syntax": "off",
+    "react/jsx-props-no-spreading": "off",
     "react/no-array-index-key": "off",
     "react/prop-types": "off",
     "react/button-has-type": "off",
@@ -36,17 +33,17 @@
     "jsx-a11y/label-has-for": "off",
     "jsx-a11y/label-has-associated-control": "off"
   },
-  "overrides": [
+  overrides: [
     {
-      "files": ["**/*.ts", "**/*.tsx"],
-      "parser": "@typescript-eslint/parser",
-      "parserOptions": {
-        "project": "./tsconfig.json"
+      files: ["**/*.ts", "**/*.tsx"],
+      parser: "@typescript-eslint/parser",
+      parserOptions: {
+        project: "./tsconfig.json",
+        // TODO: Temporary fix https://github.com/typescript-eslint/typescript-eslint/issues/890
+        createDefaultProgram: true
       },
-      "plugins": [
-        "@typescript-eslint"
-      ],
-      "rules": {
+      plugins: ["@typescript-eslint"],
+      rules: {
         "no-undef": "off",
         "no-unused-vars": "off",
         "no-restricted-globals": "off",
@@ -54,4 +51,4 @@
       }
     }
   ]
-}
+};
