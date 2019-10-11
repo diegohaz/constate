@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createContextHook } from "constate";
+import createContextHook from "constate";
 
 const translations = {
   en: {

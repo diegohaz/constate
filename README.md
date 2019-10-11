@@ -36,7 +36,7 @@ Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html)
 
 ```jsx
 import React, { useState } from "react";
-import { createContextHook } from "constate";
+import createContextHook from "constate";
 
 // 1️⃣ Create a custom hook as usual
 function useCounter() {
@@ -97,7 +97,7 @@ It's any [custom hook](https://reactjs.org/docs/hooks-custom.html):
 
 ```js
 import { useState } from "react";
-import { createContextHook } from "constate";
+import createContextHook from "constate";
 
 const useCounterContext = createContextHook(() => {
   const [count] = useState(0);

@@ -15,17 +15,40 @@ const defaultValue = canUseProxy
   ? new Proxy({}, { get: warnNoProvider, apply: warnNoProvider })
   : {};
 
-export function createContextHook<P, V>(
+type ContextHook<P, V> = {
+  (): V;
+  Context: React.Context<V>;
+  Provider: React.FunctionComponent<P>;
+};
+
+function createContextHook<P, V, SV extends Array<(value: V) => any>>(
   useValue: (props: P) => V,
-  createMemoDeps?: (value: V) => any[]
-) {
+  ...splitValues: SV
+): SV["length"] extends 0
+  ? ContextHook<P, V> & [React.FunctionComponent<P>, ContextHook<P, V>]
+  : ContextHook<P, V> &
+      [React.FunctionComponent<P>] & {
+        1: SV[0] extends (value: V) => infer U ? ContextHook<P, U> : never;
+        2: SV[1] extends (value: V) => infer U ? ContextHook<P, U> : never;
+        3: SV[2] extends (value: V) => infer U ? ContextHook<P, U> : never;
+        4: SV[3] extends (value: V) => infer U ? ContextHook<P, U> : never;
+        5: SV[4] extends (value: V) => infer U ? ContextHook<P, U> : never;
+        6: SV[5] extends (value: V) => infer U ? ContextHook<P, U> : never;
+        7: SV[6] extends (value: V) => infer U ? ContextHook<P, U> : never;
+        8: SV[7] extends (value: V) => infer U ? ContextHook<P, U> : never;
+        9: SV[8] extends (value: V) => infer U ? ContextHook<P, U> : never;
+      } {
   const Context = React.createContext(defaultValue as V);
 
   const Provider: React.FunctionComponent<P> = props => {
     const value = useValue(props);
     // createMemoDeps won't change between renders
-    const memoizedValue = createMemoDeps
-      ? React.useMemo(() => value, createMemoDeps(value))
+    // DEPRECATE THIS IN FAVOR OF MEMOIZING INSIDE USEVALUE
+    // MAYBE PROVIDE A HELPER?
+    // createContextHook(withMemo(useCounter, value => [value.count]))
+    // Maybe not?
+    const memoizedValue = splitValues[0]
+      ? React.useMemo(() => value, splitValues[0](value))
       : value;
     return (
       <Context.Provider value={memoizedValue}>
@@ -42,18 +65,40 @@ export function createContextHook<P, V>(
   const useContext = () => React.useContext(Context);
   useContext.Context = Context;
   useContext.Provider = Provider;
-  return useContext;
-}
 
-export default /* istanbul ignore next */ function<P, V>(
-  useValue: (props: P) => V,
-  createMemoDeps?: (value: V) => any[]
-) {
-  if (process.env.NODE_ENV !== "production") {
-    // eslint-disable-next-line no-console
-    console.warn(
-      '[constate] Importing default from "constate" is deprecated. Please `import { createContextHook } from "constate"` instead'
+  const contexts = [] as Array<React.Context<any>>;
+
+  if (!splitValues.length) {
+    // @ts-ignore
+    useContext[0] = Provider;
+    // @ts-ignore
+    useContext[1] = useContext;
+    return useContext as any;
+  }
+
+  function MultipleProvider(props: { children?: React.ReactNode } & P) {
+    const value = useValue(props);
+    return contexts.reduceRight(
+      (children, ctx, i) => (
+        <ctx.Provider value={splitValues[i](value)}>{children}</ctx.Provider>
+      ),
+      props.children
     );
   }
-  return createContextHook(useValue, createMemoDeps);
+
+  splitValues.forEach((_, i) => {
+    const Ctx = React.createContext(defaultValue as any);
+    const useCtx = () => React.useContext(Ctx);
+    contexts.push(Ctx);
+    useCtx.Context = Ctx;
+    useCtx.Provider = MultipleProvider;
+    // @ts-ignore;
+    useContext[i + 1] = useCtx;
+  });
+
+  // @ts-ignore
+  useContext[0] = MultipleProvider;
+  return useContext as any;
 }
+
+export default createContextHook;

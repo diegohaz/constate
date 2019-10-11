@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render, fireEvent } from "@testing-library/react";
-import { createContextHook } from "../src";
+import createContextHook from "../src";
 
 function useCounter({ initialCount = 0 } = {}) {
   const [count, setCount] = React.useState(initialCount);
@@ -50,6 +50,76 @@ test("default - using return as hook", () => {
   expect(getByText("0")).toBeDefined();
   fireEvent.click(getByText("Increment"));
   expect(getByText("1")).toBeDefined();
+});
+
+test("default - using return as array", () => {
+  const [, useCounterContainer] = createContextHook(useCounter);
+  const Increment = () => {
+    const { increment } = useCounterContainer();
+    return <button onClick={increment}>Increment</button>;
+  };
+  const Count = () => {
+    const { count } = useCounterContainer();
+    return <div>{count}</div>;
+  };
+  const App = () => (
+    <useCounterContainer.Provider>
+      <Increment />
+      <Count />
+    </useCounterContainer.Provider>
+  );
+  const { getByText } = render(<App />);
+  expect(getByText("0")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("1")).toBeDefined();
+});
+
+test("default - using return as array 2", () => {
+  const [CounterProvider, useCounterContainer] = createContextHook(useCounter);
+  const Increment = () => {
+    const { increment } = useCounterContainer();
+    return <button onClick={increment}>Increment</button>;
+  };
+  const Count = () => {
+    const { count } = useCounterContainer();
+    return <div>{count}</div>;
+  };
+  const App = () => (
+    <CounterProvider>
+      <Increment />
+      <Count />
+    </CounterProvider>
+  );
+  const { getByText } = render(<App />);
+  expect(getByText("0")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("1")).toBeDefined();
+});
+
+test("default - using return as array 3", () => {
+  const [CounterProvider, useCount, useIncrement] = createContextHook(
+    useCounter,
+    value => value.count,
+    value => value.increment
+  );
+  const Increment = () => {
+    const increment = useIncrement();
+    return <button onClick={increment}>Increment</button>;
+  };
+  const Count = () => {
+    const count = useCount();
+    return <div>{count}</div>;
+  };
+  const App = () => (
+    <CounterProvider initialCount={10}>
+      <Increment />
+      <Count />
+    </CounterProvider>
+  );
+  const { getByText } = render(<App />);
+  expect(getByText("10")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("11")).toBeDefined();
 });
 
 test("createMemoDeps", () => {
