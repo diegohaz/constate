@@ -89,7 +89,7 @@ yarn add constate
 
 ### `createContextHook(useValue[, createMemoDeps])`
 
-Constate exports a single factory method called `createContextHook`. It receives two arguments: [`useValue`](#usevalue) and [`createMemoDeps`](#creatememoinputs) (optional). And returns a wrapped hook that can now read state from the Context. The hook also has two static properties: `Provider` and `Context`.
+Constate exports a single factory method called `createContextHook`. It receives two arguments: [`useValue`](#usevalue) and [`createMemoDeps`](#creatememodeps) (optional). And returns a wrapped hook that can now read state from the Context. The hook also has two static properties: `Provider` and `Context`.
 
 #### `useValue`
 
@@ -137,7 +137,7 @@ function Counter() {
 
 #### `createMemoDeps`
 
-Optionally, you can pass in a function that receives the `value` returned by `useValue` and returns an array of inputs. When any input changes, `value` gets re-evaluated, triggering a re-render on all consumers (components calling `useContext()`).
+Optionally, you can pass in a function that receives the `value` returned by `useValue` and returns an array of deps. When any input changes, `value` gets re-evaluated, triggering a re-render on all consumers (components calling `useContext()`).
 
 If `createMemoDeps` is undefined, it'll be re-evaluated everytime `Provider` renders:
 
@@ -152,7 +152,7 @@ function useCounter() {
 }
 ```
 
-This works similarly to the `inputs` parameter in [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect) and other React built-in hooks. In fact, Constate passes it to [`React.useMemo`](https://reactjs.org/docs/hooks-reference.html#usememo) `inputs` internally.
+This works similarly to the `deps` parameter in [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect) and other React built-in hooks. In fact, Constate passes it to [`React.useMemo`](https://reactjs.org/docs/hooks-reference.html#usememo) `deps` internally.
 
 You can also achieve the same behavior within the custom hook. This is an equivalent implementation:
 
