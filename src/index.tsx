@@ -15,7 +15,7 @@ const defaultValue = canUseProxy
   ? new Proxy({}, { get: warnNoProvider, apply: warnNoProvider })
   : {};
 
-export function createContextHook<P, V>(
+function createContextHook<P, V>(
   useValue: (props: P) => V,
   createMemoDeps?: (value: V) => any[]
 ) {
@@ -45,15 +45,4 @@ export function createContextHook<P, V>(
   return useContext;
 }
 
-export default /* istanbul ignore next */ function<P, V>(
-  useValue: (props: P) => V,
-  createMemoDeps?: (value: V) => any[]
-) {
-  if (process.env.NODE_ENV !== "production") {
-    // eslint-disable-next-line no-console
-    console.warn(
-      '[constate] Importing default from "constate" is deprecated. Please `import { createContextHook } from "constate"` instead'
-    );
-  }
-  return createContextHook(useValue, createMemoDeps);
-}
+export default createContextHook;

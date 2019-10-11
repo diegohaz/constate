@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render, fireEvent } from "@testing-library/react";
-import { createContextHook } from "../src";
+import createContextHook from "../src";
 
 function useCounter({ initialCount = 0 } = {}) {
   const [count, setCount] = React.useState(initialCount);

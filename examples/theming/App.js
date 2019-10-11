@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createContextHook } from "constate";
+import createContextHook from "constate";
 import { GithubPicker } from "react-color";
 
 const useThemeContext = createContextHook(props =>
