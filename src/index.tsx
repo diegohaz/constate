@@ -8,7 +8,7 @@ function createUseContext(context: React.Context<any>): any {
     const value = React.useContext(context);
     if (process.env.NODE_ENV !== "production" && value === NO_PROVIDER) {
       // eslint-disable-next-line no-console
-      console.warn("[constate] Component not wrapped within a Provider");
+      console.warn("[constate] Component not wrapped within a Provider.");
     }
     return value;
   };
@@ -54,15 +54,14 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
   const useContext = createUseContext(Context);
 
   // const { Context, Provider } = constate(...)
-  const Container = useContext;
-  Container.Context = Context;
-  Container.Provider = Provider;
+  useContext.Context = Context;
+  useContext.Provider = Provider;
 
   if (!splitValues.length) {
     // const [Provider, useCounterContext] = constate(...);
-    Container[0] = Provider;
-    Container[1] = createUseContext(Context);
-    return Container;
+    useContext[0] = Provider;
+    useContext[1] = createUseContext(Context);
+    return useContext;
   }
 
   const contexts = [] as Array<React.Context<any>>;

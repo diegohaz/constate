@@ -9,6 +9,7 @@
   "jsnext:main": "dist/constate.es.js",
   "unpkg": "dist/constate.min.js",
   "types": "dist/ts/src",
+  "sideEffects": false,
   "author": {
     "name": "Diego Haz",
     "email": "hazdiego@gmail.com",
