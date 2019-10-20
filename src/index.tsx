@@ -29,7 +29,8 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
       // eslint-disable-next-line no-console
       console.warn(
         "[constate] Passing `createMemoDeps` as the second argument is deprecated.",
-        "Please, use `React.useMemo` in your custom hook instead."
+        "Please, use `React.useMemo` in your custom hook instead.",
+        "See https://github.com/diegohaz/constate/issues/98"
       );
     }
 
