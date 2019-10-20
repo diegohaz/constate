@@ -73,7 +73,7 @@ function App() {
 }
 ```
 
-[Learn more](#usevalue).
+[Learn more](#api)
 
 ## Advanced example
 
@@ -119,7 +119,7 @@ function App() {
 }
 ```
 
-[Learn more](#splitvalues).
+[Learn more](#splitvalues)
 
 ## Installation
 
