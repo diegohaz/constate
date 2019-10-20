@@ -253,6 +253,17 @@ test("empty createMemoDeps", () => {
   expect(getByText("0")).toBeDefined();
 });
 
+test("without provider", () => {
+  const [, useCount] = constate(useCounter);
+  const Count = () => {
+    const count = useCount();
+    return <div>{count}</div>;
+  };
+  const App = () => <Count />;
+  const { getByText } = render(<App />);
+  expect(getByText("CONSTATE_NO_PROVIDER")).toBeDefined();
+});
+
 test("displayName with named hook", () => {
   const { Provider, Context } = constate(useCounter);
   expect(Provider.displayName).toBe("useCounter.Provider");

@@ -90,9 +90,8 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
 
   splitValues.forEach((_, i) => {
     const context = React.createContext(NO_PROVIDER);
-    const useCtx = createUseContext(context);
     contexts.push(context);
-    useContext[i + 1] = useCtx;
+    useContext[i + 1] = createUseContext(context);
   });
 
   return useContext;
