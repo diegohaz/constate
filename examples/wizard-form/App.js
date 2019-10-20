@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
-import createContextHook from "constate";
+import constate from "constate";
 
-const useStepContext = createContextHook(useStep, value => [value.step]);
-const useFormContext = createContextHook(useFormState, value => [value.values]);
+const [StepProvider, useStepContext] = constate(useStep);
+const [FormProvider, useFormContext, useFormValues] = constate(
+  useFormState,
+  value => value,
+  value => value.values
+);
 
 function useStep({ initialStep = 0 } = {}) {
   const [step, setStep] = useState(initialStep);
@@ -72,7 +76,7 @@ function NameEmailForm({ onSubmit, onBack }) {
 }
 
 function Values() {
-  const { values } = useFormContext();
+  const values = useFormValues();
   return <pre>{JSON.stringify(values, null, 2)}</pre>;
 }
 
@@ -91,12 +95,12 @@ function Wizard() {
 
 function App() {
   return (
-    <useStepContext.Provider>
-      <useFormContext.Provider initialValues={{ age: 18 }}>
+    <StepProvider>
+      <FormProvider initialValues={{ age: 18 }}>
         <Wizard />
         <Values />
-      </useFormContext.Provider>
-    </useStepContext.Provider>
+      </FormProvider>
+    </StepProvider>
   );
 }
 

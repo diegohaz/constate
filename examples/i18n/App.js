@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import createContextHook from "constate";
+import constate from "constate";
 
 const translations = {
   en: {
@@ -16,8 +16,7 @@ function useI18n() {
   return { lang, locales, setLang };
 }
 
-// Only re-evaluate useI18n return value when lang changes
-const useI18NContext = createContextHook(useI18n, value => [value.lang]);
+const [I18NProvider, useI18NContext] = constate(useI18n);
 
 function useTranslation(key) {
   const { lang } = useI18NContext();
@@ -42,11 +41,11 @@ function Label(props) {
 
 function App() {
   return (
-    <useI18NContext.Provider>
+    <I18NProvider>
       <Label htmlFor="select" />
       <br />
       <Select id="select" />
-    </useI18NContext.Provider>
+    </I18NProvider>
   );
 }
 

@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import createContextHook from "constate";
 import { GithubPicker } from "react-color";
+import constate from "constate";
 
-const useThemeContext = createContextHook(props =>
-  useState(props.initialColor)
+const [ThemeProvider, useThemeContext, useThemeColor] = constate(
+  props => useState(props.initialColor),
+  value => value,
+  ([color]) => color
 );
-const usePickerVisibilityContext = createContextHook(() => useState(false));
+const [PickerVisibilityProvider, usePickerVisibilityContext] = constate(() =>
+  useState(false)
+);
 
 function Picker() {
   const [color, setColor] = useThemeContext();
@@ -24,7 +28,7 @@ function Picker() {
 }
 
 function Button() {
-  const [background] = useThemeContext();
+  const background = useThemeColor();
   const [visible, setVisible] = usePickerVisibilityContext();
   return (
     <button style={{ background }} onClick={() => setVisible(!visible)}>
@@ -35,12 +39,12 @@ function Button() {
 
 function App() {
   return (
-    <useThemeContext.Provider initialColor="red">
-      <usePickerVisibilityContext.Provider>
+    <ThemeProvider initialColor="red">
+      <PickerVisibilityProvider>
         <Button />
         <Picker />
-      </usePickerVisibilityContext.Provider>
-    </useThemeContext.Provider>
+      </PickerVisibilityProvider>
+    </ThemeProvider>
   );
 }
 
