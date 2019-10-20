@@ -261,7 +261,7 @@ test("without provider", () => {
   };
   const App = () => <Count />;
   const { getByText } = render(<App />);
-  expect(getByText("CONSTATE_NO_PROVIDER")).toBeDefined();
+  expect(getByText("_NP_")).toBeDefined();
 });
 
 test("displayName with named hook", () => {

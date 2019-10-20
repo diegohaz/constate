@@ -1,12 +1,14 @@
 import * as React from "react";
 import { SplitValueFunction, ContextHookReturn } from "./types";
 
-const NO_PROVIDER = "CONSTATE_NO_PROVIDER" as any;
+const isDev = process.env.NODE_ENV !== "production";
+
+const NO_PROVIDER = "_NP_" as any;
 
 function createUseContext(context: React.Context<any>): any {
   return () => {
     const value = React.useContext(context);
-    if (process.env.NODE_ENV !== "production" && value === NO_PROVIDER) {
+    if (isDev && value === NO_PROVIDER) {
       // eslint-disable-next-line no-console
       console.warn("[constate] Component not wrapped within a Provider.");
     }
@@ -25,7 +27,7 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
     const [createMemoDeps] = splitValues;
     const deps = createMemoDeps && createMemoDeps(value);
 
-    if (process.env.NODE_ENV !== "production" && Array.isArray(deps)) {
+    if (isDev && Array.isArray(deps)) {
       // eslint-disable-next-line no-console
       console.warn(
         "[constate] Passing `createMemoDeps` as the second argument is deprecated.",
@@ -46,7 +48,7 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
     );
   };
 
-  if (useValue.name) {
+  if (isDev && useValue.name) {
     Context.displayName = `${useValue.name}.Context`;
     Provider.displayName = `${useValue.name}.Provider`;
   }
@@ -84,7 +86,7 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
       return children;
     };
 
-    if (useValue.name) {
+    if (isDev && useValue.name) {
       SplitProvider.displayName = `${useValue.name}.Provider`;
     }
 
