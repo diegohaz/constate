@@ -9,7 +9,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 * Add `sideEffects` field to `package.json` ([97c0af5](https://github.com/diegohaz/constate/commit/97c0af5b60d102471ec91690172c3bb57d386c2c))
 * Expose API for splitting custom hook into multiple contexts ([#97](https://github.com/diegohaz/constate/issues/97)) ([fc3426e](https://github.com/diegohaz/constate/commit/fc3426ed2a9e5f7c05b2a069efb00c6b4d4e76cd)), closes [#93](https://github.com/diegohaz/constate/issues/93)
-* Rename `createUseContext` to `createContextHook` (no breaking changes) ([#95](https://github.com/diegohaz/constate/issues/95)) ([2f7c3ea](https://github.com/diegohaz/constate/commit/2f7c3eaa3d92ddaa2529da7a668ef08666e4a78a)), closes [#93](https://github.com/diegohaz/constate/issues/93)
+
+
 
 ## [1.2.0](https://github.com/diegohaz/constate/compare/v1.1.1...v1.2.0) (2019-06-29)
 
