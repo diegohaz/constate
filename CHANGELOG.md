@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/diegohaz/constate/compare/v1.3.0...v1.3.1) (2019-10-20)
+
+
+### Bug Fixes
+
+* Fix invalid attempt to destructure non-iterable instance ([67001c4](https://github.com/diegohaz/constate/commit/67001c46f981ce378538136b0dcb9f9864d54c10))
+
 ## [1.3.0](https://github.com/diegohaz/constate/compare/v1.2.0...v1.3.0) (2019-10-20)
 
 
