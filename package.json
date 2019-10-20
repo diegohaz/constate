@@ -33,8 +33,8 @@
     "release": "standard-version",
     "postpublish": "git push origin HEAD --follow-tags",
     "prepare": "npm run examples:install",
+    "examples": "npm run start --prefix examples",
     "examples:install": "yarn --cwd examples",
-    "examples:start": "npm run start --prefix examples",
     "examples:build": "npm run build --prefix examples",
     "examples:upgrade": "yarn upgrade-interactive --latest --cwd examples"
   },

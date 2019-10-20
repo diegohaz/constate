@@ -34,9 +34,11 @@ Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html)
 
 <br>
 
+## Basic example
+
 ```jsx
 import React, { useState } from "react";
-import createContextHook from "constate";
+import constate from "constate";
 
 // 1️⃣ Create a custom hook as usual
 function useCounter() {
@@ -45,8 +47,8 @@ function useCounter() {
   return { count, increment };
 }
 
-// 2️⃣ Wrap your hook with the createContextHook factory
-const useCounterContext = createContextHook(useCounter);
+// 2️⃣ Wrap your hook with the constate factory
+const [CounterProvider, useCounterContext] = constate(useCounter);
 
 function Button() {
   // 3️⃣ Use context instead of custom hook
@@ -63,13 +65,61 @@ function Count() {
 function App() {
   // 5️⃣ Wrap your components with Provider
   return (
-    <useCounterContext.Provider>
+    <CounterProvider>
       <Count />
       <Button />
-    </useCounterContext.Provider>
+    </CounterProvider>
   );
 }
 ```
+
+[Learn more](#usevalue).
+
+## Advanced example
+
+```jsx
+import React, { useState, useCallback } from "react";
+import constate from "constate";
+
+// 1️⃣ Create a custom hook that receives props
+function useCounter({ initialCount = 0 }) {
+  const [count, setCount] = useState(initialCount);
+  // 2️⃣ Wrap your updaters with useCallback or use dispatch from useReducer
+  const increment = useCallback(() => setCount(prev => prev + 1), []);
+  return { count, increment };
+}
+
+// 3️⃣ Wrap your hook with the constate factory splitting the values
+const [CounterProvider, useCount, useIncrement] = constate(
+  useCounter,
+  value => value.count, // becomes useCount
+  value => value.increment // becomes useIncrement
+);
+
+function Button() {
+  // 4️⃣ Use the updater context that will never trigger a re-render
+  const increment = useIncrement();
+  return <button onClick={increment}>+</button>;
+}
+
+function Count() {
+  // 5️⃣ Use the state context in other components
+  const count = useCount();
+  return <span>{count}</span>;
+}
+
+function App() {
+  // 6️⃣ Wrap your components with Provider passing props to your hook
+  return (
+    <CounterProvider initialCount={10}>
+      <Count />
+      <Button />
+    </CounterProvider>
+  );
+}
+```
+
+[Learn more](#splitvalues).
 
 ## Installation
 
@@ -87,9 +137,9 @@ yarn add constate
 
 ## API
 
-### `createContextHook(useValue[, createMemoDeps])`
+### `constate(useValue[, ...splitValues])`
 
-Constate exports a single factory method called `createContextHook`. It receives two arguments: [`useValue`](#usevalue) and [`createMemoDeps`](#creatememodeps) (optional). And returns a wrapped hook that can now read state from the Context. The hook also has two static properties: `Provider` and `Context`.
+Constate exports a single factory method. As parameters, it receives [`useValue`](#usevalue) and multiple optional [`splitValue`](#splitvalues) functions. It returns a tuple of `[Provider, ...contextHooks]`.
 
 #### `useValue`
 
@@ -97,31 +147,27 @@ It's any [custom hook](https://reactjs.org/docs/hooks-custom.html):
 
 ```js
 import { useState } from "react";
-import createContextHook from "constate";
+import constate from "constate";
 
-const useCounterContext = createContextHook(() => {
+const [CountProvider, useCountContext] = constate(() => {
   const [count] = useState(0);
   return count;
 });
-
-console.log(useCounterContext); // React Hook
-console.log(useCounterContext.Provider); // React Provider
-console.log(useCounterContext.Context); // React Context (if needed)
 ```
 
-You can receive arguments in the custom hook function. They will be populated with `<Provider />`:
+You can receive props in the custom hook function. They will be populated with `<Provider />`:
 
 ```jsx
-const useCounterContext = createContextHook(({ initialCount = 0 }) => {
+const [CountProvider, useCountContext] = constate(({ initialCount = 0 }) => {
   const [count] = useState(initialCount);
   return count;
 });
 
 function App() {
   return (
-    <useCounterContext.Provider initialCount={10}>
+    <CountProvider initialCount={10}>
       ...
-    </useCounterContext.Provider>
+    </CountProvider>
   );
 }
 ```
@@ -129,42 +175,45 @@ function App() {
 The API of the containerized hook returns the same value(s) as the original, as long as it is a descendant of the Provider:
 
 ```jsx
-function Counter() {
-  const count = useCounterContext();
+function Count() {
+  const count = useCountContext();
   console.log(count); // 10
 }
 ```
 
-#### `createMemoDeps`
+#### `splitValues`
 
-Optionally, you can pass in a function that receives the `value` returned by `useValue` and returns an array of deps. When any input changes, `value` gets re-evaluated, triggering a re-render on all consumers (components calling `useContext()`).
+Optionally, you can pass in one or more functions to split the custom hook value into multiple React Contexts. This is useful so you can avoid unnecessary re-renders on components that only depend on a part of the state.
 
-If `createMemoDeps` is undefined, it'll be re-evaluated everytime `Provider` renders:
+A `splitValue` function receives the value returned by [`useValue`](#usevalue) and returns the value that will be held by that particular Context.
 
-```js
-// re-render consumers only when value.count changes
-const useCounterContext = createContextHook(useCounter, value => [value.count]);
+```jsx
+import React, { useState, useCallback } from "react";
+import constate from "constate";
 
 function useCounter() {
   const [count, setCount] = useState(0);
-  const increment = () => setCount(count + 1);
+  // increment's reference identity will never change
+  const increment = useCallback(() => setCount(prev => prev + 1), []);
   return { count, increment };
 }
-```
 
-This works similarly to the `deps` parameter in [`React.useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect) and other React built-in hooks. In fact, Constate passes it to [`React.useMemo`](https://reactjs.org/docs/hooks-reference.html#usememo) `deps` internally.
+const [Provider, useCount, useIncrement] = constate(
+  useCounter,
+  value => value.count, // becomes useCount
+  value => value.increment // becomes useIncrement
+);
 
-You can also achieve the same behavior within the custom hook. This is an equivalent implementation:
+function Button() {
+  // since increment never changes, this will never trigger a re-render
+  const increment = useIncrement();
+  return <button onClick={increment}>+</button>;
+}
 
-```js
-import { useMemo } from "react";
-
-const useCounterContext = createContextHook(() => {
-  const [count, setCount] = useState(0);
-  const increment = () => setCount(count + 1);
-  // same as passing `value => [value.count]` to `createMemoDeps` parameter
-  return useMemo(() => ({ count, increment }), [count]);
-});
+function Count() {
+  const count = useCount();
+  return <span>{count}</span>;
+}
 ```
 
 ## Contributing
@@ -173,7 +222,7 @@ If you find a bug, please [create an issue](https://github.com/diegohaz/constate
 
 If you're a beginner, it'll be a pleasure to help you contribute. You can start by reading [the beginner's guide to contributing to a GitHub project](https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/).
 
-When working on this codebase, please use `yarn`. Run `yarn examples:start` to run examples.
+When working on this codebase, please use `yarn`. Run `yarn examples` to run examples.
 
 ## License
 
