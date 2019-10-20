@@ -58,41 +58,54 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
   useContext.Context = Context;
   useContext.Provider = Provider;
 
+  const tuple = [] as any[];
+
   if (!splitValues.length) {
     // const [Provider, useCounterContext] = constate(...);
-    useContext[0] = Provider;
-    useContext[1] = createUseContext(Context);
-    return useContext;
+    tuple.push(Provider, createUseContext(Context));
+  } else {
+    const contexts = [] as Array<React.Context<any>>;
+
+    const SplitProvider: React.FunctionComponent<P> = props => {
+      const value = useValue(props);
+      let children = props.children as React.ReactElement;
+
+      for (let i = 0; i < contexts.length; i += 1) {
+        const context = contexts[i];
+        // splitValue may be a hook, but it won't change between re-renders
+        const splitValue = splitValues[i];
+        children = (
+          <context.Provider value={splitValue(value)}>
+            {children}
+          </context.Provider>
+        );
+      }
+
+      return children;
+    };
+
+    if (useValue.name) {
+      SplitProvider.displayName = `${useValue.name}.Provider`;
+    }
+
+    // const [Provider, useCount, useIncrement] = constate(...);
+    tuple.push(SplitProvider);
+
+    for (let i = 0; i < splitValues.length; i += 1) {
+      const context = React.createContext(NO_PROVIDER);
+      contexts.push(context);
+      tuple.push(createUseContext(context));
+    }
   }
 
-  const contexts = [] as Array<React.Context<any>>;
-
-  const SplitProvider: React.FunctionComponent<P> = props => {
-    const value = useValue(props);
-    return contexts.reduceRight(
-      (children, context, i) => (
-        // splitValues[i] may be a custom hook, but it won't change between
-        // re-renders
-        <context.Provider value={splitValues[i](value)}>
-          {children}
-        </context.Provider>
-      ),
-      props.children as React.ReactElement
-    );
-  };
-
-  if (useValue.name) {
-    SplitProvider.displayName = `${useValue.name}.Provider`;
+  for (let i = 0; i < tuple.length; i += 1) {
+    useContext[i] = tuple[i];
   }
 
-  // const [Provider, useCount, useIncrement] = constate(...);
-  useContext[0] = SplitProvider;
-
-  splitValues.forEach((_, i) => {
-    const context = React.createContext(NO_PROVIDER);
-    contexts.push(context);
-    useContext[i + 1] = createUseContext(context);
-  });
+  if (typeof Symbol === "function" && Symbol.iterator) {
+    useContext[Symbol.iterator] = /* istanbul ignore next */ () =>
+      tuple[Symbol.iterator]();
+  }
 
   return useContext;
 }
