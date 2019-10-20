@@ -5,7 +5,8 @@ import constate from "../src";
 function useCounter({ initialCount = 0 } = {}) {
   const [count, setCount] = React.useState(initialCount);
   const increment = React.useCallback(() => setCount(c => c + 1), []);
-  return { count, increment };
+  const decrement = () => setCount(count - 1);
+  return { count, increment, decrement };
 }
 
 test("as object", () => {
@@ -28,6 +29,8 @@ test("as object", () => {
   expect(getByText("0")).toBeDefined();
   fireEvent.click(getByText("Increment"));
   expect(getByText("1")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("2")).toBeDefined();
 });
 
 test("as hook", () => {
@@ -50,6 +53,8 @@ test("as hook", () => {
   expect(getByText("10")).toBeDefined();
   fireEvent.click(getByText("Increment"));
   expect(getByText("11")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("12")).toBeDefined();
 });
 
 test("as hook with single split", () => {
@@ -72,6 +77,8 @@ test("as hook with single split", () => {
   expect(getByText("0")).toBeDefined();
   fireEvent.click(getByText("Increment"));
   expect(getByText("1")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("2")).toBeDefined();
 });
 
 test("as hook with multiple split", () => {
@@ -98,6 +105,8 @@ test("as hook with multiple split", () => {
   expect(getByText("0")).toBeDefined();
   fireEvent.click(getByText("Increment"));
   expect(getByText("1")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("2")).toBeDefined();
 });
 
 test("as tuple", () => {
@@ -120,6 +129,8 @@ test("as tuple", () => {
   expect(getByText("0")).toBeDefined();
   fireEvent.click(getByText("Increment"));
   expect(getByText("1")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("2")).toBeDefined();
 });
 
 test("as tuple with single split", () => {
@@ -164,6 +175,36 @@ test("as tuple with multiple split", () => {
   expect(getByText("10")).toBeDefined();
   fireEvent.click(getByText("Increment"));
   expect(getByText("11")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("12")).toBeDefined();
+});
+
+test("as tuple with multiple split using hooks inside splitValue", () => {
+  const [CounterProvider, useCount, useDecrement] = constate(
+    useCounter,
+    value => value.count,
+    value => React.useCallback(value.decrement, [value.count])
+  );
+  const Decrement = () => {
+    const decrement = useDecrement();
+    return <button onClick={decrement}>Decrement</button>;
+  };
+  const Count = () => {
+    const count = useCount();
+    return <div>{count}</div>;
+  };
+  const App = () => (
+    <CounterProvider initialCount={10}>
+      <Decrement />
+      <Count />
+    </CounterProvider>
+  );
+  const { getByText } = render(<App />);
+  expect(getByText("10")).toBeDefined();
+  fireEvent.click(getByText("Decrement"));
+  expect(getByText("9")).toBeDefined();
+  fireEvent.click(getByText("Decrement"));
+  expect(getByText("8")).toBeDefined();
 });
 
 test("createMemoDeps", () => {
@@ -186,6 +227,8 @@ test("createMemoDeps", () => {
   expect(getByText("0")).toBeDefined();
   fireEvent.click(getByText("Increment"));
   expect(getByText("1")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("2")).toBeDefined();
 });
 
 test("empty createMemoDeps", () => {

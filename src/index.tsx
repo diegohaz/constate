@@ -71,6 +71,8 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
     const value = useValue(props);
     return contexts.reduceRight(
       (children, context, i) => (
+        // splitValues[i] may be a custom hook, but it won't change between
+        // re-renders
         <context.Provider value={splitValues[i](value)}>
           {children}
         </context.Provider>
