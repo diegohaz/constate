@@ -52,13 +52,13 @@ const [CounterProvider, useCounterContext] = constate(useCounter);
 
 function Button() {
   // 3️⃣ Use context instead of custom hook
-  const { increment } = useCounterContext()
+  const { increment } = useCounterContext();
   return <button onClick={increment}>+</button>;
 }
 
 function Count() {
   // 4️⃣ Use context in other components
-  const { count } = useCounterContext()
+  const { count } = useCounterContext();
   return <span>{count}</span>;
 }
 
