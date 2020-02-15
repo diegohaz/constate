@@ -207,52 +207,6 @@ test("as tuple with multiple split using hooks inside splitValue", () => {
   expect(getByText("8")).toBeDefined();
 });
 
-test("createMemoDeps", () => {
-  const useCounterContext = constate(useCounter, value => [value.count]);
-  const Increment = () => {
-    const { increment } = useCounterContext();
-    return <button onClick={increment}>Increment</button>;
-  };
-  const Count = () => {
-    const { count } = useCounterContext();
-    return <div>{count}</div>;
-  };
-  const App = () => (
-    <useCounterContext.Provider>
-      <Increment />
-      <Count />
-    </useCounterContext.Provider>
-  );
-  const { getByText } = render(<App />);
-  expect(getByText("0")).toBeDefined();
-  fireEvent.click(getByText("Increment"));
-  expect(getByText("1")).toBeDefined();
-  fireEvent.click(getByText("Increment"));
-  expect(getByText("2")).toBeDefined();
-});
-
-test("empty createMemoDeps", () => {
-  const useCounterContext = constate(useCounter, () => []);
-  const Increment = () => {
-    const { increment } = useCounterContext();
-    return <button onClick={increment}>Increment</button>;
-  };
-  const Count = () => {
-    const { count } = useCounterContext();
-    return <div>{count}</div>;
-  };
-  const App = () => (
-    <useCounterContext.Provider>
-      <Increment />
-      <Count />
-    </useCounterContext.Provider>
-  );
-  const { getByText } = render(<App />);
-  expect(getByText("0")).toBeDefined();
-  fireEvent.click(getByText("Increment"));
-  expect(getByText("0")).toBeDefined();
-});
-
 test("without provider", () => {
   const [, useCount] = constate(useCounter);
   const Count = () => {
