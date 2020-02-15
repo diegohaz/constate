@@ -28,6 +28,7 @@ module.exports = {
     "react/destructuring-assignment": "off",
     "import/no-extraneous-dependencies": "off",
     "import/prefer-default-export": "off",
+    "import/extensions": "off",
     "jsx-a11y/no-autofocus": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "jsx-a11y/label-has-for": "off",
@@ -37,11 +38,6 @@ module.exports = {
     {
       files: ["**/*.ts", "**/*.tsx"],
       parser: "@typescript-eslint/parser",
-      parserOptions: {
-        project: "./tsconfig.json",
-        // TODO: Temporary fix https://github.com/typescript-eslint/typescript-eslint/issues/890
-        createDefaultProgram: true
-      },
       plugins: ["@typescript-eslint"],
       rules: {
         "no-undef": "off",
