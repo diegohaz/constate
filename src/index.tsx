@@ -22,7 +22,7 @@ function warnAboutObjectUsage() {
     console.warn(
       "[constate] Getting { Context, Provider } from constate is deprecated. " +
         "Please, use the tuple format instead. " +
-        "See instructions on https://github.com/diegohaz/constate/pull/100"
+        "See instructions on https://github.com/diegohaz/constate/pull/101"
     );
   }
 }
@@ -50,7 +50,7 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
       console.warn(
         "[constate] Using the return value of constate as a hook is deprecated. " +
           "Please, use the tuple format instead. " +
-          "See instructions on https://github.com/diegohaz/constate/pull/100"
+          "See instructions on https://github.com/diegohaz/constate/pull/101"
       );
     }
     return createUseContext(Context)();
