@@ -24,28 +24,7 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
 
   const Provider: React.FunctionComponent<P> = props => {
     const value = useValue(props);
-    const [createMemoDeps] = splitValues;
-    const deps = createMemoDeps && createMemoDeps(value);
-
-    if (isDev && Array.isArray(deps)) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        "[constate] Passing `createMemoDeps` as the second argument is deprecated.",
-        "Please, use `React.useMemo` in your custom hook instead.",
-        "See https://github.com/diegohaz/constate/issues/98"
-      );
-    }
-
-    // deps won't change between renders
-    const memoizedValue = Array.isArray(deps)
-      ? React.useMemo(() => value, deps)
-      : value;
-
-    return (
-      <Context.Provider value={memoizedValue}>
-        {props.children}
-      </Context.Provider>
-    );
+    return <Context.Provider value={value}>{props.children}</Context.Provider>;
   };
 
   if (isDev && useValue.name) {
