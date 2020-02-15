@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/diegohaz/constate/compare/v1.3.2...v2.0.0) (2020-02-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* Support for the `createMemoDeps` parameter has been dropped.
+
+  **Before**:
+  ```jsx
+  const useCounterContext = createUseContext(useCounter, value => [value.count]);
+  ```
+
+  **After**:
+  ```jsx
+  const useCounterContext = createUseContext(() => {
+    const value = useCounter();
+    return useMemo(() => value, [value.count]);
+  });
+  ```
+
+### Features
+
+* Deprecate old function/object API ([#101](https://github.com/diegohaz/constate/issues/101)) ([c102a31](https://github.com/diegohaz/constate/commit/c102a31d00b23026256f09bbede11488e04f6dc2))
+* Remove deprecated `createMemoDeps` parameter ([#100](https://github.com/diegohaz/constate/issues/100)) ([553405d](https://github.com/diegohaz/constate/commit/553405df07144cde2009a9e2590012cd1fee548f))
+
 ### [1.3.2](https://github.com/diegohaz/constate/compare/v1.3.1...v1.3.2) (2019-10-20)
 
 
