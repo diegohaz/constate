@@ -16,6 +16,17 @@ function createUseContext(context: React.Context<any>): any {
   };
 }
 
+function warnAboutObjectUsage() {
+  if (isDev) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "[constate] Getting { Context, Provider } from constate is deprecated. " +
+        "Please, use the tuple format instead. " +
+        "See instructions on https://github.com/diegohaz/constate/pull/101"
+    );
+  }
+}
+
 function constate<P, V, S extends Array<SplitValueFunction<V>>>(
   useValue: (props: P) => V,
   ...splitValues: S
@@ -33,11 +44,33 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
   }
 
   // const useCounterContext = constate(...)
-  const useContext = createUseContext(Context);
+  const useContext: any = () => {
+    if (isDev) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        "[constate] Using the return value of constate as a hook is deprecated. " +
+          "Please, use the tuple format instead. " +
+          "See instructions on https://github.com/diegohaz/constate/pull/101"
+      );
+    }
+    return createUseContext(Context)();
+  };
 
   // const { Context, Provider } = constate(...)
-  useContext.Context = Context;
-  useContext.Provider = Provider;
+  Object.defineProperties(useContext, {
+    Context: {
+      get() {
+        warnAboutObjectUsage();
+        return Context;
+      }
+    },
+    Provider: {
+      get() {
+        warnAboutObjectUsage();
+        return Provider;
+      }
+    }
+  });
 
   const tuple = [] as any[];
 
