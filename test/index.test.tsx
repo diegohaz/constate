@@ -144,15 +144,14 @@ test("without provider", () => {
   jest.spyOn(console, "warn").mockImplementation(() => {});
   const [, useCount] = constate(useCounter);
   const Count = () => {
-    const count = useCount();
-    return <div>{count}</div>;
+    useCount();
+    return null;
   };
   const App = () => <Count />;
-  const { getByText } = render(<App />);
-  expect(getByText("_NP_")).toBeDefined();
+  render(<App />);
   // eslint-disable-next-line no-console
   expect(console.warn).toHaveBeenCalledWith(
-    "Component must be wrapped within Provider."
+    "Component must be wrapped with Provider."
   );
 });
 

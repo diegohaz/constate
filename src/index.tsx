@@ -30,14 +30,14 @@ type ConstateTuple<Props, Value, Selectors extends Selector<Value>[]> = [
 
 const isDev = process.env.NODE_ENV !== "production";
 
-const NO_PROVIDER = "_NP_" as any;
+const NO_PROVIDER = {};
 
 function createUseContext(context: React.Context<any>): any {
   return () => {
     const value = React.useContext(context);
     if (isDev && value === NO_PROVIDER) {
       // eslint-disable-next-line no-console
-      console.warn("Component must be wrapped within Provider.");
+      console.warn("Component must be wrapped with Provider.");
     }
     return value;
   };
