@@ -14,8 +14,8 @@ const createCommonPlugins = () => [
   babel({
     extensions,
     babelHelpers: "bundled",
-    exclude: "node_modules/**"
-  })
+    exclude: "node_modules/**",
+  }),
 ];
 
 const main = {
@@ -24,15 +24,15 @@ const main = {
     {
       file: pkg.main,
       format: "cjs",
-      exports: "named"
+      exports: "named",
     },
     {
       file: pkg.module,
-      format: "es"
-    }
+      format: "es",
+    },
   ],
   external: allExternal,
-  plugins: [...createCommonPlugins(), nodeResolve({ extensions })]
+  plugins: [...createCommonPlugins(), nodeResolve({ extensions })],
 };
 
 const unpkg = {
@@ -43,8 +43,8 @@ const unpkg = {
     format: "umd",
     exports: "named",
     globals: {
-      react: "React"
-    }
+      react: "React",
+    },
   },
   external,
   plugins: [
@@ -52,16 +52,16 @@ const unpkg = {
     ignore(["stream"]),
     terser(),
     commonjs({
-      include: /node_modules/
+      include: /node_modules/,
     }),
     replace({
-      "process.env.NODE_ENV": JSON.stringify("production")
+      "process.env.NODE_ENV": JSON.stringify("production"),
     }),
     nodeResolve({
       extensions,
-      preferBuiltins: false
-    })
-  ]
+      preferBuiltins: false,
+    }),
+  ],
 };
 
 export default [main, unpkg];

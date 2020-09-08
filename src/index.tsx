@@ -33,7 +33,7 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
 ): ContextHookReturn<P, V, S> {
   const Context = React.createContext(NO_PROVIDER as V);
 
-  const Provider: React.FunctionComponent<P> = props => {
+  const Provider: React.FunctionComponent<P> = (props) => {
     const value = useValue(props);
     return <Context.Provider value={value}>{props.children}</Context.Provider>;
   };
@@ -62,14 +62,14 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
       get() {
         warnAboutObjectUsage();
         return Context;
-      }
+      },
     },
     Provider: {
       get() {
         warnAboutObjectUsage();
         return Provider;
-      }
-    }
+      },
+    },
   });
 
   const tuple = [] as any[];
@@ -80,7 +80,7 @@ function constate<P, V, S extends Array<SplitValueFunction<V>>>(
   } else {
     const contexts = [] as Array<React.Context<any>>;
 
-    const SplitProvider: React.FunctionComponent<P> = props => {
+    const SplitProvider: React.FunctionComponent<P> = (props) => {
       const value = useValue(props);
       let children = props.children as React.ReactElement;
 

@@ -3,14 +3,14 @@ module.exports = {
   extends: ["airbnb", "prettier/react", "plugin:prettier/recommended"],
   env: {
     jest: true,
-    browser: true
+    browser: true,
   },
   settings: {
     "import/resolver": {
       node: {
-        extensions: [".js", ".jsx", ".ts", ".tsx"]
-      }
-    }
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
+      },
+    },
   },
   rules: {
     camelcase: "off",
@@ -32,7 +32,7 @@ module.exports = {
     "jsx-a11y/no-autofocus": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "jsx-a11y/label-has-for": "off",
-    "jsx-a11y/label-has-associated-control": "off"
+    "jsx-a11y/label-has-associated-control": "off",
   },
   overrides: [
     {
@@ -43,8 +43,8 @@ module.exports = {
         "no-undef": "off",
         "no-unused-vars": "off",
         "no-restricted-globals": "off",
-        "no-use-before-define": "off"
-      }
-    }
-  ]
+        "no-use-before-define": "off",
+      },
+    },
+  ],
 };

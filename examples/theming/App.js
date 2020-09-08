@@ -3,8 +3,8 @@ import { GithubPicker } from "react-color";
 import constate from "constate";
 
 const [ThemeProvider, useThemeContext, useThemeColor] = constate(
-  props => useState(props.initialColor),
-  value => value,
+  (props) => useState(props.initialColor),
+  (value) => value,
   ([color]) => color
 );
 const [PickerVisibilityProvider, usePickerVisibilityContext] = constate(() =>
@@ -19,7 +19,7 @@ function Picker() {
       style={{ position: "absolute" }}
       triangle="hide"
       color={color}
-      onChange={c => {
+      onChange={(c) => {
         setColor(c.hex);
         setVisible(false);
       }}

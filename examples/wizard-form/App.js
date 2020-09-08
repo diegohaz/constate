@@ -4,8 +4,8 @@ import constate from "constate";
 const [StepProvider, useStepContext] = constate(useStep);
 const [FormProvider, useFormContext, useFormValues] = constate(
   useFormState,
-  value => value,
-  value => value.values
+  (value) => value,
+  (value) => value.values
 );
 
 function useStep({ initialStep = 0 } = {}) {
@@ -20,12 +20,12 @@ function useFormState({ initialValues = {} } = {}) {
   return {
     values,
     register: (name, initialValue) =>
-      setValues(prevValues => ({
+      setValues((prevValues) => ({
         ...prevValues,
-        [name]: prevValues[name] || initialValue
+        [name]: prevValues[name] || initialValue,
       })),
     update: (name, value) =>
-      setValues(prevValues => ({ ...prevValues, [name]: value }))
+      setValues((prevValues) => ({ ...prevValues, [name]: value })),
   };
 }
 
@@ -33,8 +33,8 @@ function useFormInput({ register, values, update, name, initialValue = "" }) {
   useEffect(() => register(name, initialValue), []);
   return {
     name,
-    onChange: e => update(name, e.target.value),
-    value: values[name] || initialValue
+    onChange: (e) => update(name, e.target.value),
+    value: values[name] || initialValue,
   };
 }
 
@@ -43,7 +43,7 @@ function AgeForm({ onSubmit }) {
   const age = useFormInput({ name: "age", ...state });
   return (
     <form
-      onSubmit={e => {
+      onSubmit={(e) => {
         e.preventDefault();
         onSubmit(state.values);
       }}
@@ -60,7 +60,7 @@ function NameEmailForm({ onSubmit, onBack }) {
   const email = useFormInput({ name: "email", ...state });
   return (
     <form
-      onSubmit={e => {
+      onSubmit={(e) => {
         e.preventDefault();
         onSubmit(state.values);
       }}
@@ -86,9 +86,9 @@ function Wizard() {
   const isLastStep = step === steps.length - 1;
   const props = {
     onSubmit: isLastStep
-      ? values => alert(JSON.stringify(values, null, 2)) // eslint-disable-line no-alert
+      ? (values) => alert(JSON.stringify(values, null, 2)) // eslint-disable-line no-alert
       : next,
-    onBack: previous
+    onBack: previous,
   };
   return React.createElement(steps[step], props);
 }

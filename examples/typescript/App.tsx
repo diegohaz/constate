@@ -4,14 +4,14 @@ import constate from "constate";
 
 function useCounter({ initialCount = 0 } = {}) {
   const [count, setCount] = React.useState(initialCount);
-  const increment = React.useCallback(() => setCount(c => c + 1), []);
+  const increment = React.useCallback(() => setCount((c) => c + 1), []);
   return { count, increment };
 }
 
 const [CounterProvider, useCount, useIncrement] = constate(
   useCounter,
-  value => value.count,
-  value => value.increment
+  (value) => value.count,
+  (value) => value.increment
 );
 
 function IncrementButton() {

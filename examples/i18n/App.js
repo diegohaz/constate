@@ -3,11 +3,11 @@ import constate from "constate";
 
 const translations = {
   en: {
-    selectLabel: "Select language"
+    selectLabel: "Select language",
   },
   pt: {
-    selectLabel: "Selecione o idioma"
-  }
+    selectLabel: "Selecione o idioma",
+  },
 };
 
 function useI18n() {
@@ -26,8 +26,8 @@ function useTranslation(key) {
 function Select(props) {
   const { lang, locales, setLang } = useI18NContext();
   return (
-    <select {...props} onChange={e => setLang(e.target.value)} value={lang}>
-      {locales.map(locale => (
+    <select {...props} onChange={(e) => setLang(e.target.value)} value={lang}>
+      {locales.map((locale) => (
         <option key={locale}>{locale}</option>
       ))}
     </select>

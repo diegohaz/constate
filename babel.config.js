@@ -6,12 +6,12 @@ module.exports = {
         modules: process.env.NODE_ENV === "test" ? "commonjs" : false,
         loose: true,
         targets: {
-          browsers: "defaults"
-        }
-      }
+          browsers: "defaults",
+        },
+      },
     ],
     "@babel/preset-typescript",
-    "@babel/preset-react"
+    "@babel/preset-react",
   ],
-  plugins: ["@babel/plugin-proposal-object-rest-spread"]
+  plugins: ["@babel/plugin-proposal-object-rest-spread"],
 };

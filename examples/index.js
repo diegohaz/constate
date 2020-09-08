@@ -12,13 +12,13 @@ const paths = {
   i18n: I18n,
   theming: Theming,
   typescript: TypeScript,
-  "wizard-form": WizardForm
+  "wizard-form": WizardForm,
 };
 
 const App = () => (
   <div style={{ display: "flex" }}>
     <ul style={{ flex: 0, whiteSpace: "nowrap" }}>
-      {Object.keys(paths).map(path => (
+      {Object.keys(paths).map((path) => (
         <li key={path}>
           <Link to={path}>{path}</Link>
         </li>

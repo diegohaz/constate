@@ -4,7 +4,7 @@ import constate from "../src";
 
 function useCounter({ initialCount = 0 } = {}) {
   const [count, setCount] = React.useState(initialCount);
-  const increment = React.useCallback(() => setCount(c => c + 1), []);
+  const increment = React.useCallback(() => setCount((c) => c + 1), []);
   const decrement = () => setCount(count - 1);
   return { count, increment, decrement };
 }
@@ -58,7 +58,7 @@ test("as hook", () => {
 });
 
 test("as hook with single split", () => {
-  const useCounterContext = constate(useCounter, value => value.count);
+  const useCounterContext = constate(useCounter, (value) => value.count);
   const Increment = () => {
     const { increment } = useCounterContext();
     return <button onClick={increment}>Increment</button>;
@@ -84,8 +84,8 @@ test("as hook with single split", () => {
 test("as hook with multiple split", () => {
   const useCounterContext = constate(
     useCounter,
-    value => value.count,
-    value => value.increment
+    (value) => value.count,
+    (value) => value.increment
   );
   const Increment = () => {
     const { increment } = useCounterContext();
@@ -136,7 +136,7 @@ test("as tuple", () => {
 test("as tuple with single split", () => {
   const [CounterProvider, useCount] = constate(
     useCounter,
-    value => value.count
+    (value) => value.count
   );
   const Count = () => {
     const count = useCount();
@@ -154,8 +154,8 @@ test("as tuple with single split", () => {
 test("as tuple with multiple split", () => {
   const [CounterProvider, useCount, useIncrement] = constate(
     useCounter,
-    value => value.count,
-    value => value.increment
+    (value) => value.count,
+    (value) => value.increment
   );
   const Increment = () => {
     const increment = useIncrement();
@@ -182,8 +182,8 @@ test("as tuple with multiple split", () => {
 test("as tuple with multiple split using hooks inside splitValue", () => {
   const [CounterProvider, useCount, useDecrement] = constate(
     useCounter,
-    value => value.count,
-    value => React.useCallback(value.decrement, [value.count])
+    (value) => value.count,
+    (value) => React.useCallback(value.decrement, [value.count])
   );
   const Decrement = () => {
     const decrement = useDecrement();
@@ -238,8 +238,8 @@ test("displayName with named hook as tuple", () => {
 test("displayName with named hook as multiple tuples", () => {
   const [Provider] = constate(
     useCounter,
-    value => value.count,
-    value => value.increment
+    (value) => value.count,
+    (value) => value.increment
   );
   expect(Provider.displayName).toBe("useCounter.Provider");
 });
