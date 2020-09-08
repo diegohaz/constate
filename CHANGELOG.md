@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/diegohaz/constate/compare/v2.0.0...v3.0.0) (2020-09-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* Types now depend on TypeScript v4.0.
+* The deprecated function/object API has been removed.
+
+  **Before**:
+  ```jsx
+  import createUseContext from "constate";
+  const useCounterContext = createUseContext(useCounter);
+  <useCounterContext.Provider>
+    ...
+  </useCounterContext.Provider>
+  ```
+
+  **After**:
+  ```jsx
+  import constate from "constate";
+  const [CounterProvider, useCounterContext] = constate(useCounter);
+  <CounterProvider>
+    ...
+  </CounterProvider>
+  ```
+
+### Features
+
+* Upgrade to TypeScript 4 and remove deprecated API ([#118](https://github.com/diegohaz/constate/issues/118)) ([19e6b6a](https://github.com/diegohaz/constate/commit/19e6b6a0645b61e6163be5ad80a789cb3aa2a40d)), closes [#109](https://github.com/diegohaz/constate/issues/109) [#117](https://github.com/diegohaz/constate/issues/117)
+
 ## [2.0.0](https://github.com/diegohaz/constate/compare/v1.3.2...v2.0.0) (2020-02-15)
 
 
