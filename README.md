@@ -137,9 +137,9 @@ yarn add constate
 
 ## API
 
-### `constate(useValue[, ...splitValues])`
+### `constate(useValue[, ...selectors])`
 
-Constate exports a single factory method. As parameters, it receives [`useValue`](#usevalue) and multiple optional [`splitValue`](#splitvalues) functions. It returns a tuple of `[Provider, ...contextHooks]`.
+Constate exports a single factory method. As parameters, it receives [`useValue`](#usevalue) and optional [`selector`](#selectors) functions. It returns a tuple of `[Provider, ...hooks]`.
 
 #### `useValue`
 
@@ -181,11 +181,11 @@ function Count() {
 }
 ```
 
-#### `splitValues`
+#### `selectors`
 
 Optionally, you can pass in one or more functions to split the custom hook value into multiple React Contexts. This is useful so you can avoid unnecessary re-renders on components that only depend on a part of the state.
 
-A `splitValue` function receives the value returned by [`useValue`](#usevalue) and returns the value that will be held by that particular Context.
+A `selector` function receives the value returned by [`useValue`](#usevalue) and returns the value that will be held by that particular Context.
 
 ```jsx
 import React, { useState, useCallback } from "react";
