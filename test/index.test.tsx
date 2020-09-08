@@ -9,7 +9,7 @@ function useCounter({ initialCount = 0 } = {}) {
   return { count, increment, decrement };
 }
 
-test("as tuple", () => {
+test("no selectors", () => {
   const [CounterProvider, useCounterContext] = constate(useCounter);
   const Increment = () => {
     const { increment } = useCounterContext();
@@ -33,7 +33,7 @@ test("as tuple", () => {
   expect(getByText("2")).toBeDefined();
 });
 
-test("as tuple with single split", () => {
+test("single selector", () => {
   const [CounterProvider, useCount] = constate(
     useCounter,
     (value) => value.count
@@ -51,7 +51,7 @@ test("as tuple with single split", () => {
   expect(getByText("10")).toBeDefined();
 });
 
-test("as tuple with multiple split", () => {
+test("two selectors", () => {
   const [CounterProvider, useCount, useIncrement] = constate(
     useCounter,
     (value) => value.count,
@@ -79,7 +79,7 @@ test("as tuple with multiple split", () => {
   expect(getByText("12")).toBeDefined();
 });
 
-test("as tuple with multiple split with inline useValue", () => {
+test("two selectors with inline useValue", () => {
   const [CounterProvider, useCount, useIncrement] = constate(
     ({ initialCount = 0 }: { initialCount?: number } = {}) => {
       const [count, setCount] = React.useState(initialCount);
@@ -112,7 +112,7 @@ test("as tuple with multiple split with inline useValue", () => {
   expect(getByText("12")).toBeDefined();
 });
 
-test("as tuple with multiple split using hooks inside splitValue", () => {
+test("two selectors with hooks inside them", () => {
   const [CounterProvider, useCount, useDecrement] = constate(
     useCounter,
     (value) => value.count,
@@ -156,12 +156,17 @@ test("without provider", () => {
   );
 });
 
-test("displayName with named hook as tuple", () => {
+test("displayName with named useValue with no selector", () => {
   const [Provider] = constate(useCounter);
   expect(Provider.displayName).toBe("useCounter.Provider");
 });
 
-test("displayName with named hook as multiple tuples", () => {
+test("displayName with anonymous useValue", () => {
+  const [Provider] = constate(() => {});
+  expect(Provider.displayName).toBeUndefined();
+});
+
+test("displayName with named useValue with selectors", () => {
   const [Provider] = constate(
     useCounter,
     // @ts-expect-error
