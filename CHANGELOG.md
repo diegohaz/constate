@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.1](https://github.com/diegohaz/constate/compare/v3.0.0...v3.0.1) (2020-09-08)
+
+
+### Bug Fixes
+
+* Use empty object instead of string for NO_PROVIDER value ([28dd2f8](https://github.com/diegohaz/constate/commit/28dd2f8c8c59e17bd0f025f7e5df08bf381c77c9))
+
 ## [3.0.0](https://github.com/diegohaz/constate/compare/v2.0.0...v3.0.0) (2020-09-08)
 
 
