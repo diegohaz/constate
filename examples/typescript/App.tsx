@@ -1,4 +1,5 @@
 // It just works! No need to type anything explicitly.
+// Requires TypeScript 4, which CodeSandbox may not support.
 import * as React from "react";
 import constate from "constate";
 
