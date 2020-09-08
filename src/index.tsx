@@ -1,5 +1,32 @@
 import * as React from "react";
-import { SplitValueFunction, ContextHookReturn } from "./types";
+
+// constate(useCounter, value => value.count)
+//                      ^^^^^^^^^^^^^^^^^^^^
+type Selector<Value> = (value: Value) => any;
+
+// const [Provider, useCount, useIncrement] = constate(...)
+//                  ^^^^^^^^^^^^^^^^^^^^^^
+type SelectorHooks<Selectors> = {
+  [K in keyof Selectors]: () => Selectors[K] extends (...args: any) => infer R
+    ? R
+    : never;
+};
+
+// const [Provider, useCounterContext] = constate(...)
+// or               ^^^^^^^^^^^^^^^^^
+// const [Provider, useCount, useIncrement] = constate(...)
+//                  ^^^^^^^^^^^^^^^^^^^^^^
+type Hooks<
+  Value,
+  Selectors extends Selector<Value>[]
+> = Selectors["length"] extends 0 ? [() => Value] : SelectorHooks<Selectors>;
+
+// const [Provider, useContextValue] = constate(useValue)
+//       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+type ConstateTuple<Props, Value, Selectors extends Selector<Value>[]> = [
+  React.FC<Props>,
+  ...Hooks<Value, Selectors>
+];
 
 const isDev = process.env.NODE_ENV !== "production";
 
@@ -10,118 +37,49 @@ function createUseContext(context: React.Context<any>): any {
     const value = React.useContext(context);
     if (isDev && value === NO_PROVIDER) {
       // eslint-disable-next-line no-console
-      console.warn("[constate] Component not wrapped within a Provider.");
+      console.warn("Component must be wrapped within Provider.");
     }
     return value;
   };
 }
 
-function warnAboutObjectUsage() {
-  if (isDev) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      "[constate] Getting { Context, Provider } from constate is deprecated. " +
-        "Please, use the tuple format instead. " +
-        "See instructions on https://github.com/diegohaz/constate/pull/101"
-    );
+function constate<Props, Value, Selectors extends Selector<Value>[]>(
+  useValue: (props: Props) => Value,
+  ...selectors: Selectors
+): ConstateTuple<Props, Value, Selectors> {
+  const contexts = [] as React.Context<any>[];
+  const hooks = ([] as unknown) as Hooks<Value, Selectors>;
+
+  const createContext = () => {
+    const context = React.createContext(NO_PROVIDER);
+    contexts.push(context);
+    hooks.push(createUseContext(context));
+  };
+
+  if (selectors.length) {
+    selectors.forEach(createContext);
+  } else {
+    createContext();
   }
-}
 
-function constate<P, V, S extends Array<SplitValueFunction<V>>>(
-  useValue: (props: P) => V,
-  ...splitValues: S
-): ContextHookReturn<P, V, S> {
-  const Context = React.createContext(NO_PROVIDER as V);
-
-  const Provider: React.FunctionComponent<P> = (props) => {
-    const value = useValue(props);
-    return <Context.Provider value={value}>{props.children}</Context.Provider>;
+  const Provider: React.FC<Props> = ({ children, ...props }) => {
+    const value = useValue(props as Props);
+    let element = children as React.ReactElement;
+    for (let i = 0; i < contexts.length; i += 1) {
+      const context = contexts[i];
+      const selector = selectors[i] || ((v) => v);
+      element = (
+        <context.Provider value={selector(value)}>{element}</context.Provider>
+      );
+    }
+    return element;
   };
 
   if (isDev && useValue.name) {
-    Context.displayName = `${useValue.name}.Context`;
     Provider.displayName = `${useValue.name}.Provider`;
   }
 
-  // const useCounterContext = constate(...)
-  const useContext: any = () => {
-    if (isDev) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        "[constate] Using the return value of constate as a hook is deprecated. " +
-          "Please, use the tuple format instead. " +
-          "See instructions on https://github.com/diegohaz/constate/pull/101"
-      );
-    }
-    return createUseContext(Context)();
-  };
-
-  // const { Context, Provider } = constate(...)
-  Object.defineProperties(useContext, {
-    Context: {
-      get() {
-        warnAboutObjectUsage();
-        return Context;
-      },
-    },
-    Provider: {
-      get() {
-        warnAboutObjectUsage();
-        return Provider;
-      },
-    },
-  });
-
-  const tuple = [] as any[];
-
-  if (!splitValues.length) {
-    // const [Provider, useCounterContext] = constate(...);
-    tuple.push(Provider, createUseContext(Context));
-  } else {
-    const contexts = [] as Array<React.Context<any>>;
-
-    const SplitProvider: React.FunctionComponent<P> = (props) => {
-      const value = useValue(props);
-      let children = props.children as React.ReactElement;
-
-      for (let i = 0; i < contexts.length; i += 1) {
-        const context = contexts[i];
-        // splitValue may be a hook, but it won't change between re-renders
-        const splitValue = splitValues[i];
-        children = (
-          <context.Provider value={splitValue(value)}>
-            {children}
-          </context.Provider>
-        );
-      }
-
-      return children;
-    };
-
-    if (isDev && useValue.name) {
-      SplitProvider.displayName = `${useValue.name}.Provider`;
-    }
-
-    // const [Provider, useCount, useIncrement] = constate(...);
-    tuple.push(SplitProvider);
-
-    for (let i = 0; i < splitValues.length; i += 1) {
-      const context = React.createContext(NO_PROVIDER);
-      contexts.push(context);
-      tuple.push(createUseContext(context));
-    }
-  }
-
-  for (let i = 0; i < tuple.length; i += 1) {
-    useContext[i] = tuple[i];
-  }
-
-  if (typeof Symbol === "function" && Symbol.iterator) {
-    useContext[Symbol.iterator] = /* istanbul ignore next */ () =>
-      tuple[Symbol.iterator]();
-  }
-
-  return useContext;
+  return [Provider, ...hooks];
 }
 
 export default constate;

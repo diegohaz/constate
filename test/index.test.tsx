@@ -9,107 +9,7 @@ function useCounter({ initialCount = 0 } = {}) {
   return { count, increment, decrement };
 }
 
-test("as object", () => {
-  const { Provider, Context } = constate(useCounter);
-  const Increment = () => {
-    const { increment } = React.useContext(Context);
-    return <button onClick={increment}>Increment</button>;
-  };
-  const Count = () => {
-    const { count } = React.useContext(Context);
-    return <div>{count}</div>;
-  };
-  const App = () => (
-    <Provider>
-      <Increment />
-      <Count />
-    </Provider>
-  );
-  const { getByText } = render(<App />);
-  expect(getByText("0")).toBeDefined();
-  fireEvent.click(getByText("Increment"));
-  expect(getByText("1")).toBeDefined();
-  fireEvent.click(getByText("Increment"));
-  expect(getByText("2")).toBeDefined();
-});
-
-test("as hook", () => {
-  const useCounterContext = constate(useCounter);
-  const Increment = () => {
-    const { increment } = useCounterContext();
-    return <button onClick={increment}>Increment</button>;
-  };
-  const Count = () => {
-    const { count } = useCounterContext();
-    return <div>{count}</div>;
-  };
-  const App = () => (
-    <useCounterContext.Provider initialCount={10}>
-      <Increment />
-      <Count />
-    </useCounterContext.Provider>
-  );
-  const { getByText } = render(<App />);
-  expect(getByText("10")).toBeDefined();
-  fireEvent.click(getByText("Increment"));
-  expect(getByText("11")).toBeDefined();
-  fireEvent.click(getByText("Increment"));
-  expect(getByText("12")).toBeDefined();
-});
-
-test("as hook with single split", () => {
-  const useCounterContext = constate(useCounter, (value) => value.count);
-  const Increment = () => {
-    const { increment } = useCounterContext();
-    return <button onClick={increment}>Increment</button>;
-  };
-  const Count = () => {
-    const { count } = useCounterContext();
-    return <div>{count}</div>;
-  };
-  const App = () => (
-    <useCounterContext.Provider>
-      <Increment />
-      <Count />
-    </useCounterContext.Provider>
-  );
-  const { getByText } = render(<App />);
-  expect(getByText("0")).toBeDefined();
-  fireEvent.click(getByText("Increment"));
-  expect(getByText("1")).toBeDefined();
-  fireEvent.click(getByText("Increment"));
-  expect(getByText("2")).toBeDefined();
-});
-
-test("as hook with multiple split", () => {
-  const useCounterContext = constate(
-    useCounter,
-    (value) => value.count,
-    (value) => value.increment
-  );
-  const Increment = () => {
-    const { increment } = useCounterContext();
-    return <button onClick={increment}>Increment</button>;
-  };
-  const Count = () => {
-    const { count } = useCounterContext();
-    return <div>{count}</div>;
-  };
-  const App = () => (
-    <useCounterContext.Provider>
-      <Increment />
-      <Count />
-    </useCounterContext.Provider>
-  );
-  const { getByText } = render(<App />);
-  expect(getByText("0")).toBeDefined();
-  fireEvent.click(getByText("Increment"));
-  expect(getByText("1")).toBeDefined();
-  fireEvent.click(getByText("Increment"));
-  expect(getByText("2")).toBeDefined();
-});
-
-test("as tuple", () => {
+test("no selectors", () => {
   const [CounterProvider, useCounterContext] = constate(useCounter);
   const Increment = () => {
     const { increment } = useCounterContext();
@@ -133,7 +33,7 @@ test("as tuple", () => {
   expect(getByText("2")).toBeDefined();
 });
 
-test("as tuple with single split", () => {
+test("single selector", () => {
   const [CounterProvider, useCount] = constate(
     useCounter,
     (value) => value.count
@@ -151,7 +51,7 @@ test("as tuple with single split", () => {
   expect(getByText("10")).toBeDefined();
 });
 
-test("as tuple with multiple split", () => {
+test("two selectors", () => {
   const [CounterProvider, useCount, useIncrement] = constate(
     useCounter,
     (value) => value.count,
@@ -179,7 +79,40 @@ test("as tuple with multiple split", () => {
   expect(getByText("12")).toBeDefined();
 });
 
-test("as tuple with multiple split using hooks inside splitValue", () => {
+test("two selectors with inline useValue", () => {
+  const [CounterProvider, useCount, useIncrement] = constate(
+    ({ initialCount = 0 }: { initialCount?: number } = {}) => {
+      const [count, setCount] = React.useState(initialCount);
+      const increment = React.useCallback(() => setCount((c) => c + 1), []);
+      const decrement = () => setCount(count - 1);
+      return { count, increment, decrement };
+    },
+    (value) => value.count,
+    (value) => value.increment
+  );
+  const Increment = () => {
+    const increment = useIncrement();
+    return <button onClick={increment}>Increment</button>;
+  };
+  const Count = () => {
+    const count = useCount();
+    return <div>{count}</div>;
+  };
+  const App = () => (
+    <CounterProvider initialCount={10}>
+      <Increment />
+      <Count />
+    </CounterProvider>
+  );
+  const { getByText } = render(<App />);
+  expect(getByText("10")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("11")).toBeDefined();
+  fireEvent.click(getByText("Increment"));
+  expect(getByText("12")).toBeDefined();
+});
+
+test("two selectors with hooks inside them", () => {
   const [CounterProvider, useCount, useDecrement] = constate(
     useCounter,
     (value) => value.count,
@@ -208,6 +141,7 @@ test("as tuple with multiple split using hooks inside splitValue", () => {
 });
 
 test("without provider", () => {
+  jest.spyOn(console, "warn").mockImplementation(() => {});
   const [, useCount] = constate(useCounter);
   const Count = () => {
     const count = useCount();
@@ -216,29 +150,28 @@ test("without provider", () => {
   const App = () => <Count />;
   const { getByText } = render(<App />);
   expect(getByText("_NP_")).toBeDefined();
+  // eslint-disable-next-line no-console
+  expect(console.warn).toHaveBeenCalledWith(
+    "Component must be wrapped within Provider."
+  );
 });
 
-test("displayName with named hook", () => {
-  const { Provider, Context } = constate(useCounter);
-  expect(Provider.displayName).toBe("useCounter.Provider");
-  expect(Context.displayName).toBe("useCounter.Context");
-});
-
-test("displayName with anonymous hook", () => {
-  const { Provider, Context } = constate(() => {});
-  expect(Provider.displayName).toBeUndefined();
-  expect(Context.displayName).toBeUndefined();
-});
-
-test("displayName with named hook as tuple", () => {
+test("displayName with named useValue with no selector", () => {
   const [Provider] = constate(useCounter);
   expect(Provider.displayName).toBe("useCounter.Provider");
 });
 
-test("displayName with named hook as multiple tuples", () => {
+test("displayName with anonymous useValue", () => {
+  const [Provider] = constate(() => {});
+  expect(Provider.displayName).toBeUndefined();
+});
+
+test("displayName with named useValue with selectors", () => {
   const [Provider] = constate(
     useCounter,
+    // @ts-expect-error
     (value) => value.count,
+    // @ts-expect-error
     (value) => value.increment
   );
   expect(Provider.displayName).toBe("useCounter.Provider");
