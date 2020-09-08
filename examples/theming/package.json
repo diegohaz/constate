@@ -16,7 +16,7 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "constate": "3.0.0",
+    "constate": "3.0.1",
     "parcel-bundler": "1.12.4",
     "react": "16.13.1",
     "react-color": "2.18.1",
