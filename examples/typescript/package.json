@@ -15,12 +15,12 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "@types/react": "16.9.19",
-    "@types/react-dom": "16.9.5",
+    "@types/react": "16.9.49",
+    "@types/react-dom": "16.9.8",
     "constate": "2.0.0",
     "parcel-bundler": "1.12.4",
-    "react": "16.12.0",
-    "react-dom": "16.12.0",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
     "tslib": "1.10.0",
     "typescript": "3.7.5"
   }
