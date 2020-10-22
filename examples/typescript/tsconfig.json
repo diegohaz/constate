@@ -1,22 +1,23 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "downlevelIteration": true,
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
     "jsx": "react",
     "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictFunctionTypes": false,
     "declaration": true,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
     "noImplicitReturns": true,
-    "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "stripInternal": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
-    "importHelpers": true,
-    "sourceMap": true,
-    "removeComments": true,
-    "stripInternal": true
+    "removeComments": true
   }
 }
