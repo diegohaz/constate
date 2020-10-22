@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/diegohaz/constate/compare/v3.0.1...v3.1.0) (2020-10-22)
+
+
+### Features
+
+* Allow React 17 as a peerDependency ([#122](https://github.com/diegohaz/constate/issues/122)) ([0f69b83](https://github.com/diegohaz/constate/commit/0f69b8336a53a6ef8797795bc618dc3b884a189c))
+
 ### [3.0.1](https://github.com/diegohaz/constate/compare/v3.0.0...v3.0.1) (2020-09-08)
 
 
