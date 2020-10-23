@@ -45,34 +45,26 @@ function createUseContext(context: React.Context<any>): any {
 
 function constate<Props, Value, Selectors extends Selector<Value>[]>(
   useValue: (props: Props) => Value,
-  ...selectors: Selectors
+  ...selectorsArg: Selectors
 ): ConstateTuple<Props, Value, Selectors> {
-  const contexts = [] as React.Context<any>[];
-  const hooks = ([] as unknown) as Hooks<Value, Selectors>;
+  const selectors: Selector<Value>[] = selectorsArg.length
+    ? selectorsArg
+    : [(value: Value) => value];
 
-  const createContext = () => {
-    const context = React.createContext(NO_PROVIDER);
-    contexts.push(context);
-    hooks.push(createUseContext(context));
-  };
+  const contexts = selectors.map(() => React.createContext(NO_PROVIDER));
 
-  if (selectors.length) {
-    selectors.forEach(createContext);
-  } else {
-    createContext();
-  }
+  const hooks = contexts.map(createUseContext) as Hooks<Value, Selectors>;
 
   const Provider: React.FC<Props> = ({ children, ...props }) => {
     const value = useValue(props as Props);
-    let element = children as React.ReactElement;
-    for (let i = 0; i < contexts.length; i += 1) {
-      const context = contexts[i];
-      const selector = selectors[i] || ((v) => v);
-      element = (
-        <context.Provider value={selector(value)}>{element}</context.Provider>
-      );
-    }
-    return element;
+    return contexts.reduce(
+      (accElement, Context, i) => (
+        <Context.Provider value={selectors[i](value)}>
+          {accElement}
+        </Context.Provider>
+      ),
+      children as React.ReactElement
+    );
   };
 
   if (isDev && useValue.name) {
