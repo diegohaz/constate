@@ -60,7 +60,7 @@ function constate<Props, Value, Selectors extends Selector<Value>[]>(
   };
 
   if (selectors.length) {
-    selectors.forEach(selector => createContext(selector.name));
+    selectors.forEach((selector) => createContext(selector.name));
   } else {
     createContext(useValue.name);
   }
@@ -79,7 +79,7 @@ function constate<Props, Value, Selectors extends Selector<Value>[]>(
   };
 
   if (isDev && useValue.name) {
-    Provider.displayName = 'Constate';
+    Provider.displayName = "Constate";
   }
 
   return [Provider, ...hooks];
