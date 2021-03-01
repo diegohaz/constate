@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.2.0](https://github.com/diegohaz/constate/compare/v3.1.0...v3.2.0) (2021-03-01)
+
+
+### Features
+
+* Show displayName for each context in React Developer Tools ([#128](https://github.com/diegohaz/constate/issues/128)) ([6c1d5e0](https://github.com/diegohaz/constate/commit/6c1d5e0f22d07c57e85c6784b00e27958596e51b))
+
 ## [3.1.0](https://github.com/diegohaz/constate/compare/v3.0.1...v3.1.0) (2020-10-22)
 
 
