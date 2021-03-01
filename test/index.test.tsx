@@ -157,7 +157,7 @@ test("without provider", () => {
 
 test("displayName with named useValue with no selector", () => {
   const [Provider] = constate(useCounter);
-  expect(Provider.displayName).toBe("useCounter.Provider");
+  expect(Provider.displayName).toBe("Constate");
 });
 
 test("displayName with anonymous useValue", () => {
@@ -173,5 +173,5 @@ test("displayName with named useValue with selectors", () => {
     // @ts-expect-error
     (value) => value.increment
   );
-  expect(Provider.displayName).toBe("useCounter.Provider");
+  expect(Provider.displayName).toBe("Constate");
 });
