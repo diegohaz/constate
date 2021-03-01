@@ -50,16 +50,19 @@ function constate<Props, Value, Selectors extends Selector<Value>[]>(
   const contexts = [] as React.Context<any>[];
   const hooks = ([] as unknown) as Hooks<Value, Selectors>;
 
-  const createContext = () => {
+  const createContext = (displayName: string) => {
     const context = React.createContext(NO_PROVIDER);
+    if (isDev && displayName) {
+      context.displayName = displayName;
+    }
     contexts.push(context);
     hooks.push(createUseContext(context));
   };
 
   if (selectors.length) {
-    selectors.forEach(createContext);
+    selectors.forEach((selector) => createContext(selector.name));
   } else {
-    createContext();
+    createContext(useValue.name);
   }
 
   const Provider: React.FC<Props> = ({ children, ...props }) => {
@@ -76,7 +79,7 @@ function constate<Props, Value, Selectors extends Selector<Value>[]>(
   };
 
   if (isDev && useValue.name) {
-    Provider.displayName = `${useValue.name}.Provider`;
+    Provider.displayName = "Constate";
   }
 
   return [Provider, ...hooks];
