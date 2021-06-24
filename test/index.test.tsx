@@ -151,6 +151,21 @@ test("without provider", () => {
   render(<App />);
   // eslint-disable-next-line no-console
   expect(console.warn).toHaveBeenCalledWith(
+    "The context consumer of useCounter must be wrapped with its corresponding Provider"
+  );
+});
+
+test("without the provider which is created by anonymous function", () => {
+  jest.spyOn(console, "warn").mockImplementation(() => {});
+  const [, useCount] = constate(() => useCounter());
+  const Count = () => {
+    useCount();
+    return null;
+  };
+  const App = () => <Count />;
+  render(<App />);
+  // eslint-disable-next-line no-console
+  expect(console.warn).toHaveBeenCalledWith(
     "Component must be wrapped with Provider."
   );
 });
