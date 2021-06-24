@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.3.0](https://github.com/diegohaz/constate/compare/v3.2.0...v3.3.0) (2021-06-24)
+
+
+### Features
+
+* Add debug message for no provider case ([#138](https://github.com/diegohaz/constate/issues/138)) ([dcdf1fb](https://github.com/diegohaz/constate/commit/dcdf1fb62660a530f04eea5bfff3b6f3a9a45d84))
+
 ## [3.2.0](https://github.com/diegohaz/constate/compare/v3.1.0...v3.2.0) (2021-03-01)
 
 
