@@ -36,8 +36,11 @@ function createUseContext(context: React.Context<any>): any {
   return () => {
     const value = React.useContext(context);
     if (isDev && value === NO_PROVIDER) {
+      const warnMessage = context.displayName
+        ? `The context consumer of ${context.displayName} must be wrapped with its corresponding Provider`
+        : "Component must be wrapped with Provider.";
       // eslint-disable-next-line no-console
-      console.warn("Component must be wrapped with Provider.");
+      console.warn(warnMessage);
     }
     return value;
   };
