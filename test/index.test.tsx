@@ -190,3 +190,103 @@ test("displayName with named useValue with selectors", () => {
   );
   expect(Provider.displayName).toBe("Constate");
 });
+
+describe("FromValue", () => {
+  test("no selectors", () => {
+    const [CounterProvider, useCounterContext] = constate(useCounter);
+    const Increment = () => {
+      const { increment } = useCounterContext();
+      return <button onClick={increment}>Increment</button>;
+    };
+    const Decrement = () => {
+      const { decrement } = useCounterContext();
+      return <button onClick={decrement}>Decrement</button>;
+    };
+    const Count = () => {
+      const { count } = useCounterContext();
+      return <div>{count}</div>;
+    };
+    const mockContextValue = {
+      count: 10,
+      increment: jest.fn(),
+      decrement: jest.fn(),
+    };
+    const MockApp = () => (
+      <CounterProvider.FromValue value={mockContextValue}>
+        <Increment />
+        <Decrement />
+        <Count />
+      </CounterProvider.FromValue>
+    );
+    const { getByText } = render(<MockApp />);
+    expect(getByText("10")).toBeDefined();
+
+    fireEvent.click(getByText("Increment"));
+    expect(getByText("10")).toBeDefined();
+    expect(mockContextValue.increment).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(getByText("Decrement"));
+    expect(getByText("10")).toBeDefined();
+    expect(mockContextValue.decrement).toHaveBeenCalledTimes(1);
+  });
+
+  test("single selector", () => {
+    const [CounterProvider, useCount] = constate(
+      useCounter,
+      (value) => value.count
+    );
+    const Count = () => {
+      const count = useCount();
+      return <div>{count}</div>;
+    };
+    const mockContextValue = {
+      count: 10,
+      increment: jest.fn(),
+      decrement: jest.fn(),
+    };
+    const App = () => (
+      <CounterProvider.FromValue value={mockContextValue}>
+        <Count />
+      </CounterProvider.FromValue>
+    );
+    const { getByText } = render(<App />);
+    expect(getByText("10")).toBeDefined();
+  });
+
+  test("two selectors", () => {
+    const [CounterProvider, useCount, useIncrement] = constate(
+      useCounter,
+      (value) => value.count,
+      (value) => value.increment
+    );
+    const Increment = () => {
+      const increment = useIncrement();
+      return <button onClick={increment}>Increment</button>;
+    };
+    const Count = () => {
+      const count = useCount();
+      return <div>{count}</div>;
+    };
+    const mockContextValue = {
+      count: 10,
+      increment: jest.fn(),
+      decrement: jest.fn(),
+    };
+    const MockApp = () => (
+      <CounterProvider.FromValue value={mockContextValue}>
+        <Increment />
+        <Count />
+      </CounterProvider.FromValue>
+    );
+    const { getByText } = render(<MockApp />);
+    expect(getByText("10")).toBeDefined();
+
+    fireEvent.click(getByText("Increment"));
+    expect(getByText("10")).toBeDefined();
+    expect(mockContextValue.increment).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(getByText("Increment"));
+    expect(getByText("10")).toBeDefined();
+    expect(mockContextValue.increment).toHaveBeenCalledTimes(2);
+  });
+});
