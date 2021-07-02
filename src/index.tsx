@@ -13,20 +13,29 @@ type SelectorHooks<Selectors> = {
 };
 
 // const [Provider, useCounterContext] = constate(...)
-// or               ^^^^^^^^^^^^^^^^^
+//                  ^^^^^^^^^^^^^^^^^
+type TupleWithSingleValueSelector<Props, Value> = [
+  React.FC<Props>,
+  () => Value
+];
+
 // const [Provider, useCount, useIncrement] = constate(...)
 //                  ^^^^^^^^^^^^^^^^^^^^^^
-type Hooks<
+type TupleWithMultipleSelectors<
+  Props,
   Value,
   Selectors extends Selector<Value>[]
-> = Selectors["length"] extends 0 ? [() => Value] : SelectorHooks<Selectors>;
+> = [React.FC<Props>, ...SelectorHooks<Selectors>];
 
 // const [Provider, useContextValue] = constate(useValue)
 //       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-type ConstateTuple<Props, Value, Selectors extends Selector<Value>[]> = [
-  React.FC<Props>,
-  ...Hooks<Value, Selectors>
-];
+type ConstateTuple<
+  Props,
+  Value,
+  Selectors extends Selector<Value>[]
+> = Selectors["length"] extends 0
+  ? TupleWithSingleValueSelector<Props, Value>
+  : TupleWithMultipleSelectors<Props, Value, Selectors>;
 
 const isDev = process.env.NODE_ENV !== "production";
 
@@ -51,7 +60,9 @@ function constate<Props, Value, Selectors extends Selector<Value>[]>(
   ...selectors: Selectors
 ): ConstateTuple<Props, Value, Selectors> {
   const contexts = [] as React.Context<any>[];
-  const hooks = ([] as unknown) as Hooks<Value, Selectors>;
+  const hooks = ([] as unknown) as Selectors["length"] extends 0
+    ? [() => Value]
+    : SelectorHooks<Selectors>;
 
   const createContext = (displayName: string) => {
     const context = React.createContext(NO_PROVIDER);
