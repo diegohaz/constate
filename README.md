@@ -8,7 +8,7 @@
 <a href="https://npmjs.org/package/constate"><img alt="NPM downloads" src="https://img.shields.io/npm/dm/constate.svg?style=flat-square"></a>
 <a href="https://unpkg.com/constate"><img alt="Size" src="https://img.badgesize.io/https://unpkg.com/constate?style=flat-square"></a>
 <a href="https://david-dm.org/diegohaz/constate"><img alt="Dependencies" src="https://img.shields.io/david/diegohaz/constate.svg?style=flat-square"></a>
-<a href="https://travis-ci.org/diegohaz/constate"><img alt="Build Status" src="https://img.shields.io/travis/diegohaz/constate/master.svg?style=flat-square"></a>
+<a href="https://github.com/diegohaz/constate/actions/workflows/ci.yml"><img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/workflow/status/diegohaz/constate/ci/master"></a>
 <a href="https://codecov.io/gh/diegohaz/constate/branch/master"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/diegohaz/constate/master.svg?style=flat-square"></a>
 
 Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html) and lift it up to [React Context](https://reactjs.org/docs/context.html) only when needed with minimum effort.
