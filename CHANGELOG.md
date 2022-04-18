@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.3.2](https://github.com/diegohaz/constate/compare/v3.3.1...v3.3.2) (2022-04-18)
+
+
+### Bug Fixes
+
+* Allow React 18 as a peer dependency ([6611f1c](https://github.com/diegohaz/constate/commit/6611f1c74f12281d6e7e7d0c2633f9d7178d2efb))
+
 ### [3.3.1](https://github.com/diegohaz/constate/compare/v3.3.0...v3.3.1) (2022-04-18)
 
 
