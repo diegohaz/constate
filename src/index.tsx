@@ -24,9 +24,20 @@ type Hooks<
 // const [Provider, useContextValue] = constate(useValue)
 //       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 type ConstateTuple<Props, Value, Selectors extends Selector<Value>[]> = [
-  React.FC<Props>,
+  HookedProvider<Props, Value>,
   ...Hooks<Value, Selectors>
 ];
+
+// const [Provider, useContextValue] = constate(useValue)
+//        ^^^^^^^^
+type HookedProvider<Props, Value> = React.FC<React.PropsWithChildren<Props>> & {
+  FromValue: ValueProvider<Value>;
+};
+
+// const [Provider, useContextValue] = constate(useValue)
+// <Provider.FromValue value={value}> ... </Provider.FromValue>
+//           ^^^^^^^^^
+type ValueProvider<Value> = React.FC<React.PropsWithChildren<{ value: Value }>>;
 
 const isDev = process.env.NODE_ENV !== "production";
 
@@ -68,8 +79,7 @@ function constate<Props, Value, Selectors extends Selector<Value>[]>(
     createContext(useValue.name);
   }
 
-  const Provider: React.FC<Props> = ({ children, ...props }) => {
-    const value = useValue(props as Props);
+  const Providers: ValueProvider<Value> = ({ children, value }) => {
     let element = children as React.ReactElement;
     for (let i = 0; i < contexts.length; i += 1) {
       const context = contexts[i];
@@ -80,6 +90,11 @@ function constate<Props, Value, Selectors extends Selector<Value>[]>(
     }
     return element;
   };
+  const Provider: HookedProvider<Props, Value> = ({ children, ...props }) => {
+    const value = useValue(props as Props);
+    return Providers({ value, children });
+  };
+  Provider.FromValue = Providers;
 
   if (isDev && useValue.name) {
     Provider.displayName = "Constate";
