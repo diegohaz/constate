@@ -68,9 +68,9 @@ function constate<Props, Value, Selectors extends Selector<Value>[]>(
     createContext(useValue.name);
   }
 
-  const Provider: React.FC<React.PropsWithChildren<Props>> = ({ 
-    children, 
-    ...props 
+  const Provider: React.FC<React.PropsWithChildren<Props>> = ({
+    children,
+    ...props
   }) => {
     const value = useValue(props as Props);
     let element = children as React.ReactElement;
