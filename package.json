@@ -8,7 +8,21 @@
   "module": "dist/constate.es.js",
   "jsnext:main": "dist/constate.es.js",
   "unpkg": "dist/constate.min.js",
-  "types": "dist/ts/src",
+  "types": "dist/ts/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/ts/src/index.d.mts",
+        "default": "./dist/constate.es.js"
+      },
+      "require": {
+        "types": "./dist/ts/src/index.d.cts",
+        "default": "./dist/constate.cjs.js"
+      },
+      "default": "./dist/constate.cjs.js"
+    },
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "author": {
     "name": "Diego Haz",
@@ -28,7 +42,7 @@
     "lint": "eslint . --ext js,ts,tsx",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "build": "tsc --emitDeclarationOnly && rollup -c",
+    "build": "tsc --emitDeclarationOnly && rollup -c && node scripts/emit-cts.js",
     "prerelease": "npm run lint && npm test && npm run build",
     "release": "standard-version",
     "postpublish": "git push origin HEAD --follow-tags",

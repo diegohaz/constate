@@ -46,7 +46,7 @@ function createUseContext(context: React.Context<any>): any {
   };
 }
 
-function constate<Props, Value, Selectors extends Selector<Value>[]>(
+export function constate<Props, Value, Selectors extends Selector<Value>[]>(
   useValue: (props: Props) => Value,
   ...selectors: Selectors
 ): ConstateTuple<Props, Value, Selectors> {
