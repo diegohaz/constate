@@ -1,5 +1,5 @@
 import constate from "constate";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const [StepProvider, useStepContext] = constate(useStep);
 const [FormProvider, useFormContext, useFormValues] = constate(
@@ -84,13 +84,15 @@ function Wizard() {
   const { step, next, previous } = useStepContext();
   const steps = [AgeForm, NameEmailForm];
   const isLastStep = step === steps.length - 1;
-  const props = {
-    onSubmit: isLastStep
-      ? (values) => alert(JSON.stringify(values, null, 2)) // eslint-disable-line no-alert
-      : next,
-    onBack: previous,
-  };
-  return React.createElement(steps[step], props);
+  const Step = steps[step];
+  return (
+    <Step
+      onSubmit={
+        isLastStep ? (values) => alert(JSON.stringify(values, null, 2)) : next
+      }
+      onBack={previous}
+    />
+  );
 }
 
 function App() {
