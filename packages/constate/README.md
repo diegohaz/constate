@@ -132,6 +132,12 @@ Yarn:
 yarn add constate
 ```
 
+pnpm:
+
+```sh
+pnpm add constate
+```
+
 ## API
 
 ### `constate(useValue[, ...selectors])`
