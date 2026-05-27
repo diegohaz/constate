@@ -1,0 +1,50 @@
+{
+  "name": "constate",
+  "version": "3.3.3",
+  "description": "Yet another React state management library that lets you work with local state and scale up to global state with ease",
+  "keywords": [
+    "constate",
+    "context",
+    "hooks",
+    "react",
+    "state"
+  ],
+  "homepage": "https://github.com/diegohaz/constate",
+  "license": "MIT",
+  "author": {
+    "name": "Diego Haz",
+    "email": "hazdiego@gmail.com",
+    "url": "https://github.com/diegohaz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diegohaz/constate.git",
+    "directory": "packages/constate"
+  },
+  "funding": "https://github.com/sponsors/diegohaz",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "source": "./src/index.tsx",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rolldown -c",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@testing-library/react": "16.3.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+  }
+}

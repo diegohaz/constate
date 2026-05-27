@@ -1,8 +1,20 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "editor.formatOnSave": false,
-  "eslint.enable": true,
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "oxc.typeAware": true,
+  "editor.snippetSuggestions": "bottom",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.oxc": "explicit"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[markdown]": {
+    "editor.wordWrap": "on"
   }
 }

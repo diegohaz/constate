@@ -1,0 +1,48 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
+  "minimumReleaseAge": "3 days",
+  "semanticCommits": "disabled",
+  "packageRules": [
+    {
+      "groupName": "changesets",
+      "matchPackageNames": ["/^@changesets//"]
+    },
+    {
+      "groupName": "oxc",
+      "matchPackageNames": ["/^oxlint/", "/^oxfmt/"]
+    },
+    {
+      "groupName": "react",
+      "matchPackageNames": ["react", "react-dom", "/^@types/react/"]
+    },
+    {
+      "matchPackageNames": [
+        "pnpm",
+        "/^@types//",
+        "/^oxlint/",
+        "/^oxfmt/",
+        "/^rolldown/",
+        "/^vite/",
+        "/^vitest/",
+        "/^typescript/",
+        "jsdom"
+      ],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "matchPackageNames": ["lint-staged"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["actions/**", "github/**"],
+      "pinDigests": false
+    }
+  ]
+}

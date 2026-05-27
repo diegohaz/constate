@@ -1,0 +1,77 @@
+name: Release Preview
+
+on:
+  pull_request:
+    branches: [master]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release Preview
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Fetch base branch
+        run: git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
+
+      - uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Get changeset status
+        id: changeset-status
+        run: |
+          # Only consider changesets added since the base branch (i.e., in this PR)
+          # changeset status exits with non-zero when there are no changesets, so we ignore the exit code
+          pnpm changeset status --since=${{ github.base_ref }} --output changes.json || true
+          if [ -f changes.json ] && [ "$(jq '.releases | length' changes.json)" -gt 0 ]; then
+            echo "has-changesets=true" >> $GITHUB_OUTPUT
+          else
+            echo "has-changesets=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Compute affected packages
+        id: compute-affected-packages
+        if: steps.changeset-status.outputs.has-changesets == 'true'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('node:fs');
+            const path = require('node:path');
+            const changes = JSON.parse(fs.readFileSync('changes.json', 'utf8'));
+            const packageDirs = fs.readdirSync('packages', { withFileTypes: true })
+              .filter(d => d.isDirectory())
+              .map(d => path.join('packages', d.name));
+            const packagesMap = Object.fromEntries(packageDirs.map(dir => {
+              const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+              return [pkg.name, dir];
+            }));
+            const affectedPackages = changes.releases.map(r => packagesMap[r.name]).filter(Boolean);
+            core.setOutput('affected-packages', JSON.stringify(affectedPackages));
+
+      - name: Publish preview
+        if: steps.changeset-status.outputs.has-changesets == 'true'
+        env:
+          AFFECTED_PACKAGES: ${{ steps.compute-affected-packages.outputs.affected-packages }}
+        run: |
+          packages=$(echo $AFFECTED_PACKAGES | jq -r '.[]' | tr '\n' ' ')
+          if [ -n "$packages" ]; then
+            pnpm exec pkg-pr-new publish $packages
+          else
+            echo "No affected packages to publish"
+          fi
