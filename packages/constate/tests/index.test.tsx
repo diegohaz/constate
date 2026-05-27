@@ -187,3 +187,128 @@ test("displayName with named useValue with selectors", () => {
   );
   expect(Provider.displayName).toBe("Constate");
 });
+
+// In the Fast Refresh tests below `simulateHmrCall(fn)` and
+// `simulateHmrCallWithSelector(fn, sel)` stand in for an HMR re-evaluation:
+// they invoke `constate(...)` from a fixed source line, so the caller
+// location captured from `new Error().stack` matches between the two calls
+// (as it would when the same module is re-executed by Vite). Direct
+// `constate(useFoo)` calls in this file have distinct lines and therefore
+// distinct cache keys, which is what the "two constate calls" test asserts.
+function simulateHmrCall<Value>(useValue: () => Value) {
+  return constate(useValue);
+}
+
+function simulateHmrCallWithSelector<Value, Selected>(
+  useValue: () => Value,
+  selector: (value: Value) => Selected,
+) {
+  return constate(useValue, selector);
+}
+
+test("reuses Provider and hooks across re-evaluations (Fast Refresh)", () => {
+  function useTimer() {
+    const [count, setCount] = React.useState(0);
+    const tick = React.useCallback(() => setCount((c) => c + 1), []);
+    return { count, tick };
+  }
+  const first = simulateHmrCall(useTimer);
+
+  function useTimerReloaded() {
+    const [count, setCount] = React.useState(0);
+    const tick = React.useCallback(() => setCount((c) => c + 10), []);
+    return { count, tick };
+  }
+  Object.defineProperty(useTimerReloaded, "name", { value: "useTimer" });
+  const second = simulateHmrCall(useTimerReloaded as typeof useTimer);
+
+  expect(second[0]).toBe(first[0]);
+  expect(second[1]).toBe(first[1]);
+
+  const Tick = () => {
+    const { tick } = second[1]();
+    return <button onClick={tick}>Tick</button>;
+  };
+  const Count = () => {
+    const { count } = second[1]();
+    return <div>{count}</div>;
+  };
+  const Provider = second[0];
+  const { getByText } = render(
+    <Provider>
+      <Tick />
+      <Count />
+    </Provider>,
+  );
+  expect(getByText("0")).toBeDefined();
+  fireEvent.click(getByText("Tick"));
+  expect(getByText("10")).toBeDefined();
+});
+
+test("creates a fresh Provider when useValue hook count changes (Fast Refresh)", () => {
+  function useShape() {
+    const [count] = React.useState(0);
+    return { count };
+  }
+  const first = simulateHmrCall(useShape);
+
+  function useShapeReloaded() {
+    const [count] = React.useState(0);
+    React.useEffect(() => {}, []);
+    return { count };
+  }
+  Object.defineProperty(useShapeReloaded, "name", { value: "useShape" });
+  const second = simulateHmrCall(useShapeReloaded as typeof useShape);
+
+  expect(second[0]).not.toBe(first[0]);
+  expect(second[1]).not.toBe(first[1]);
+});
+
+test("creates a fresh Provider when selector hook count changes (Fast Refresh)", () => {
+  function useStore() {
+    const [count, setCount] = React.useState(0);
+    return { count, setCount };
+  }
+  const first = simulateHmrCallWithSelector(useStore, (value) => value.count);
+
+  function useStoreReloaded() {
+    const [count, setCount] = React.useState(0);
+    return { count, setCount };
+  }
+  Object.defineProperty(useStoreReloaded, "name", { value: "useStore" });
+  const second = simulateHmrCallWithSelector(
+    useStoreReloaded as typeof useStore,
+    (value) => React.useMemo(() => value.count, [value.count]),
+  );
+
+  expect(second[0]).not.toBe(first[0]);
+  expect(second[1]).not.toBe(first[1]);
+});
+
+test("two constate calls on different lines in the same file are independent", () => {
+  function useIndependent() {
+    const [count] = React.useState(0);
+    return { count };
+  }
+  const a = constate(useIndependent);
+  const b = constate(useIndependent);
+  expect(a[0]).not.toBe(b[0]);
+  expect(a[1]).not.toBe(b[1]);
+});
+
+test("two constate calls on the same line are independent (column-distinct cache keys)", () => {
+  function useSameLine() {
+    const [count] = React.useState(0);
+    return { count };
+  }
+  const pair = [constate(useSameLine), constate(useSameLine)];
+  expect(pair[0][0]).not.toBe(pair[1][0]);
+  expect(pair[0][1]).not.toBe(pair[1][1]);
+});
+
+test("skips the HMR cache for anonymous useValue", () => {
+  const a = simulateHmrCall(() => React.useState(0));
+  const b = simulateHmrCall(() => React.useState(0));
+  expect(a[0]).not.toBe(b[0]);
+  expect(a[1]).not.toBe(b[1]);
+});
