@@ -1,5 +1,8 @@
 {
-	"recommendations": [
-		"dbaeumer.vscode-eslint"
-	]	
+  "recommendations": [
+    "oxc.oxc-vscode",
+    "esbenp.prettier-vscode",
+    "editorconfig.editorconfig"
+  ],
+  "unwantedRecommendations": []
 }

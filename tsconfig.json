@@ -1,26 +1,11 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "dist/ts",
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "jsx": "react",
-    "strict": true,
-    "declaration": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "esModuleInterop": true,
-    "importHelpers": true,
-    "sourceMap": true,
-    "removeComments": true,
-    "stripInternal": true
+    "noEmit": true,
+    "composite": false,
+    "emitDeclarationOnly": false,
+    "lib": ["ES2023", "DOM", "DOM.Iterable"]
   },
-  "exclude": [
-    "examples",
-    "dist"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+  "references": [{ "path": "./packages/constate" }, { "path": "./examples" }]
 }

@@ -1,6 +1,49 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.tsc
+*.tsbuildinfo
+
+# Testing
+coverage/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Claude Code
+.claude/worktrees/
+.claude/scheduled_tasks.lock
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
 .DS_Store
-node_modules
-coverage
-dist
+
+# Logs
+logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Temporary files
+.tmp/
+.temp/
+*.tmp
 .cache
+
+# OS
+Thumbs.db
