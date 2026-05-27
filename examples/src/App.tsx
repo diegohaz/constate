@@ -1,9 +1,9 @@
 import { BrowserRouter, Link, Navigate, Route, Routes } from "react-router";
-import Counter from "./counter/App.jsx";
-import I18n from "./i18n/App.jsx";
-import Theming from "./theming/App.jsx";
+import Counter from "./counter/App.tsx";
+import I18n from "./i18n/App.tsx";
+import Theming from "./theming/App.tsx";
 import TypeScript from "./typescript/App.tsx";
-import WizardForm from "./wizard-form/App.jsx";
+import WizardForm from "./wizard-form/App.tsx";
 
 const examples = {
   counter: Counter,

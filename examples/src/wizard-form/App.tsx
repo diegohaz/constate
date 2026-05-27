@@ -1,6 +1,31 @@
 import constate from "constate";
 import { useEffect, useState } from "react";
 
+type FormValues = Partial<Record<string, string | number>>;
+
+function useStep({ initialStep = 0 }: { initialStep?: number } = {}) {
+  const [step, setStep] = useState(initialStep);
+  const next = () => setStep(step + 1);
+  const previous = () => setStep(step - 1);
+  return { step, next, previous };
+}
+
+function useFormState({
+  initialValues = {},
+}: { initialValues?: FormValues } = {}) {
+  const [values, setValues] = useState<FormValues>(initialValues);
+  return {
+    values,
+    register: (name: string, initialValue: string | number) =>
+      setValues((prevValues) => ({
+        ...prevValues,
+        [name]: prevValues[name] || initialValue,
+      })),
+    update: (name: string, value: string | number) =>
+      setValues((prevValues) => ({ ...prevValues, [name]: value })),
+  };
+}
+
 const [StepProvider, useStepContext] = constate(useStep);
 const [FormProvider, useFormContext, useFormValues] = constate(
   useFormState,
@@ -8,37 +33,35 @@ const [FormProvider, useFormContext, useFormValues] = constate(
   (value) => value.values,
 );
 
-function useStep({ initialStep = 0 } = {}) {
-  const [step, setStep] = useState(initialStep);
-  const next = () => setStep(step + 1);
-  const previous = () => setStep(step - 1);
-  return { step, next, previous };
-}
+type FormState = ReturnType<typeof useFormState>;
 
-function useFormState({ initialValues = {} } = {}) {
-  const [values, setValues] = useState(initialValues);
-  return {
-    values,
-    register: (name, initialValue) =>
-      setValues((prevValues) => ({
-        ...prevValues,
-        [name]: prevValues[name] || initialValue,
-      })),
-    update: (name, value) =>
-      setValues((prevValues) => ({ ...prevValues, [name]: value })),
-  };
-}
+type UseFormInputProps = FormState & {
+  name: string;
+  initialValue?: string | number;
+};
 
-function useFormInput({ register, values, update, name, initialValue = "" }) {
+function useFormInput({
+  register,
+  values,
+  update,
+  name,
+  initialValue = "",
+}: UseFormInputProps) {
   useEffect(() => register(name, initialValue), []);
   return {
     name,
-    onChange: (e) => update(name, e.target.value),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+      update(name, e.target.value),
     value: values[name] || initialValue,
   };
 }
 
-function AgeForm({ onSubmit }) {
+type StepProps = {
+  onSubmit: (values: FormValues) => void;
+  onBack?: () => void;
+};
+
+function AgeForm({ onSubmit }: StepProps) {
   const state = useFormContext();
   const age = useFormInput({ name: "age", ...state });
   return (
@@ -54,7 +77,7 @@ function AgeForm({ onSubmit }) {
   );
 }
 
-function NameEmailForm({ onSubmit, onBack }) {
+function NameEmailForm({ onSubmit, onBack }: StepProps) {
   const state = useFormContext();
   const name = useFormInput({ name: "name", ...state });
   const email = useFormInput({ name: "email", ...state });

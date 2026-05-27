@@ -20,11 +20,11 @@ Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html)
   </thead>
   <tbody>
     <tr>
-      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/counter/App.jsx">Counter</a></td>
-      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/i18n/App.jsx">I18n</a></td>
-      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/theming/App.jsx">Theming</a></td>
+      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/counter/App.tsx">Counter</a></td>
+      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/i18n/App.tsx">I18n</a></td>
+      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/theming/App.tsx">Theming</a></td>
       <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/typescript/App.tsx">TypeScript</a></td>
-      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/wizard-form/App.jsx">Wizard Form</a></td>
+      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/wizard-form/App.tsx">Wizard Form</a></td>
     </tr>
   </tbody>
 </table>
