@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/diegohaz/constate/master/logo/logo.png" alt="constate logo" width="300" />
+  <img src="https://raw.githubusercontent.com/diegohaz/constate/main/logo/logo.png" alt="constate logo" width="300" />
 </p>
 
 # Constate
 
 <a href="https://npmjs.org/package/constate"><img alt="NPM version" src="https://img.shields.io/npm/v/constate.svg?style=flat-square"></a>
 <a href="https://npmjs.org/package/constate"><img alt="NPM downloads" src="https://img.shields.io/npm/dm/constate.svg?style=flat-square"></a>
-<a href="https://github.com/diegohaz/constate/actions/workflows/ci.yml"><img alt="CI status" src="https://github.com/diegohaz/constate/actions/workflows/ci.yml/badge.svg?branch=master"></a>
+<a href="https://github.com/diegohaz/constate/actions/workflows/ci.yml"><img alt="CI status" src="https://github.com/diegohaz/constate/actions/workflows/ci.yml/badge.svg?branch=main"></a>
 
 Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html) and lift it up to [React Context](https://reactjs.org/docs/context.html) only when needed with minimum effort.
 
@@ -20,11 +20,11 @@ Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html)
   </thead>
   <tbody>
     <tr>
-      <td><a href="https://github.com/diegohaz/constate/blob/master/examples/src/counter/App.jsx">Counter</a></td>
-      <td><a href="https://github.com/diegohaz/constate/blob/master/examples/src/i18n/App.jsx">I18n</a></td>
-      <td><a href="https://github.com/diegohaz/constate/blob/master/examples/src/theming/App.jsx">Theming</a></td>
-      <td><a href="https://github.com/diegohaz/constate/blob/master/examples/src/typescript/App.tsx">TypeScript</a></td>
-      <td><a href="https://github.com/diegohaz/constate/blob/master/examples/src/wizard-form/App.jsx">Wizard Form</a></td>
+      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/counter/App.jsx">Counter</a></td>
+      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/i18n/App.jsx">I18n</a></td>
+      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/theming/App.jsx">Theming</a></td>
+      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/typescript/App.tsx">TypeScript</a></td>
+      <td><a href="https://github.com/diegohaz/constate/blob/main/examples/src/wizard-form/App.jsx">Wizard Form</a></td>
     </tr>
   </tbody>
 </table>

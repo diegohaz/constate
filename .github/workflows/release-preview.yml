@@ -2,7 +2,7 @@ name: Release Preview
 
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
