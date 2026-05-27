@@ -48,9 +48,9 @@ async function getChangelogText(changelogLines: Array<Promise<string>>) {
   const overviewLines = lines
     .filter(isOverviewLine)
     .map((line) => line.replace("### Overview\n\n", ""));
-  const nonOverviewHeadingLines = lines
-    .filter((line) => isHeadingLine(line) && !isOverviewLine(line))
-    .map((line) => line.replace("### Overview\n\n", ""));
+  const nonOverviewHeadingLines = lines.filter(
+    (line) => isHeadingLine(line) && !isOverviewLine(line),
+  );
   const headingLines = [...overviewLines, ...nonOverviewHeadingLines];
 
   const otherLines = lines.filter(isOtherLine);
