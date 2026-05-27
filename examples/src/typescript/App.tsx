@@ -1,10 +1,11 @@
-import constate from "constate";
 // It just works! No need to type anything explicitly.
-import * as React from "react";
+
+import constate from "constate";
+import { useCallback, useState } from "react";
 
 function useCounter({ initialCount = 0 } = {}) {
-  const [count, setCount] = React.useState(initialCount);
-  const increment = React.useCallback(() => setCount((c) => c + 1), []);
+  const [count, setCount] = useState(initialCount);
+  const increment = useCallback(() => setCount((c) => c + 1), []);
   return { count, increment };
 }
 
