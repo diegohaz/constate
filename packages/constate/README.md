@@ -34,7 +34,7 @@ Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html)
 ## Basic example
 
 ```jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import constate from "constate";
 
 // 1️⃣ Create a custom hook as usual
@@ -75,7 +75,7 @@ function App() {
 ## Advanced example
 
 ```jsx
-import React, { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import constate from "constate";
 
 // 1️⃣ Create a custom hook that receives props
@@ -181,7 +181,7 @@ Optionally, you can pass in one or more functions to split the custom hook value
 A `selector` function receives the value returned by [`useValue`](#usevalue) and returns the value that will be held by that particular Context.
 
 ```jsx
-import React, { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import constate from "constate";
 
 function useCounter() {
