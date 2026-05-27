@@ -11,5 +11,5 @@ export default defineConfig({
     format: "es",
     sourcemap: true,
   },
-  plugins: [dts()],
+  plugins: [dts({ sourcemap: true })],
 });
