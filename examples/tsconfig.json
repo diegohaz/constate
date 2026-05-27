@@ -2,9 +2,7 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./.tsc",
-    "jsx": "react-jsx",
-    "allowJs": true,
-    "checkJs": false
+    "jsx": "react-jsx"
   },
   "include": ["src", "vite.config.ts"]
 }

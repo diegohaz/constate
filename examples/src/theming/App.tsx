@@ -3,7 +3,7 @@ import { useState } from "react";
 import { HexColorPicker } from "react-colorful";
 
 const [ThemeProvider, useThemeContext, useThemeColor] = constate(
-  (props) => useState(props.initialColor),
+  (props: { initialColor: string }) => useState(props.initialColor),
   (value) => value,
   ([color]) => color,
 );
