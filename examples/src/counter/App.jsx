@@ -1,5 +1,5 @@
 import constate from "constate";
-import React, { useState } from "react";
+import { useState } from "react";
 
 // 1️⃣ Create a custom hook as usual
 function useCounter() {

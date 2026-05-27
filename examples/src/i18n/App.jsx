@@ -1,5 +1,5 @@
 import constate from "constate";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const translations = {
   en: {
