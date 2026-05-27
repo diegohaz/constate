@@ -1,20 +1,18 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. Releases are managed with [Changesets](https://github.com/changesets/changesets).
-
-### [3.3.3](https://github.com/diegohaz/constate/compare/v3.3.2...v3.3.3) (2025-04-01)
+## [3.3.3](https://github.com/diegohaz/constate/compare/v3.3.2...v3.3.3) (2025-04-01)
 
 ### Bug Fixes
 
 - Allow React 19 as a peer dependency ([#161](https://github.com/diegohaz/constate/issues/161)) ([2054d86](https://github.com/diegohaz/constate/commit/2054d86b918a93c6be97bcf4f0705b3eb6326c25))
 
-### [3.3.2](https://github.com/diegohaz/constate/compare/v3.3.1...v3.3.2) (2022-04-18)
+## [3.3.2](https://github.com/diegohaz/constate/compare/v3.3.1...v3.3.2) (2022-04-18)
 
 ### Bug Fixes
 
 - Allow React 18 as a peer dependency ([6611f1c](https://github.com/diegohaz/constate/commit/6611f1c74f12281d6e7e7d0c2633f9d7178d2efb))
 
-### [3.3.1](https://github.com/diegohaz/constate/compare/v3.3.0...v3.3.1) (2022-04-18)
+## [3.3.1](https://github.com/diegohaz/constate/compare/v3.3.0...v3.3.1) (2022-04-18)
 
 ### Bug Fixes
 
@@ -38,7 +36,7 @@ All notable changes to this project will be documented in this file. Releases ar
 
 - Allow React 17 as a peerDependency ([#122](https://github.com/diegohaz/constate/issues/122)) ([0f69b83](https://github.com/diegohaz/constate/commit/0f69b8336a53a6ef8797795bc618dc3b884a189c))
 
-### [3.0.1](https://github.com/diegohaz/constate/compare/v3.0.0...v3.0.1) (2020-09-08)
+## [3.0.1](https://github.com/diegohaz/constate/compare/v3.0.0...v3.0.1) (2020-09-08)
 
 ### Bug Fixes
 
@@ -99,13 +97,13 @@ All notable changes to this project will be documented in this file. Releases ar
 - Deprecate old function/object API ([#101](https://github.com/diegohaz/constate/issues/101)) ([c102a31](https://github.com/diegohaz/constate/commit/c102a31d00b23026256f09bbede11488e04f6dc2))
 - Remove deprecated `createMemoDeps` parameter ([#100](https://github.com/diegohaz/constate/issues/100)) ([553405d](https://github.com/diegohaz/constate/commit/553405df07144cde2009a9e2590012cd1fee548f))
 
-### [1.3.2](https://github.com/diegohaz/constate/compare/v1.3.1...v1.3.2) (2019-10-20)
+## [1.3.2](https://github.com/diegohaz/constate/compare/v1.3.1...v1.3.2) (2019-10-20)
 
 ### Bug Fixes
 
 - Remove unnecessary code from production ([a0d22bf](https://github.com/diegohaz/constate/commit/a0d22bfebc409dbea081c13ac61a84ca2022bc0b))
 
-### [1.3.1](https://github.com/diegohaz/constate/compare/v1.3.0...v1.3.1) (2019-10-20)
+## [1.3.1](https://github.com/diegohaz/constate/compare/v1.3.0...v1.3.1) (2019-10-20)
 
 ### Bug Fixes
 
@@ -130,12 +128,12 @@ All notable changes to this project will be documented in this file. Releases ar
 
 - Fix React peer dependency range ([7132e3d](https://github.com/diegohaz/constate/commit/7132e3d))
 
-# [1.1.0](https://github.com/diegohaz/constate/compare/v1.0.0...v1.1.0) (2019-04-14)
+## [1.1.0](https://github.com/diegohaz/constate/compare/v1.0.0...v1.1.0) (2019-04-14)
 
 ### Features
 
 - Return a hook from the createContainer method ([#78](https://github.com/diegohaz/constate/issues/78)) ([8de6eb6](https://github.com/diegohaz/constate/commit/8de6eb6)), closes [#77](https://github.com/diegohaz/constate/issues/77)
 
-# [1.0.0](https://github.com/diegohaz/constate/compare/v0.9.0...v1.0.0) (2019-02-06)
+## [1.0.0](https://github.com/diegohaz/constate/compare/v0.9.0...v1.0.0) (2019-02-06)
 
 First official release.
