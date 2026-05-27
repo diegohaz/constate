@@ -71,7 +71,7 @@ jobs:
         run: |
           packages=$(echo $AFFECTED_PACKAGES | jq -r '.[]' | tr '\n' ' ')
           if [ -n "$packages" ]; then
-            pnpm dlx pkg-pr-new publish $packages
+            pnpm exec pkg-pr-new publish $packages
           else
             echo "No affected packages to publish"
           fi
