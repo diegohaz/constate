@@ -1,6 +1,6 @@
 {
   "name": "constate",
-  "version": "3.3.3",
+  "version": "4.0.0",
   "description": "Yet another React state management library that lets you work with local state and scale up to global state with ease",
   "keywords": [
     "constate",
