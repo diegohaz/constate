@@ -35,10 +35,10 @@ const [FormProvider, useFormContext, useFormValues] = constate(
 
 type FormState = ReturnType<typeof useFormState>;
 
-type UseFormInputProps = FormState & {
+interface UseFormInputProps extends FormState {
   name: string;
   initialValue?: string | number;
-};
+}
 
 function useFormInput({
   register,
@@ -56,10 +56,10 @@ function useFormInput({
   };
 }
 
-type StepProps = {
+interface StepProps {
   onSubmit: (values: FormValues) => void;
   onBack?: () => void;
-};
+}
 
 function AgeForm({ onSubmit }: StepProps) {
   const state = useFormContext();
