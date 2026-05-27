@@ -26,6 +26,7 @@
         "/^vite/",
         "/^vitest/",
         "/^typescript/",
+        "/^@testing-library//",
         "jsdom"
       ],
       "automerge": true,
