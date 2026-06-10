@@ -10,6 +10,9 @@
     "state"
   ],
   "homepage": "https://github.com/diegohaz/constate",
+  "bugs": {
+    "url": "https://github.com/diegohaz/constate/issues"
+  },
   "license": "MIT",
   "author": {
     "name": "Diego Haz",
