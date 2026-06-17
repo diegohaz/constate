@@ -51,5 +51,9 @@
       "oxlint --type-aware --type-check"
     ]
   },
-  "packageManager": "pnpm@11.6.0"
+  "packageManager": "pnpm@11.6.0",
+  "homepage": "https://github.com/diegohaz/constate#readme",
+  "bugs": {
+    "url": "https://github.com/diegohaz/constate/issues"
+  }
 }
