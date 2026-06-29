@@ -21,6 +21,9 @@
     "url": "git+https://github.com/diegohaz/constate.git",
     "directory": "packages/constate"
   },
+  "bugs": {
+    "url": "https://github.com/diegohaz/constate/issues"
+  },
   "funding": "https://github.com/sponsors/diegohaz",
   "files": [
     "dist",
