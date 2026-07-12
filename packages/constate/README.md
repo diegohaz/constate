@@ -221,7 +221,7 @@ If you find a bug, please [create an issue](https://github.com/diegohaz/constate
 
 If you're a beginner, it'll be a pleasure to help you contribute. You can start by reading [the beginner's guide to contributing to a GitHub project](https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/).
 
-When working on this codebase, please use [`pnpm`](https://pnpm.io). Run `pnpm install` once and then `pnpm dev` to start the examples app, or `pnpm test` to run the test suite.
+When working on this codebase, please use [`pnpm`](https://pnpm.io/installation). Run `pnpm install` once to install the dependencies and the configured Node.js runtime. Then run `pnpm dev` to start the examples app, or `pnpm test` to run the test suite.
 
 ## License
 
