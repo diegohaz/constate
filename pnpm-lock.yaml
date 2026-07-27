@@ -54,8 +54,8 @@ importers:
         specifier: 7.0.2001
         version: 7.0.2001
       pkg-pr-new:
-        specifier: 0.0.79
-        version: 0.0.79
+        specifier: 0.0.80
+        version: 0.0.80
       rolldown:
         specifier: 1.2.0
         version: 1.2.0
@@ -1837,8 +1837,8 @@ packages:
     resolution: {integrity: sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==}
     engines: {node: '>=6'}
 
-  pkg-pr-new@0.0.79:
-    resolution: {integrity: sha512-ip74NzaakGZha5s/X1T7j+Ez9/bRNDhzxQZTfnzAzoI7zO9JnMRdoiIfCLyy+ZzxxXg8WXRW2WcdvdORI0O30w==}
+  pkg-pr-new@0.0.80:
+    resolution: {integrity: sha512-a6Ie3sxNVrIkx5TQhe5+nbPbyLQg0jnrMNDYoXQpDXBaELxdDgwUVmlVThOSj7oKB3kEIrji5xyhSvWAWf5ABQ==}
     hasBin: true
 
   postcss@8.5.19:
@@ -3579,7 +3579,7 @@ snapshots:
 
   pify@4.0.1: {}
 
-  pkg-pr-new@0.0.79: {}
+  pkg-pr-new@0.0.80: {}
 
   postcss@8.5.19:
     dependencies:
