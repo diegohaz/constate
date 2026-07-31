@@ -36,7 +36,7 @@
     "oxfmt": "0.61.0",
     "oxlint": "1.76.0",
     "oxlint-tsgolint": "7.0.2001",
-    "pkg-pr-new": "0.0.80",
+    "pkg-pr-new": "0.0.82",
     "rolldown": "1.2.0",
     "rolldown-plugin-dts": "0.27.14",
     "typescript": "7.0.2",
