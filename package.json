@@ -23,10 +23,10 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@changesets/apply-release-plan": "7.1.1",
-    "@changesets/cli": "2.31.1",
-    "@changesets/config": "3.1.4",
-    "@changesets/types": "6.1.0",
+    "@changesets/apply-release-plan": "8.0.0",
+    "@changesets/cli": "3.0.0",
+    "@changesets/config": "4.0.0",
+    "@changesets/types": "7.0.0",
     "@types/node": "25.9.5",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
