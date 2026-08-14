@@ -62,7 +62,7 @@ test("changesets getChangelogEntry hook", async () => {
     } as const;
 
     const packages = {
-      root: { dir: process.cwd() },
+      rootDir: process.cwd(),
       packages: [
         {
           dir: packageDir,
@@ -93,6 +93,81 @@ test("changesets getChangelogEntry hook", async () => {
       ### Other updates
 
       - Chore: update docs
+      "
+    `);
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("includes dependency release lines in the custom changelog entry", async () => {
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), "changesets-test-"));
+  try {
+    const packageADir = path.join(tempDir, "pkg-a");
+    const packageBDir = path.join(tempDir, "pkg-b");
+    await mkdir(packageADir, { recursive: true });
+    await mkdir(packageBDir, { recursive: true });
+
+    const packageAJson = {
+      name: "pkg-a",
+      version: "1.0.0",
+      dependencies: { "pkg-b": "^1.0.0" },
+    };
+    const packageBJson = { name: "pkg-b", version: "1.0.0" };
+    await writeFile(
+      path.join(packageADir, "package.json"),
+      JSON.stringify(packageAJson, null, 2),
+    );
+    await writeFile(
+      path.join(packageBDir, "package.json"),
+      JSON.stringify(packageBJson, null, 2),
+    );
+
+    const releasePlan = {
+      changesets: [
+        {
+          id: "fake-id-1",
+          summary: "Release pkg-b v2",
+          releases: [{ name: "pkg-b", type: "major" }],
+        },
+      ],
+      releases: [
+        {
+          name: "pkg-a",
+          type: "patch",
+          newVersion: "1.0.1",
+          changesets: [],
+        },
+        {
+          name: "pkg-b",
+          type: "major",
+          newVersion: "2.0.0",
+          changesets: ["fake-id-1"],
+        },
+      ],
+      preState: undefined,
+    } as const;
+
+    const packages = {
+      rootDir: process.cwd(),
+      packages: [
+        { dir: packageADir, packageJson: packageAJson },
+        { dir: packageBDir, packageJson: packageBJson },
+      ],
+    } as const;
+
+    await releasePlanRunner(releasePlan, packages, config);
+
+    const changelog = await readFile(
+      path.join(packageADir, "CHANGELOG.md"),
+      "utf8",
+    );
+    expect(changelog).toMatchInlineSnapshot(`
+      "# pkg-a
+
+      ## 1.0.1
+
+      - Updated dependencies: \`pkg-b@2.0.0\`
       "
     `);
   } finally {
@@ -134,7 +209,7 @@ test("prepends the new entry directly under the existing `# Changelog` header", 
     } as const;
 
     const packages = {
-      root: { dir: process.cwd() },
+      rootDir: process.cwd(),
       packages: [
         {
           dir: packageDir,
