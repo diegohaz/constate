@@ -29,7 +29,7 @@
     "@changesets/types": "7.0.0",
     "@types/node": "25.9.5",
     "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.4",
+    "@types/react-dom": "19.2.5",
     "husky": "9.1.7",
     "jsdom": "30.0.1",
     "lint-staged": "17.3.0",
