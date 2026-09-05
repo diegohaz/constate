@@ -106,7 +106,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  '@changesets/apply-release-plan@8.0.0': 25ca56226d613051f94334ce487a9f492856c79704ef602eb48b60f83d422d92
+  '@changesets/apply-release-plan@8.0.0': 3634e9fb21f663654a8e3559cc744da02297e7005394fc21938880a7a97bb7cb
 
 importers:
 
@@ -114,7 +114,7 @@ importers:
     devDependencies:
       '@changesets/apply-release-plan':
         specifier: 8.0.0
-        version: 8.0.0(patch_hash=25ca56226d613051f94334ce487a9f492856c79704ef602eb48b60f83d422d92)
+        version: 8.0.0(patch_hash=3634e9fb21f663654a8e3559cc744da02297e7005394fc21938880a7a97bb7cb)
       '@changesets/cli':
         specifier: 3.0.1
         version: 3.0.1
@@ -2108,7 +2108,7 @@ snapshots:
     dependencies:
       css-tree: 3.2.1
 
-  '@changesets/apply-release-plan@8.0.0(patch_hash=25ca56226d613051f94334ce487a9f492856c79704ef602eb48b60f83d422d92)':
+  '@changesets/apply-release-plan@8.0.0(patch_hash=3634e9fb21f663654a8e3559cc744da02297e7005394fc21938880a7a97bb7cb)':
     dependencies:
       '@changesets/config': 4.0.0
       '@changesets/format': 0.1.2
@@ -2133,7 +2133,7 @@ snapshots:
 
   '@changesets/cli@3.0.1':
     dependencies:
-      '@changesets/apply-release-plan': 8.0.0(patch_hash=25ca56226d613051f94334ce487a9f492856c79704ef602eb48b60f83d422d92)
+      '@changesets/apply-release-plan': 8.0.0(patch_hash=3634e9fb21f663654a8e3559cc744da02297e7005394fc21938880a7a97bb7cb)
       '@changesets/assemble-release-plan': 7.0.0
       '@changesets/changelog-git': 1.0.0
       '@changesets/config': 4.0.0
