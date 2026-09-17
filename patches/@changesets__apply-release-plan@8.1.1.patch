@@ -1,8 +1,8 @@
 diff --git a/dist/index.mjs b/dist/index.mjs
-index ffe7f5cc11801bda72789240081ac33762a34dfe..f3e5cf856df0953bbfc6ba1b829af54113c9ae81 100644
+index afd01449c0d03356760009a1efcd80c52f2c9fdf..0e4bda9f895e178f01f8b01d02eee53db201ea88 100644
 --- a/dist/index.mjs
 +++ b/dist/index.mjs
-@@ -120,6 +120,9 @@ async function getChangelogEntry(cwd, release, releases, changesets, changelogFu
+@@ -122,6 +122,9 @@ async function getChangelogEntry(cwd, release, releases, changesets, changelogFu
  	});
  	const relevantChangesets = changesets.filter((cs) => relevantChangesetIds.has(cs.id));
  	changelogLines.patch.push(Promise.resolve(changelogFuncs.getDependencyReleaseLine(relevantChangesets, dependentReleases, changelogOpts)));
