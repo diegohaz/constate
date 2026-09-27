@@ -224,11 +224,11 @@ importers:
         specifier: 7.0.2
         version: 7.0.2
       vite:
-        specifier: 8.3.0
-        version: 8.3.0(@types/node@25.9.8)(yaml@2.9.0)
+        specifier: 8.3.1
+        version: 8.3.1(@types/node@25.9.8)(yaml@2.9.0)
       vitest:
         specifier: 5.0.1
-        version: 5.0.1(@types/node@25.9.8)(jsdom@30.1.1)(vite@8.3.0(@types/node@25.9.8)(yaml@2.9.0))
+        version: 5.0.1(@types/node@25.9.8)(jsdom@30.1.1)(vite@8.3.1(@types/node@25.9.8)(yaml@2.9.0))
 
   examples:
     dependencies:
@@ -250,7 +250,7 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: 5.1.1
-        version: 5.1.1(vite@8.3.0(@types/node@25.9.8)(yaml@2.9.0))
+        version: 5.1.1(vite@8.3.1(@types/node@25.9.8)(yaml@2.9.0))
 
   packages/constate:
     devDependencies:
@@ -1888,8 +1888,8 @@ packages:
     peerDependencies:
       browserslist: '>= 4.21.0'
 
-  vite@8.3.0:
-    resolution: {integrity: sha512-lhZBVvEHefgE+HQZC9O7EBJgCU/nVzFNl7vkS4RE0APtWLP02/8QVIkQtzBxPquh7lq5/78NHipTj7ODQ6XuyQ==}
+  vite@8.3.1:
+    resolution: {integrity: sha512-/bvH9E9tmCXRGp2uXY3WbOldqpTwFkbha/8ANaEQ6VkxhH60KyqLwgZq6lG2y+4uT55x9+9eUHMpQ7uGnOCKjA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -2642,7 +2642,7 @@ snapshots:
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
 
-  '@vitejs/plugin-react@5.1.1(vite@8.3.0(@types/node@25.9.8)(yaml@2.9.0))':
+  '@vitejs/plugin-react@5.1.1(vite@8.3.1(@types/node@25.9.8)(yaml@2.9.0))':
     dependencies:
       '@babel/core': 7.29.7
       '@babel/plugin-transform-react-jsx-self': 7.29.7(@babel/core@7.29.7)
@@ -2650,18 +2650,18 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.47
       '@types/babel__core': 7.20.5
       react-refresh: 0.18.0
-      vite: 8.3.0(@types/node@25.9.8)(yaml@2.9.0)
+      vite: 8.3.1(@types/node@25.9.8)(yaml@2.9.0)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/mocker@5.0.1(vite@8.3.0(@types/node@25.9.8)(yaml@2.9.0))':
+  '@vitest/mocker@5.0.1(vite@8.3.1(@types/node@25.9.8)(yaml@2.9.0))':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       '@vitest/spy': 5.0.1
       estree-walker: 3.0.3
       magic-string: 1.2.3
     optionalDependencies:
-      vite: 8.3.0(@types/node@25.9.8)(yaml@2.9.0)
+      vite: 8.3.1(@types/node@25.9.8)(yaml@2.9.0)
 
   '@vitest/spy@5.0.1': {}
 
@@ -3219,7 +3219,7 @@ snapshots:
       escalade: 3.2.0
       picocolors: 1.1.1
 
-  vite@8.3.0(@types/node@25.9.8)(yaml@2.9.0):
+  vite@8.3.1(@types/node@25.9.8)(yaml@2.9.0):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -3231,10 +3231,10 @@ snapshots:
       fsevents: 2.3.3
       yaml: 2.9.0
 
-  vitest@5.0.1(@types/node@25.9.8)(jsdom@30.1.1)(vite@8.3.0(@types/node@25.9.8)(yaml@2.9.0)):
+  vitest@5.0.1(@types/node@25.9.8)(jsdom@30.1.1)(vite@8.3.1(@types/node@25.9.8)(yaml@2.9.0)):
     dependencies:
       '@types/chai': 5.2.3
-      '@vitest/mocker': 5.0.1(vite@8.3.0(@types/node@25.9.8)(yaml@2.9.0))
+      '@vitest/mocker': 5.0.1(vite@8.3.1(@types/node@25.9.8)(yaml@2.9.0))
       chai: 6.2.2
       es-module-lexer: 2.3.2
       expect-type: 1.4.0
@@ -3245,7 +3245,7 @@ snapshots:
       tinybench: 6.1.4
       tinyexec: 1.3.0
       tinyglobby: 0.2.17
-      vite: 8.3.0(@types/node@25.9.8)(yaml@2.9.0)
+      vite: 8.3.1(@types/node@25.9.8)(yaml@2.9.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 25.9.8
