@@ -34,8 +34,8 @@ Write local state using [React Hooks](https://reactjs.org/docs/hooks-intro.html)
 ## Basic example
 
 ```jsx
-import { useState } from "react";
 import constate from "constate";
+import { useState } from "react";
 
 // 1️⃣ Create a custom hook as usual
 function useCounter() {
@@ -75,8 +75,8 @@ function App() {
 ## Advanced example
 
 ```jsx
-import { useCallback, useState } from "react";
 import constate from "constate";
+import { useCallback, useState } from "react";
 
 // 1️⃣ Create a custom hook that receives props
 function useCounter({ initialCount = 0 }) {
@@ -149,8 +149,8 @@ Constate exports a single factory method. As parameters, it receives [`useValue`
 It's any [custom hook](https://reactjs.org/docs/hooks-custom.html):
 
 ```js
-import { useState } from "react";
 import constate from "constate";
+import { useState } from "react";
 
 const [CountProvider, useCountContext] = constate(() => {
   const [count] = useState(0);
@@ -187,8 +187,8 @@ Optionally, you can pass in one or more functions to split the custom hook value
 A `selector` function receives the value returned by [`useValue`](#usevalue) and returns the value that will be held by that particular Context.
 
 ```jsx
-import { useCallback, useState } from "react";
 import constate from "constate";
+import { useCallback, useState } from "react";
 
 function useCounter() {
   const [count, setCount] = useState(0);
