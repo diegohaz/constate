@@ -212,8 +212,8 @@ importers:
         specifier: 7.0.2003
         version: 7.0.2003
       pkg-pr-new:
-        specifier: 0.0.90
-        version: 0.0.90
+        specifier: 0.0.91
+        version: 0.0.91
       rolldown:
         specifier: 1.2.13
         version: 1.2.13
@@ -1714,8 +1714,8 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
-  pkg-pr-new@0.0.90:
-    resolution: {integrity: sha512-koirj8hzOS1t86OHIunQL/ezeimuCegmtcoNJTGqaFbjWSUbM5U+uKfFqu5Q2kxC/odCAZknaf2tFmfLsbchiw==}
+  pkg-pr-new@0.0.91:
+    resolution: {integrity: sha512-FQPmjspKRKYV4MlHQnun9snJqlYm6Yhmo12x1O3pgE2Akim/y/BZjMOppK//BFdh222WOj6WGqlmeZfrtUtfgQ==}
     hasBin: true
 
   postcss@8.5.28:
@@ -3052,7 +3052,7 @@ snapshots:
 
   picomatch@4.0.7: {}
 
-  pkg-pr-new@0.0.90: {}
+  pkg-pr-new@0.0.91: {}
 
   postcss@8.5.28:
     dependencies:
