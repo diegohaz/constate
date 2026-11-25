@@ -32,7 +32,7 @@
     "@types/react-dom": "19.3.0",
     "husky": "9.1.7",
     "jsdom": "31.0.1",
-    "lint-staged": "17.6.1",
+    "lint-staged": "17.6.2",
     "oxfmt": "0.79.0",
     "oxlint": "1.94.0",
     "oxlint-tsgolint": "7.0.2008",
