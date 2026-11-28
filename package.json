@@ -28,7 +28,7 @@
     "@changesets/config": "4.0.1",
     "@changesets/types": "7.0.0",
     "@types/node": "26.6.10",
-    "@types/react": "19.3.1",
+    "@types/react": "19.3.2",
     "@types/react-dom": "19.3.0",
     "husky": "9.1.7",
     "jsdom": "31.0.1",
